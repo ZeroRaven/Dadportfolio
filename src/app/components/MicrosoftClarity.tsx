@@ -1,17 +1,29 @@
-import { Helmet } from "react-helmet";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 
 interface MicrosoftClarityProps {
   projectId: string;
 }
 
 export function MicrosoftClarity({ projectId }: MicrosoftClarityProps) {
+  const initialized = useRef(false);
+
   // Only load Clarity in production
   if (!projectId || projectId === "YOUR_CLARITY_ID") {
     return null;
   }
 
   useEffect(() => {
+    // Prevent double initialization
+    if (initialized.current) {
+      return;
+    }
+
+    // Check if already loaded
+    if (typeof window.clarity !== 'undefined' || document.querySelector('script[src*="clarity.ms"]')) {
+      initialized.current = true;
+      return;
+    }
+
     // Inject Microsoft Clarity script
     const script = document.createElement("script");
     script.type = "text/javascript";
@@ -24,10 +36,7 @@ export function MicrosoftClarity({ projectId }: MicrosoftClarityProps) {
     `;
     document.head.appendChild(script);
 
-    // Cleanup
-    return () => {
-      document.head.removeChild(script);
-    };
+    initialized.current = true;
   }, [projectId]);
 
   return null;
