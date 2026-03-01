@@ -60,25 +60,37 @@ export function Navigation() {
       className={`fixed top-0 w-full z-50 transition-all duration-300 ${getNavStyle()}`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-24">
+        <div className="flex justify-between items-center h-20 lg:h-24">
           {/* Logo */}
-          <Link to="/" className="flex items-center space-x-4 group">
+          <Link to="/" className="flex items-center space-x-3 group">
             <motion.div
               whileHover={{ scale: 1.05, rotate: 5 }}
               transition={{ type: "spring", stiffness: 400 }}
-              className="relative"
+              className="relative flex-shrink-0"
             >
-              <div className="w-14 h-14 bg-gradient-to-br from-[#0A2540] to-[#1A3A5C] rounded-xl flex items-center justify-center shadow-lg">
-                <Award className="text-[#D4AF37]" size={28} />
+              <div className="w-12 h-12 lg:w-14 lg:h-14 bg-gradient-to-br from-[#0A2540] to-[#1A3A5C] rounded-xl flex items-center justify-center shadow-lg">
+                <Award className="text-[#D4AF37]" size={24} />
               </div>
-              <div className="absolute -top-1 -right-1 w-4 h-4 bg-[#D4AF37] rounded-full animate-pulse"></div>
+              <div className="absolute -top-1 -right-1 w-3 h-3 lg:w-4 lg:h-4 bg-[#D4AF37] rounded-full animate-pulse"></div>
             </motion.div>
+            
+            {/* Desktop Logo Text */}
             <div className="hidden md:block">
               <div className={`text-xl font-bold transition-colors ${textColorClass === 'light' ? 'text-white' : 'text-[#0A2540]'}`}>
                 Dr. Mogal Prasad Shah
               </div>
               <div className="text-xs text-[#D4AF37] font-medium tracking-wide">
                 M.Sc. | 27+ Years Excellence
+              </div>
+            </div>
+            
+            {/* Mobile Logo Text - Compact Version */}
+            <div className="block md:hidden">
+              <div className={`text-base font-bold transition-colors leading-tight ${textColorClass === 'light' ? 'text-white' : 'text-[#0A2540]'}`}>
+                Dr. M.P. Shah
+              </div>
+              <div className="text-[10px] text-[#D4AF37] font-medium tracking-wide">
+                Livestock Expert
               </div>
             </div>
           </Link>
@@ -147,39 +159,84 @@ export function Navigation() {
               animate={{ opacity: 1, height: "auto" }}
               exit={{ opacity: 0, height: 0 }}
               transition={{ duration: 0.3 }}
-              className="lg:hidden overflow-hidden bg-white border-t"
+              className="lg:hidden overflow-hidden bg-white/98 backdrop-blur-md border-t border-gray-200 shadow-xl"
             >
-              <div className="py-6 space-y-2">
+              {/* Mobile Menu Header with Full Name */}
+              <motion.div 
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1 }}
+                className="px-4 pt-4 pb-3 border-b border-gray-100"
+              >
+                <div className="flex items-center space-x-3">
+                  <div className="w-10 h-10 bg-gradient-to-br from-[#0A2540] to-[#1A3A5C] rounded-lg flex items-center justify-center shadow-md">
+                    <Award className="text-[#D4AF37]" size={20} />
+                  </div>
+                  <div>
+                    <div className="text-sm font-bold text-[#0A2540]">
+                      Dr. Mogal Prasad Shah
+                    </div>
+                    <div className="text-xs text-[#D4AF37] font-medium">
+                      Livestock Development Expert
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+
+              <div className="py-4 space-y-1 px-2">
                 {navItems.map((item, index) => (
                   <motion.div
                     key={item.path}
                     initial={{ x: -50, opacity: 0 }}
                     animate={{ x: 0, opacity: 1 }}
-                    transition={{ delay: index * 0.1 }}
+                    transition={{ delay: index * 0.08 + 0.2 }}
                   >
                     <Link
                       to={item.path}
                       onClick={() => setIsOpen(false)}
-                      className={`block px-4 py-3 rounded-lg text-base font-medium transition-colors ${
+                      className={`block px-4 py-3 rounded-lg text-base font-medium transition-all ${
                         isActive(item.path)
-                          ? "bg-[#D4AF37]/10 text-[#0A2540] font-semibold"
-                          : "text-gray-700 hover:bg-gray-50"
+                          ? "bg-gradient-to-r from-[#D4AF37]/15 to-[#D4AF37]/5 text-[#0A2540] font-semibold border-l-4 border-[#D4AF37]"
+                          : "text-gray-700 hover:bg-gray-50 hover:pl-5"
                       }`}
                     >
-                      {item.label}
+                      <div className="flex items-center justify-between">
+                        <span>{item.label}</span>
+                        {isActive(item.path) && (
+                          <motion.div
+                            initial={{ scale: 0 }}
+                            animate={{ scale: 1 }}
+                            className="w-2 h-2 bg-[#D4AF37] rounded-full"
+                          />
+                        )}
+                      </div>
                     </Link>
                   </motion.div>
                 ))}
-                <Link to="/contact" onClick={() => setIsOpen(false)}>
-                  <motion.button
-                    initial={{ x: -50, opacity: 0 }}
-                    animate={{ x: 0, opacity: 1 }}
-                    transition={{ delay: navItems.length * 0.1 }}
-                    className="w-full mt-4 px-4 py-3 bg-gradient-to-r from-[#D4AF37] to-[#B8941F] text-[#0A2540] rounded-lg text-base font-semibold"
-                  >
-                    Get in Touch
-                  </motion.button>
-                </Link>
+                
+                {/* Mobile CTA Button */}
+                <motion.div
+                  initial={{ x: -50, opacity: 0 }}
+                  animate={{ x: 0, opacity: 1 }}
+                  transition={{ delay: navItems.length * 0.08 + 0.2 }}
+                  className="pt-4"
+                >
+                  <Link to="/contact" onClick={() => setIsOpen(false)}>
+                    <button className="w-full px-4 py-3.5 bg-gradient-to-r from-[#D4AF37] to-[#B8941F] text-[#0A2540] rounded-lg text-base font-semibold shadow-lg hover:shadow-xl transition-all flex items-center justify-center space-x-2">
+                      <span>Get in Touch</span>
+                      <motion.svg
+                        animate={{ x: [0, 5, 0] }}
+                        transition={{ repeat: Infinity, duration: 1.5 }}
+                        className="w-4 h-4"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                      </motion.svg>
+                    </button>
+                  </Link>
+                </motion.div>
               </div>
             </motion.div>
           )}

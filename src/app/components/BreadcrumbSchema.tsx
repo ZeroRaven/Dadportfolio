@@ -1,5 +1,3 @@
-import { Helmet } from "react-helmet";
-
 interface BreadcrumbItem {
   name: string;
   url: string;
@@ -24,10 +22,9 @@ export function BreadcrumbSchema({ items }: BreadcrumbSchemaProps) {
   };
 
   return (
-    <Helmet>
-      <script type="application/ld+json">
-        {JSON.stringify(breadcrumbSchema)}
-      </script>
-    </Helmet>
+    <script 
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+    />
   );
 }

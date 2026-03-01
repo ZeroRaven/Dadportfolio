@@ -20,8 +20,9 @@ export function Footer() {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
+            className="text-center md:text-left"
           >
-            <div className="flex items-center space-x-3 mb-6">
+            <div className="flex items-center space-x-3 mb-6 justify-center md:justify-start">
               <div className="w-12 h-12 bg-gradient-to-br from-[#D4AF37] to-[#B8941F] rounded-xl flex items-center justify-center">
                 <Award className="text-[#0A2540]" size={24} />
               </div>
@@ -41,6 +42,7 @@ export function Footer() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.1 }}
+            className="text-center md:text-left"
           >
             <h4 className="font-display text-lg font-bold mb-6">Quick Links</h4>
             <ul className="space-y-3 text-sm">
@@ -70,20 +72,21 @@ export function Footer() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.2 }}
+            className="text-center md:text-left"
           >
             <h4 className="font-display text-lg font-bold mb-6">Contact</h4>
             <ul className="space-y-4 text-sm">
-              <li className="flex items-start space-x-3">
+              <li className="flex items-start space-x-3 justify-center md:justify-start">
                 <Phone size={16} className="mt-1 text-[#D4AF37] flex-shrink-0" />
                 <span className="text-gray-300">+977 XXX-XXXX-XXX</span>
               </li>
-              <li className="flex items-start space-x-3">
+              <li className="flex items-start space-x-3 justify-center md:justify-start">
                 <Mail size={16} className="mt-1 text-[#D4AF37] flex-shrink-0" />
                 <a href="mailto:info@drmogalshah.com.np" className="text-gray-300 hover:text-[#D4AF37] transition-colors">
                   info@drmogalshah.com.np
                 </a>
               </li>
-              <li className="flex items-start space-x-3">
+              <li className="flex items-start space-x-3 justify-center md:justify-start">
                 <MapPin size={16} className="mt-1 text-[#D4AF37] flex-shrink-0" />
                 <span className="text-gray-300">Bagamati Province<br />Nepal</span>
               </li>
@@ -96,6 +99,7 @@ export function Footer() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.3 }}
+            className="text-center md:text-left"
           >
             <h4 className="font-display text-lg font-bold mb-6">Professional</h4>
             <ul className="space-y-3 text-sm text-gray-300">
@@ -104,7 +108,7 @@ export function Footer() {
               <li>✓ Former Director, DLFD</li>
               <li>✓ 27+ Years Experience</li>
             </ul>
-            <div className="flex space-x-3 mt-6">
+            <div className="flex space-x-3 mt-6 justify-center md:justify-start">
               <a
                 href="https://www.linkedin.com/in/dr-mogal-prasad-shah/"
                 target="_blank"
@@ -138,9 +142,9 @@ export function Footer() {
           viewport={{ once: true }}
           className="pt-8 border-t border-white/10"
         >
-          <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0 text-sm">
+          <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0 text-sm text-center md:text-left">
             <p className="text-gray-400">&copy; {currentYear} Dr. Mogal Prasad Shah. All rights reserved.</p>
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-2 flex-wrap justify-center">
               <span className="text-gray-400">Site developed with love</span>
               <span className="text-red-500 animate-pulse text-lg">❤️</span>
               <span className="text-gray-400">by</span>

@@ -139,48 +139,57 @@ export function SEO({ title, description, keywords, ogImage, canonical, type = "
   };
 
   return (
-    <Helmet>
-      {/* Primary Meta Tags */}
-      <html lang="en" />
-      <title>{fullTitle}</title>
-      <meta name="title" content={fullTitle} />
-      <meta name="description" content={description} />
-      {keywords && <meta name="keywords" content={keywords} />}
-      <link rel="canonical" href={siteUrl} />
-      <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <>
+      <Helmet htmlAttributes={{ lang: "en" }}>
+        <title>{fullTitle}</title>
+        <meta name="title" content={fullTitle} />
+        <meta name="description" content={description} />
+        <meta name="keywords" content={keywords || ""} />
+        <link rel="canonical" href={siteUrl} />
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
 
-      {/* Open Graph / Facebook */}
-      <meta property="og:type" content={type} />
-      <meta property="og:url" content={siteUrl} />
-      <meta property="og:title" content={fullTitle} />
-      <meta property="og:description" content={description} />
-      <meta property="og:image" content={defaultImage} />
-      <meta property="og:image:width" content="1200" />
-      <meta property="og:image:height" content="630" />
-      <meta property="og:site_name" content={siteName} />
-      <meta property="og:locale" content="en_US" />
+        <meta property="og:type" content={type} />
+        <meta property="og:url" content={siteUrl} />
+        <meta property="og:title" content={fullTitle} />
+        <meta property="og:description" content={description} />
+        <meta property="og:image" content={defaultImage} />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:site_name" content={siteName} />
+        <meta property="og:locale" content="en_US" />
 
-      {/* Twitter */}
-      <meta name="twitter:card" content="summary_large_image" />
-      <meta name="twitter:url" content={siteUrl} />
-      <meta name="twitter:title" content={fullTitle} />
-      <meta name="twitter:description" content={description} />
-      <meta name="twitter:image" content={defaultImage} />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:url" content={siteUrl} />
+        <meta name="twitter:title" content={fullTitle} />
+        <meta name="twitter:description" content={description} />
+        <meta name="twitter:image" content={defaultImage} />
 
-      {/* Additional SEO */}
-      <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
-      <meta name="googlebot" content="index, follow" />
-      <meta name="language" content="English" />
-      <meta name="author" content="Dr. Mogal Prasad Shah" />
-      <meta name="geo.region" content="NP" />
-      <meta name="geo.placename" content="Nepal" />
-      
-      {/* Mobile Optimization */}
-      <meta name="theme-color" content="#0A2540" />
-      <meta name="mobile-web-app-capable" content="yes" />
-      <meta name="apple-mobile-web-app-capable" content="yes" />
-      <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-      <meta name="apple-mobile-web-app-title" content="Dr. Mogal Shah" />
-    </Helmet>
+        <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+        <meta name="googlebot" content="index, follow" />
+        <meta name="language" content="English" />
+        <meta name="author" content="Dr. Mogal Prasad Shah" />
+        <meta name="geo.region" content="NP" />
+        <meta name="geo.placename" content="Nepal" />
+        
+        <meta name="theme-color" content="#0A2540" />
+        <meta name="mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+        <meta name="apple-mobile-web-app-title" content="Dr. Mogal Shah" />
+      </Helmet>
+
+      <script 
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(personSchema) }}
+      />
+      <script 
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(professionalServiceSchema) }}
+      />
+      <script 
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
+      />
+    </>
   );
 }
