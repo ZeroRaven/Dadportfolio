@@ -1,5 +1,6 @@
 import { GraduationCap, Briefcase, Award, Globe2, Target, Heart, TrendingUp, Users2 } from "lucide-react";
 import { ImageWithFallback } from "../components/figma/ImageWithFallback";
+import drShahHeadshot from "@/imports/image.png";
 import { Card, CardContent } from "../components/ui/card";
 import { SEO } from "../components/SEO";
 import { motion } from "motion/react";
@@ -99,9 +100,9 @@ export function About() {
               >
                 <div className="relative h-[600px] rounded-3xl overflow-hidden shadow-2xl">
                   <ImageWithFallback
-                    src="https://images.unsplash.com/photo-1738566061505-556830f8b8f5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxwcm9mZXNzaW9uYWwlMjBidXNpbmVzcyUyMHBvcnRyYWl0JTIwYXNpYW4lMjBtYW58ZW58MXx8fHwxNzcyMzYxNDgxfDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral"
-                    alt="Dr. Mogal Prasad Shah"
-                    className="w-full h-full object-cover"
+                    src={drShahHeadshot}
+                    alt="Dr. Mogal Prasad Shah, Livestock Development Expert"
+                    className="w-full h-full object-cover object-top"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-[#0A2540]/40 to-transparent"></div>
                 </div>
