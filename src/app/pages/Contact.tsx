@@ -1,5 +1,6 @@
-import { useState } from "react";
-import { MapPin, Phone, Mail, Send, Linkedin, MessageCircle } from "lucide-react";
+import { useState, type ElementType } from "react";
+import { useLanguage } from "../context/LanguageContext";
+import { MapPin, Phone, Mail, Send, Linkedin, MessageCircle, Facebook } from "lucide-react";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Textarea } from "../components/ui/textarea";
@@ -9,6 +10,8 @@ import { SEO } from "../components/SEO";
 import { motion } from "motion/react";
 
 export function Contact() {
+  const { language } = useLanguage();
+  const np = language === "np";
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -50,28 +53,61 @@ export function Contact() {
     });
   };
 
-  const contactInfo = [
+  type ContactInfo = { icon: ElementType; title: string; primary: string; secondary: string; href?: string };
+  const contactInfo: ContactInfo[] = np ? [
+    {
+      icon: Phone,
+      title: "फोन",
+      primary: "+977 XXX-XXXX-XXX",
+      secondary: "सोम-शुक्र, बिहान ९ - साँझ ५ उपलब्ध",
+      href: "tel:+977XXXXXXXXX"
+    },
+    {
+      icon: Mail,
+      title: "इमेल",
+      primary: "info@drmogalshah.com.np",
+      secondary: "२४ घण्टाभित्र जवाफ",
+      href: "mailto:info@drmogalshah.com.np"
+    },
+    {
+      icon: MapPin,
+      title: "स्थान",
+      primary: "बागमती प्रदेश",
+      secondary: "नेपाल",
+      href: undefined
+    }
+  ] : [
     {
       icon: Phone,
       title: "Phone",
       primary: "+977 XXX-XXXX-XXX",
-      secondary: "Available Mon-Fri, 9AM-5PM"
+      secondary: "Available Mon-Fri, 9AM-5PM",
+      href: "tel:+977XXXXXXXXX"
     },
     {
       icon: Mail,
       title: "Email",
       primary: "info@drmogalshah.com.np",
-      secondary: "Response within 24 hours"
+      secondary: "Response within 24 hours",
+      href: "mailto:info@drmogalshah.com.np"
     },
     {
       icon: MapPin,
       title: "Location",
       primary: "Bagamati Province",
-      secondary: "Nepal"
+      secondary: "Nepal",
+      href: undefined
     }
   ];
 
-  const collaborationAreas = [
+  const collaborationAreas = np ? [
+    "रणनीतिक परामर्श र सल्लाह",
+    "परियोजना डिजाइन र व्यवस्थापन",
+    "प्राविधिक मूल्यांकन",
+    "नीति निर्माण",
+    "क्षमता निर्माण कार्यक्रम",
+    "अनुसन्धान साझेदारी"
+  ] : [
     "Strategic Consulting & Advisory",
     "Project Design & Management",
     "Technical Assessments",
@@ -102,12 +138,14 @@ export function Contact() {
             animate={{ opacity: 1, y: 0 }}
             className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-white"
           >
-            <h1 className="font-display text-5xl md:text-6xl font-bold mb-6">
-              Let's Connect
+            <h1 className="font-display text-4xl sm:text-5xl md:text-6xl font-bold mb-6">
+              {np ? "सम्पर्कमा रहौं" : "Let's Connect"}
             </h1>
             <div className="w-24 h-1.5 bg-gradient-to-r from-[#D4AF37] to-[#B8941F] mx-auto rounded-full mb-6"></div>
             <p className="text-xl text-gray-300 max-w-3xl mx-auto">
-              Open to consulting opportunities, strategic partnerships, and collaborative initiatives in livestock development and agricultural innovation
+              {np
+                ? "पशुपालन विकास र कृषि नवाचारमा परामर्श अवसर, रणनीतिक साझेदारी र सहकार्य पहलहरूका लागि खुला"
+                : "Open to consulting opportunities, strategic partnerships, and collaborative initiatives in livestock development and agricultural innovation"}
             </p>
           </motion.div>
         </section>
@@ -127,12 +165,18 @@ export function Contact() {
                     transition={{ delay: index * 0.1 }}
                   >
                     <Card className="h-full text-center border-2 border-transparent hover:border-[#D4AF37] transition-all duration-300 shadow-lg hover:shadow-xl bg-white">
-                      <CardContent className="p-8">
-                        <div className="w-16 h-16 bg-gradient-to-br from-[#D4AF37]/20 to-[#B8941F]/20 rounded-2xl flex items-center justify-center mx-auto mb-6">
-                          <Icon className="text-[#D4AF37]" size={32} />
+                      <CardContent className="p-6 sm:p-8">
+                        <div className="w-14 h-14 sm:w-16 sm:h-16 bg-gradient-to-br from-[#D4AF37]/20 to-[#B8941F]/20 rounded-2xl flex items-center justify-center mx-auto mb-5">
+                          <Icon className="text-[#D4AF37]" size={28} />
                         </div>
-                        <h3 className="font-display text-xl font-bold text-[#0A2540] mb-3">{info.title}</h3>
-                        <p className="text-gray-900 font-semibold mb-1">{info.primary}</p>
+                        <h3 className="font-display text-lg sm:text-xl font-bold text-[#0A2540] mb-2">{info.title}</h3>
+                        {info.href ? (
+                          <a href={info.href} className="text-gray-900 font-semibold mb-1 hover:text-[#D4AF37] transition-colors block break-all">
+                            {info.primary}
+                          </a>
+                        ) : (
+                          <p className="text-gray-900 font-semibold mb-1">{info.primary}</p>
+                        )}
                         <p className="text-sm text-gray-600">{info.secondary}</p>
                       </CardContent>
                     </Card>
@@ -155,29 +199,31 @@ export function Contact() {
                 className="lg:col-span-3"
               >
                 <Card className="border-2 border-[#D4AF37]/20 shadow-xl bg-white">
-                  <CardContent className="p-8 md:p-12">
-                    <h2 className="font-display text-3xl font-bold text-[#0A2540] mb-3">Send a Message</h2>
+                  <CardContent className="p-5 sm:p-8 md:p-12">
+                    <h2 className="font-display text-3xl font-bold text-[#0A2540] mb-3">{np ? "सन्देश पठाउनुहोस्" : "Send a Message"}</h2>
                     <p className="text-gray-600 mb-8">
-                      Interested in collaboration or have a question? Fill out the form below and I'll respond promptly.
+                      {np
+                        ? "सहकार्यमा रुचि छ वा कुनै प्रश्न छ? तल फारम भर्नुहोस् र म छिट्टै जवाफ दिनेछु।"
+                        : "Interested in collaboration or have a question? Fill out the form below and I'll respond promptly."}
                     </p>
 
                     <form onSubmit={handleSubmit} className="space-y-6">
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
-                          <Label htmlFor="name" className="text-[#0A2540]">Full Name *</Label>
+                          <Label htmlFor="name" className="text-[#0A2540]">{np ? "पूरा नाम *" : "Full Name *"}</Label>
                           <Input
                             id="name"
                             name="name"
                             value={formData.name}
                             onChange={handleChange}
                             required
-                            placeholder="Your name"
+                            placeholder={np ? "तपाईंको नाम" : "Your name"}
                             className="mt-2 border-gray-300 focus:border-[#D4AF37] focus:ring-[#D4AF37]"
                           />
                         </div>
 
                         <div>
-                          <Label htmlFor="email" className="text-[#0A2540]">Email Address *</Label>
+                          <Label htmlFor="email" className="text-[#0A2540]">{np ? "इमेल ठेगाना *" : "Email Address *"}</Label>
                           <Input
                             id="email"
                             name="email"
@@ -193,40 +239,40 @@ export function Contact() {
 
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
-                          <Label htmlFor="organization" className="text-[#0A2540]">Organization</Label>
+                          <Label htmlFor="organization" className="text-[#0A2540]">{np ? "संगठन" : "Organization"}</Label>
                           <Input
                             id="organization"
                             name="organization"
                             value={formData.organization}
                             onChange={handleChange}
-                            placeholder="Your organization"
+                            placeholder={np ? "तपाईंको संगठन" : "Your organization"}
                             className="mt-2 border-gray-300 focus:border-[#D4AF37] focus:ring-[#D4AF37]"
                           />
                         </div>
 
                         <div>
-                          <Label htmlFor="subject" className="text-[#0A2540]">Subject *</Label>
+                          <Label htmlFor="subject" className="text-[#0A2540]">{np ? "विषय *" : "Subject *"}</Label>
                           <Input
                             id="subject"
                             name="subject"
                             value={formData.subject}
                             onChange={handleChange}
                             required
-                            placeholder="Brief subject"
+                            placeholder={np ? "संक्षिप्त विषय" : "Brief subject"}
                             className="mt-2 border-gray-300 focus:border-[#D4AF37] focus:ring-[#D4AF37]"
                           />
                         </div>
                       </div>
 
                       <div>
-                        <Label htmlFor="message" className="text-[#0A2540]">Message *</Label>
+                        <Label htmlFor="message" className="text-[#0A2540]">{np ? "सन्देश *" : "Message *"}</Label>
                         <Textarea
                           id="message"
                           name="message"
                           value={formData.message}
                           onChange={handleChange}
                           required
-                          placeholder="Tell me about your inquiry, project, or collaboration opportunity..."
+                          placeholder={np ? "तपाईंको सोधपुछ, परियोजना वा सहकार्य अवसरबारे बताउनुहोस्..." : "Tell me about your inquiry, project, or collaboration opportunity..."}
                           rows={6}
                           className="mt-2 resize-none border-gray-300 focus:border-[#D4AF37] focus:ring-[#D4AF37]"
                         />
@@ -238,7 +284,7 @@ export function Contact() {
                         className="w-full bg-gradient-to-r from-[#D4AF37] to-[#B8941F] hover:from-[#B8941F] hover:to-[#D4AF37] text-[#0A2540] font-semibold text-lg"
                       >
                         <Send className="mr-2" size={20} />
-                        Send Message
+                        {np ? "सन्देश पठाउनुहोस्" : "Send Message"}
                       </Button>
                     </form>
                   </CardContent>
@@ -255,7 +301,7 @@ export function Contact() {
                 {/* Collaboration Areas */}
                 <Card className="bg-gradient-to-br from-[#0A2540] to-[#1A3A5C] text-white border-0 shadow-xl">
                   <CardContent className="p-8">
-                    <h3 className="font-display text-2xl font-bold mb-6">Collaboration Areas</h3>
+                    <h3 className="font-display text-2xl font-bold mb-6">{np ? "सहकार्य क्षेत्रहरू" : "Collaboration Areas"}</h3>
                     <ul className="space-y-3">
                       {collaborationAreas.map((area, idx) => (
                         <motion.li
@@ -279,25 +325,34 @@ export function Contact() {
                 {/* Social Connect */}
                 <Card className="border-2 border-[#D4AF37]/20 shadow-xl bg-white">
                   <CardContent className="p-8">
-                    <h3 className="font-display text-2xl font-bold text-[#0A2540] mb-4">Connect on Social</h3>
+                    <h3 className="font-display text-2xl font-bold text-[#0A2540] mb-4">{np ? "सामाजिक सञ्जालमा जोडिनुहोस्" : "Connect on Social"}</h3>
                     <p className="text-gray-600 mb-6 text-sm">
-                      Follow and connect for updates on projects and insights
+                      {np ? "परियोजनाहरू र अन्तर्दृष्टिमा अपडेटका लागि पछ्याउनुहोस् र जोडिनुहोस्" : "Follow and connect for updates on projects and insights"}
                     </p>
-                    <div className="flex flex-wrap gap-4">
+                    <div className="flex flex-wrap gap-3">
                       <a
                         href="https://www.linkedin.com/in/dr-mogal-prasad-shah/"
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="flex-1 flex items-center justify-center space-x-2 px-4 py-3 bg-[#0077B5] hover:bg-[#006399] text-white rounded-lg transition-colors"
+                        className="flex-1 flex items-center justify-center space-x-2 px-3 py-3 bg-[#0077B5] hover:bg-[#006399] text-white rounded-lg transition-colors min-w-[100px]"
                       >
-                        <Linkedin size={20} />
+                        <Linkedin size={18} />
                         <span className="text-sm font-medium">LinkedIn</span>
                       </a>
                       <a
-                        href="mailto:info@drmogalshah.com.np"
-                        className="flex-1 flex items-center justify-center space-x-2 px-4 py-3 bg-[#D4AF37] hover:bg-[#B8941F] text-[#0A2540] rounded-lg transition-colors"
+                        href="https://www.facebook.com/mpsah"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex-1 flex items-center justify-center space-x-2 px-3 py-3 bg-[#1877F2] hover:bg-[#166FE5] text-white rounded-lg transition-colors min-w-[100px]"
                       >
-                        <Mail size={20} />
+                        <Facebook size={18} />
+                        <span className="text-sm font-medium">Facebook</span>
+                      </a>
+                      <a
+                        href="mailto:info@drmogalshah.com.np"
+                        className="w-full flex items-center justify-center space-x-2 px-3 py-3 bg-[#D4AF37] hover:bg-[#B8941F] text-[#0A2540] rounded-lg transition-colors"
+                      >
+                        <Mail size={18} />
                         <span className="text-sm font-medium">Email</span>
                       </a>
                     </div>
@@ -309,10 +364,10 @@ export function Contact() {
                   <CardContent className="p-8 text-center">
                     <MessageCircle size={48} className="text-[#0A2540] mx-auto mb-4" />
                     <h3 className="font-display text-xl font-bold text-[#0A2540] mb-2">
-                      Available for Consulting
+                      {np ? "परामर्शका लागि उपलब्ध" : "Available for Consulting"}
                     </h3>
                     <p className="text-sm text-[#0A2540]/80">
-                      Open to short-term and long-term engagements
+                      {np ? "अल्पकालीन र दीर्घकालीन संलग्नताका लागि खुला" : "Open to short-term and long-term engagements"}
                     </p>
                   </CardContent>
                 </Card>

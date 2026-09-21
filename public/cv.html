@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dr. Mogal Prasad Shah — Curriculum Vitae</title>
+  <style>
+    :root {
+      --navy: #0A2540;
+      --gold: #D4AF37;
+      --gold-dark: #B8941F;
+      --text: #1a1a2e;
+      --muted: #6b7280;
+      --border: #e5e7eb;
+      --bg-light: #f9fafb;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Georgia', serif;
+      font-size: 11pt;
+      color: var(--text);
+      background: #fff;
+      line-height: 1.6;
+    }
+
+    .page {
+      max-width: 780px;
+      margin: 0 auto;
+      padding: 48px 48px 64px;
+    }
+
+    /* ── Header ── */
+    .header {
+      border-bottom: 3px solid var(--gold);
+      padding-bottom: 20px;
+      margin-bottom: 28px;
+    }
+
+    .header-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 24px;
+    }
+
+    .header-name h1 {
+      font-size: 26pt;
+      font-weight: bold;
+      color: var(--navy);
+      letter-spacing: -0.5px;
+      line-height: 1.1;
+    }
+
+    .header-name .title {
+      font-size: 12pt;
+      color: var(--gold-dark);
+      font-style: italic;
+      margin-top: 4px;
+    }
+
+    .header-contact {
+      text-align: right;
+      font-size: 9.5pt;
+      color: var(--muted);
+      line-height: 1.8;
+    }
+
+    .header-contact a {
+      color: var(--navy);
+      text-decoration: none;
+    }
+
+    .tag-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 14px;
+    }
+
+    .tag {
+      background: var(--navy);
+      color: #fff;
+      font-size: 8.5pt;
+      padding: 3px 10px;
+      border-radius: 100px;
+      font-family: Arial, sans-serif;
+    }
+
+    .tag.gold {
+      background: var(--gold);
+      color: var(--navy);
+      font-weight: bold;
+    }
+
+    /* ── Sections ── */
+    section { margin-bottom: 26px; }
+
+    .section-title {
+      font-size: 10pt;
+      font-weight: bold;
+      color: var(--navy);
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      font-family: Arial, sans-serif;
+      border-bottom: 1.5px solid var(--gold);
+      padding-bottom: 4px;
+      margin-bottom: 14px;
+    }
+
+    /* ── Experience ── */
+    .position { margin-bottom: 20px; }
+
+    .position-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 16px;
+      margin-bottom: 2px;
+    }
+
+    .position-title {
+      font-size: 12pt;
+      font-weight: bold;
+      color: var(--navy);
+    }
+
+    .position-duration {
+      font-size: 9pt;
+      color: var(--muted);
+      white-space: nowrap;
+      font-family: Arial, sans-serif;
+      margin-top: 2px;
+    }
+
+    .position-org {
+      font-size: 10.5pt;
+      color: var(--gold-dark);
+      font-weight: bold;
+      margin-bottom: 2px;
+    }
+
+    .position-location {
+      font-size: 9pt;
+      color: var(--muted);
+      font-family: Arial, sans-serif;
+      margin-bottom: 8px;
+    }
+
+    .position ul {
+      padding-left: 18px;
+    }
+
+    .position li {
+      font-size: 10pt;
+      margin-bottom: 4px;
+      color: #374151;
+    }
+
+    /* ── Education ── */
+    .edu-item {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    .edu-year {
+      font-size: 9pt;
+      color: var(--gold-dark);
+      font-weight: bold;
+      font-family: Arial, sans-serif;
+      width: 90px;
+      flex-shrink: 0;
+      padding-top: 2px;
+    }
+
+    .edu-content .degree {
+      font-size: 11pt;
+      font-weight: bold;
+      color: var(--navy);
+    }
+
+    .edu-content .field {
+      font-size: 10.5pt;
+      color: var(--gold-dark);
+      font-style: italic;
+    }
+
+    .edu-content .institution {
+      font-size: 10pt;
+      color: var(--text);
+    }
+
+    .edu-content .note {
+      font-size: 9.5pt;
+      color: var(--muted);
+      margin-top: 3px;
+    }
+
+    /* ── Skills ── */
+    .skills-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+
+    .skill-group h4 {
+      font-size: 9.5pt;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: var(--navy);
+      font-family: Arial, sans-serif;
+      margin-bottom: 5px;
+    }
+
+    .skill-list {
+      font-size: 9.5pt;
+      color: #4b5563;
+      line-height: 1.7;
+    }
+
+    /* ── Summary ── */
+    .summary {
+      background: var(--bg-light);
+      border-left: 4px solid var(--gold);
+      padding: 12px 16px;
+      font-size: 10.5pt;
+      color: #374151;
+      line-height: 1.7;
+      border-radius: 0 4px 4px 0;
+    }
+
+    /* ── Print ── */
+    @media print {
+      body { font-size: 10pt; }
+      .page { padding: 24px 32px; }
+      .no-print { display: none !important; }
+      section { break-inside: avoid; }
+      .position { break-inside: avoid; }
+    }
+
+    /* ── Print button (screen only) ── */
+    .print-bar {
+      background: var(--navy);
+      color: #fff;
+      padding: 12px 48px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: Arial, sans-serif;
+      font-size: 10pt;
+    }
+
+    .print-bar a {
+      color: var(--gold);
+      text-decoration: none;
+    }
+
+    .btn-print {
+      background: var(--gold);
+      color: var(--navy);
+      font-weight: bold;
+      border: none;
+      padding: 8px 22px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 10pt;
+      font-family: Arial, sans-serif;
+    }
+
+    .btn-print:hover { background: #c8a020; }
+
+    @media print {
+      .print-bar { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Print bar — hidden on print -->
+  <div class="print-bar no-print">
+    <span>Dr. Mogal Prasad Shah &mdash; Curriculum Vitae</span>
+    <button class="btn-print" onclick="window.print()">&#8659; Save / Print as PDF</button>
+  </div>
+
+  <div class="page">
+
+    <!-- Header -->
+    <div class="header">
+      <div class="header-top">
+        <div class="header-name">
+          <h1>Dr. Mogal Prasad Shah</h1>
+          <div class="title">Livestock Development Expert &amp; Animal Health Advisor</div>
+        </div>
+        <div class="header-contact">
+          <div><a href="mailto:info@drmogalshah.com.np">info@drmogalshah.com.np</a></div>
+          <div>Bagamati Province, Nepal</div>
+          <div><a href="https://www.linkedin.com/in/dr-mogal-prasad-shah/" target="_blank">linkedin.com/in/dr-mogal-prasad-shah</a></div>
+          <div><a href="https://drmogalshah.com.np" target="_blank">drmogalshah.com.np</a></div>
+        </div>
+      </div>
+      <div class="tag-row">
+        <span class="tag gold">M.Sc. Animal Nutrition</span>
+        <span class="tag">27+ Years Experience</span>
+        <span class="tag">Veterinary Sciences</span>
+        <span class="tag">World Bank Projects</span>
+        <span class="tag">Policy Leadership</span>
+        <span class="tag">Food Security</span>
+      </div>
+    </div>
+
+    <!-- Professional Summary -->
+    <section>
+      <div class="section-title">Professional Summary</div>
+      <div class="summary">
+        Distinguished livestock development expert with over 27 years of senior leadership in veterinary sciences, animal nutrition, and rural agricultural transformation across Nepal. Former Director at the Directorate of Livestock and Fisheries Development (DLFD), overseeing program planning, monitoring, and evaluation across 13 districts of Bagamati Province. Proven track record in food security, zoonotic disease control, World Bank project management, and community capacity building. Currently serving as Animal Health Advisor at GeoKrishi.
+      </div>
+    </section>
+
+    <!-- Experience -->
+    <section>
+      <div class="section-title">Professional Experience</div>
+
+      <div class="position">
+        <div class="position-header">
+          <div class="position-title">Animal Health Advisor</div>
+          <div class="position-duration">Dec 2022 – Present</div>
+        </div>
+        <div class="position-org">GeoKrishi &middot; Part-time</div>
+        <div class="position-location">Kathmandu, Bāgmatī, Nepal</div>
+        <ul>
+          <li>Strategic guidance on animal health and livestock development programs.</li>
+          <li>Technical support for agricultural innovation and sustainable livestock practices.</li>
+          <li>Policy recommendations for rural development and food security initiatives.</li>
+        </ul>
+      </div>
+
+      <div class="position">
+        <div class="position-header">
+          <div class="position-title">Ex-Director</div>
+          <div class="position-duration">Feb 2022 – Jun 2022</div>
+        </div>
+        <div class="position-org">Directorate of Livestock and Fisheries Development (DLFD) &middot; Full-time</div>
+        <div class="position-location">Hetauda, Makwanpur, Nepal</div>
+        <ul>
+          <li>Oversaw Program Planning, Monitoring, and Evaluation of twelve Government Offices related to Livestock and Fisheries Development.</li>
+          <li>Executed administrative and technical support to the Bagmati Province Government for poverty alleviation of Livestock Farmers through entrepreneurship development.</li>
+          <li>Designed and incorporated strategies promoting self-sufficiency in milk, meat, and egg production across Bagmati Province.</li>
+          <li>Enforced and coordinated human, technical, and logistical resources for Infectious and Zoonotic disease control across all 13 districts of Bagmati Province.</li>
+          <li>Spearheaded a task force of 10 people on policy formulation for control and containment of Infectious and Zoonotic diseases.</li>
+        </ul>
+      </div>
+
+      <div class="position">
+        <div class="position-header">
+          <div class="position-title">Senior Livestock Development Officer</div>
+          <div class="position-duration">2013 – 2022 &middot; 9 yrs</div>
+        </div>
+        <div class="position-org">Veterinary Hospital and Livestock Service Expert Center &middot; Full-time</div>
+        <div class="position-location">Lalitpur; Panchthar; Kavrepalanchowk</div>
+        <ul>
+          <li>Oversaw program planning, implementation, monitoring, evaluation, and technical backup support for livestock development.</li>
+          <li>Treatment and control of infectious livestock diseases; technical advice to farmers and extension services for new technology dissemination.</li>
+          <li>Mobilised resources for disease diagnosis, treatment, and immunization through coordination with local government livestock sections.</li>
+          <li>Maximized distribution of medicines and forage/fodder seeds to farmers.</li>
+          <li>Conducted training and workshops for farmers and entrepreneurs in commercial farm development, resulting in employment generation.</li>
+        </ul>
+      </div>
+
+      <div class="position">
+        <div class="position-header">
+          <div class="position-title">Livestock Development Officer</div>
+          <div class="position-duration">1997 – 2013 &middot; 16 yrs</div>
+        </div>
+        <div class="position-org">District Livestock Services Office &middot; Full-time</div>
+        <div class="position-location">Sarlahi; Doti; Makwanpur; Jhapa; Rautahat; Lalitpur</div>
+        <ul>
+          <li>Coordinated livestock and poultry production activities of the Third Livestock Development Project (TLDP) under the World Bank Support Program.</li>
+          <li>Coordinator for HMG/Nepal Special Poverty Alleviation Semi-commercial Goat Development Project and Self-employment Generation Commercial Poultry Development Project.</li>
+          <li>Influenced agro-processing and market development programs, transitioning traditional marketing into commercialised, large-scale enterprise development.</li>
+          <li>Uplifted economic status of livestock farmers through disease treatment, diagnosis, extension services, and provision of technical inputs.</li>
+          <li>Strengthened capacity of livestock services through monitoring and evaluation systems and formation of farmer groups and livestock industry associations.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- Education -->
+    <section>
+      <div class="section-title">Education</div>
+
+      <div class="edu-item">
+        <div class="edu-year">2008 – 2010</div>
+        <div class="edu-content">
+          <div class="degree">Master of Science (M.Sc.)</div>
+          <div class="field">Animal Nutrition</div>
+          <div class="institution">Institute of Agriculture and Animal Science (IAAS), Tribhuvan University — Chitwan, Nepal</div>
+          <div class="note">Thesis: Productive performance of Mulato II (Brachiaria hybrid CIAT 36087) with respect to delayed planting in Chitwan.</div>
+        </div>
+      </div>
+
+      <div class="edu-item">
+        <div class="edu-year">2003 – 2004</div>
+        <div class="edu-content">
+          <div class="degree">Postgraduate Diploma</div>
+          <div class="field">Tropical Animal Production</div>
+          <div class="institution">Larenstein University of Professional Education — Deventer, Netherlands</div>
+          <div class="note">International advanced training in tropical animal production systems.</div>
+        </div>
+      </div>
+
+      <div class="edu-item">
+        <div class="edu-year">1989 – 1996</div>
+        <div class="edu-content">
+          <div class="degree">Bachelor of Veterinary Science &amp; Animal Husbandry (B.V.Sc. &amp; AH)</div>
+          <div class="field">Veterinary Sciences / Veterinary Clinical Sciences</div>
+          <div class="institution">Institute of Agriculture and Animal Science (IAAS), Tribhuvan University — Chitwan, Nepal</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Skills -->
+    <section>
+      <div class="section-title">Core Competencies</div>
+      <div class="skills-grid">
+        <div class="skill-group">
+          <h4>Technical</h4>
+          <div class="skill-list">
+            Livestock Development &amp; Production<br/>
+            Animal Nutrition &amp; Feed Management<br/>
+            Infectious &amp; Zoonotic Disease Control<br/>
+            Climate-Resilient Agriculture<br/>
+            Veterinary Clinical Sciences
+          </div>
+        </div>
+        <div class="skill-group">
+          <h4>Leadership &amp; Management</h4>
+          <div class="skill-list">
+            Policy Formulation &amp; Implementation<br/>
+            Project Design, M&amp;E (World Bank)<br/>
+            Capacity Building &amp; Training<br/>
+            Multi-stakeholder Coordination<br/>
+            Food Security Program Management
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div><!-- /page -->
+
+</body>
+</html>

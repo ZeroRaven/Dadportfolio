@@ -3,11 +3,14 @@ import { Card, CardContent } from "../components/ui/card";
 import { ImageWithFallback } from "../components/figma/ImageWithFallback";
 import { SEO } from "../components/SEO";
 import { motion } from "motion/react";
+import { useLanguage } from "../context/LanguageContext";
 import { Link } from "react-router";
 import { Button } from "../components/ui/button";
 
 export function Services() {
-  const expertiseAreas = [
+  const { language } = useLanguage();
+  const np = language === "np";
+  const expertiseAreasEn = [
     {
       icon: Sprout,
       title: "Livestock Development & Production",
@@ -82,7 +85,84 @@ export function Services() {
     }
   ];
 
-  const services = [
+  const expertiseAreasNp = [
+    {
+      icon: Sprout,
+      title: "पशुपालन विकास र उत्पादन",
+      description: "उत्पादकता वृद्धि र दिगो अभ्यासमा केन्द्रित व्यापक पशुपालन र कुखुरापालन विकास कार्यक्रमहरू",
+      image: "https://images.unsplash.com/photo-1761284724050-3541146cd0b5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxsaXZlc3RvY2slMjBhbmltYWwlMjBodXNiYW5kcnklMjBmYXJtaW5nfGVufDF8fHx8MTc3MjM3ODUwMnww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
+      capabilities: [
+        "डेरी र मासु मूल्य श्रृङ्खला विकास",
+        "कुखुरापालन उत्पादन प्रणाली",
+        "नस्ल सुधार कार्यक्रम",
+        "घाँस र चारा व्यवस्थापन"
+      ]
+    },
+    {
+      icon: Shield,
+      title: "पशु स्वास्थ्य र रोग व्यवस्थापन",
+      description: "संक्रामक र जुनोटिक रोग नियन्त्रण, पशुचिकित्सा सेवाहरू र पशु स्वास्थ्य नीति निर्माणमा विशेषज्ञ नेतृत्व",
+      image: "https://images.unsplash.com/photo-1771962152057-4c3015841488?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxsaXZlc3RvY2slMjBjYXR0bGUlMjBkYWlyeSUyMGZhcm1pbmd8ZW58MXx8fHwxNzcyMzc4MDc0fDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
+      capabilities: [
+        "रोग निगरानी र नियन्त्रण",
+        "खोप र प्रतिरक्षण कार्यक्रमहरू",
+        "पशुचिकित्सा निदान सेवाहरू",
+        "आपतकालीन प्रतिक्रिया समन्वय"
+      ]
+    },
+    {
+      icon: DollarSign,
+      title: "खाद्य सुरक्षा र पोषण",
+      description: "खाद्य प्रणाली सुदृढीकरण, पोषण सुरक्षा र कृषि नवाचारमार्फत गरिबी न्यूनीकरणका रणनीतिक पहलहरू",
+      image: "https://images.unsplash.com/photo-1759174469221-71382a2b5bce?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxmb29kJTIwc2VjdXJpdHklMjBhZ3JpY3VsdHVyZSUyMGNyb3BzfGVufDF8fHx8MTc3MjM3ODUwM3ww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
+      capabilities: [
+        "खाद्य प्रणाली परिवर्तन",
+        "दूध, मासु र अण्डामा आत्मनिर्भरता",
+        "पोषण-संवेदनशील कृषि",
+        "बजार सम्बन्ध विकास"
+      ]
+    },
+    {
+      icon: Leaf,
+      title: "जलवायु-अनुकूलित कृषि",
+      description: "कमजोर समुदायहरूमा लचकता र अनुकूलन बढाउने जलवायु-स्मार्ट पशुपालन प्रणालीहरूको विकास र कार्यान्वयन",
+      image: "https://images.unsplash.com/photo-1760992004202-7df4128f7ac1?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjbGltYXRlJTIwY2hhbmdlJTIwc3VzdGFpbmFibGUlMjBhZ3JpY3VsdHVyZXxlbnwxfHx8fDE3NzIzNzg1MDN8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
+      capabilities: [
+        "जलवायु अनुकूलन रणनीतिहरू",
+        "दिगो चरन व्यवस्थापन",
+        "स्रोत अनुकूलन",
+        "वातावरणीय प्रभाव न्यूनीकरण"
+      ]
+    },
+    {
+      icon: HeartHandshake,
+      title: "ग्रामीण जीविकोपार्जन सुधार",
+      description: "गरिबी न्यूनीकरण, उद्यमशीलता विकास र आर्थिक सशक्तीकरणका समुदायकेन्द्रित कार्यक्रमहरू",
+      image: "https://images.unsplash.com/photo-1768595701593-c84fd8143aea?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxydXJhbCUyMGRldmVsb3BtZW50JTIwY29tbXVuaXR5JTIwZW1wb3dlcm1lbnR8ZW58MXx8fHwxNzcyMzc4NTAzfDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
+      capabilities: [
+        "किसान समूह गठन र क्षमता निर्माण",
+        "व्यावसायिक खेत विकास",
+        "रोजगार सृजना कार्यक्रम",
+        "सहकारी सुदृढीकरण"
+      ]
+    },
+    {
+      icon: BarChart3,
+      title: "परियोजना व्यवस्थापन र M&E",
+      description: "अन्तर्राष्ट्रिय दाताहरूद्वारा वित्तपोषित ठूला विकास परियोजनाहरूको डिजाइन, कार्यान्वयन र मूल्यांकनमा विशेषज्ञता",
+      image: "https://images.unsplash.com/photo-1635183067334-c0dbdac46c73?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxhZ3JpY3VsdHVyZSUyMGxpdmVzdG9jayUyMGRldmVsb3BtZW50JTIwcHJvZmVzc2lvbmFsfGVufDF8fHx8MTc3MjM3ODA3Mnww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
+      capabilities: [
+        "विश्व बैंक परियोजना व्यवस्थापन",
+        "कार्यक्रम डिजाइन र कार्यान्वयन",
+        "अनुगमन र मूल्यांकन प्रणाली",
+        "परिणाम-आधारित प्रतिवेदन"
+      ]
+    }
+  ];
+
+  const expertiseAreas = np ? expertiseAreasNp : expertiseAreasEn;
+
+  const servicesEn = [
     {
       icon: Lightbulb,
       title: "Strategic Consulting",
@@ -104,6 +184,31 @@ export function Services() {
       description: "Feasibility studies, baseline surveys, and impact evaluations for development initiatives"
     }
   ];
+
+  const servicesNp = [
+    {
+      icon: Lightbulb,
+      title: "रणनीतिक परामर्श",
+      description: "नीति विकास, कार्यक्रम डिजाइन र रणनीतिक योजनाका लागि विशेषज्ञ सल्लाहकार सेवाहरू"
+    },
+    {
+      icon: Users,
+      title: "क्षमता निर्माण",
+      description: "सरकारी निकाय, गैरसरकारी संस्था र समुदायहरूका लागि प्रशिक्षण कार्यक्रम र प्राविधिक सहयोग"
+    },
+    {
+      icon: MapPin,
+      title: "क्षेत्रीय कार्यान्वयन",
+      description: "विविध क्षेत्रहरूमा प्रत्यक्ष परियोजना व्यवस्थापन र क्षेत्रस्तरीय कार्यक्रम कार्यान्वयन"
+    },
+    {
+      icon: FileCheck,
+      title: "प्राविधिक मूल्यांकन",
+      description: "विकास पहलहरूका लागि व्यवहार्यता अध्ययन, आधारभूत सर्वेक्षण र प्रभाव मूल्यांकन"
+    }
+  ];
+
+  const services = np ? servicesNp : servicesEn;
 
   return (
     <>
@@ -127,12 +232,12 @@ export function Services() {
             animate={{ opacity: 1, y: 0 }}
             className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-white"
           >
-            <h1 className="font-display text-5xl md:text-6xl font-bold mb-6">
-              Expertise & Services
+            <h1 className="font-display text-4xl sm:text-5xl md:text-6xl font-bold mb-6">
+              {np ? "विशेषज्ञता र सेवाहरू" : "Expertise & Services"}
             </h1>
             <div className="w-24 h-1.5 bg-gradient-to-r from-[#D4AF37] to-[#B8941F] mx-auto rounded-full mb-6"></div>
             <p className="text-xl text-gray-300 max-w-3xl mx-auto">
-              Comprehensive solutions for livestock development, food security, and sustainable rural transformation
+                {np ? "पशुपालन विकास, खाद्य सुरक्षा र दिगो ग्रामीण परिवर्तनका लागि व्यापक समाधानहरू" : "Comprehensive solutions for livestock development, food security, and sustainable rural transformation"}
             </p>
           </motion.div>
         </section>
@@ -147,11 +252,11 @@ export function Services() {
               className="text-center mb-16"
             >
               <h2 className="font-display text-4xl md:text-5xl font-bold text-[#0A2540] mb-4">
-                Core Expertise Areas
+                {np ? "मुख्य विशेषज्ञता क्षेत्रहरू" : "Core Expertise Areas"}
               </h2>
               <div className="w-24 h-1.5 bg-gradient-to-r from-[#D4AF37] to-[#B8941F] mx-auto rounded-full mb-6"></div>
               <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-                Specialized knowledge and proven experience across multiple domains of agricultural development
+                {np ? "कृषि विकासका धेरै क्षेत्रहरूमा विशेष ज्ञान र प्रमाणित अनुभव" : "Specialized knowledge and proven experience across multiple domains of agricultural development"}
               </p>
             </motion.div>
 
@@ -171,7 +276,7 @@ export function Services() {
                   >
                     {/* Image */}
                     <div className={`${isEven ? 'lg:order-1' : 'lg:order-2'}`}>
-                      <div className="relative h-[400px] rounded-3xl overflow-hidden shadow-xl group">
+                      <div className="relative h-[240px] sm:h-[320px] lg:h-[400px] rounded-3xl overflow-hidden shadow-xl group">
                         <ImageWithFallback
                           src={area.image}
                           alt={area.title}
@@ -229,11 +334,11 @@ export function Services() {
               className="text-center mb-16"
             >
               <h2 className="font-display text-4xl md:text-5xl font-bold text-[#0A2540] mb-4">
-                Service Offerings
+                {np ? "सेवा प्रस्तावहरू" : "Service Offerings"}
               </h2>
               <div className="w-24 h-1.5 bg-gradient-to-r from-[#D4AF37] to-[#B8941F] mx-auto rounded-full mb-6"></div>
               <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-                Comprehensive support for organizations and communities seeking to advance agricultural development
+                {np ? "कृषि विकास अगाडि बढाउन खोज्ने संस्था र समुदायहरूका लागि व्यापक सहयोग" : "Comprehensive support for organizations and communities seeking to advance agricultural development"}
               </p>
             </motion.div>
 
@@ -280,16 +385,16 @@ export function Services() {
             viewport={{ once: true }}
             className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-white"
           >
-            <h2 className="font-display text-4xl md:text-5xl font-bold mb-6">
-              Ready to Collaborate?
+            <h2 className="font-display text-3xl sm:text-4xl md:text-5xl font-bold mb-6">
+              {np ? "सहकार्य गर्न तयार हुनुहुन्छ?" : "Ready to Collaborate?"}
             </h2>
             <p className="text-xl text-gray-300 mb-10 max-w-2xl mx-auto">
-              Whether you need strategic consulting, technical expertise, or project management support, let's discuss how we can work together
+              {np ? "रणनीतिक परामर्श, प्राविधिक विशेषज्ञता वा परियोजना व्यवस्थापन सहयोगको आवश्यकता भए पनि, हामी सँगै कसरी काम गर्न सक्छौं भन्ने बारे छलफल गरौं" : "Whether you need strategic consulting, technical expertise, or project management support, let's discuss how we can work together"}
             </p>
             <Link to="/contact">
               <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                 <Button size="lg" className="bg-gradient-to-r from-[#D4AF37] to-[#B8941F] hover:from-[#B8941F] hover:to-[#D4AF37] text-[#0A2540] font-semibold text-lg px-10 py-6">
-                  Get in Touch
+                  {np ? "सम्पर्कमा आउनुहोस्" : "Get in Touch"}
                 </Button>
               </motion.div>
             </Link>

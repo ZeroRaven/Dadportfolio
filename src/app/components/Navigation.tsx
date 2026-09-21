@@ -1,13 +1,15 @@
 import { Link, useLocation } from "react-router";
 import { Menu, X } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, type CSSProperties } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import drShahIllustration from "@/imports/image-1.png";
+import { useLanguage } from "../context/LanguageContext";
 
 export function Navigation() {
   const location = useLocation();
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const { language, setLanguage, t } = useLanguage();
 
   const isHomePage = location.pathname === "/";
 
@@ -20,11 +22,11 @@ export function Navigation() {
   }, []);
 
   const navItems = [
-    { path: "/", label: "Home" },
-    { path: "/about", label: "About" },
-    { path: "/services", label: "Expertise" },
-    { path: "/gallery", label: "Experience" },
-    { path: "/contact", label: "Contact" },
+    { path: "/", label: t("nav_home") },
+    { path: "/about", label: t("nav_about") },
+    { path: "/services", label: t("nav_expertise") },
+    { path: "/experience", label: t("nav_experience") },
+    { path: "/contact", label: t("nav_contact") },
   ];
 
   const isActive = (path: string) => {
@@ -69,7 +71,10 @@ export function Navigation() {
               transition={{ type: "spring", stiffness: 400 }}
               className="relative flex-shrink-0"
             >
-              <div className="w-12 h-12 lg:w-14 lg:h-14 rounded-full overflow-hidden ring-2 ring-[#D4AF37] ring-offset-2 ring-offset-transparent shadow-lg">
+              <div
+                className="w-12 h-12 lg:w-14 lg:h-14 rounded-full overflow-hidden ring-2 ring-[#D4AF37] ring-offset-2 shadow-lg"
+                style={{ "--tw-ring-offset-color": isHomePage && !scrolled ? "#0A2540" : "#ffffff" } as CSSProperties}
+              >
                 <img
                   src={drShahIllustration}
                   alt="Dr. Mogal Prasad Shah portrait"
@@ -81,21 +86,27 @@ export function Navigation() {
             
             {/* Desktop Logo Text */}
             <div className="hidden md:block">
-              <div className={`text-xl font-bold transition-colors ${textColorClass === 'light' ? 'text-white' : 'text-[#0A2540]'}`}>
-                Dr. Mogal Prasad Shah
+              <div
+                className={`font-display text-xl font-bold transition-colors ${textColorClass === 'light' ? 'text-white' : 'text-[#0A2540]'}`}
+                style={language === "np" ? { fontFamily: "'Khand', 'Noto Sans Devanagari', sans-serif", letterSpacing: "0.04em" } : undefined}
+              >
+                {t("nav_name")}
               </div>
               <div className="text-xs text-[#D4AF37] font-medium tracking-wide">
-                M.Sc. | 27+ Years Excellence
+                {t("nav_tagline")}
               </div>
             </div>
-            
+
             {/* Mobile Logo Text - Compact Version */}
             <div className="block md:hidden">
-              <div className={`text-base font-bold transition-colors leading-tight ${textColorClass === 'light' ? 'text-white' : 'text-[#0A2540]'}`}>
-                Dr. M.P. Shah
+              <div
+                className={`font-display text-base font-bold transition-colors leading-tight ${textColorClass === 'light' ? 'text-white' : 'text-[#0A2540]'}`}
+                style={language === "np" ? { fontFamily: "'Khand', 'Noto Sans Devanagari', sans-serif", letterSpacing: "0.04em" } : undefined}
+              >
+                {language === "np" ? "डा. एम.पी. शाह" : "Dr. M.P. Shah"}
               </div>
               <div className="text-[10px] text-[#D4AF37] font-medium tracking-wide">
-                Livestock Expert
+                {t("nav_mobile_tagline")}
               </div>
             </div>
           </Link>
@@ -132,13 +143,28 @@ export function Navigation() {
                 </motion.div>
               </Link>
             ))}
+            {/* Language switcher */}
+            <motion.button
+              whileTap={{ scale: 0.95 }}
+              onClick={() => setLanguage(language === "en" ? "np" : "en")}
+              className="ml-3 flex items-center gap-0.5 rounded-lg border border-[#D4AF37]/40 overflow-hidden text-xs font-semibold"
+              title="Switch language / भाषा बदल्नुहोस्"
+            >
+              <span className={`px-2.5 py-2 transition-colors ${language === "en" ? "bg-[#D4AF37] text-[#0A2540]" : textColorClass === "light" ? "text-white/60 hover:text-white" : "text-gray-400 hover:text-gray-700"}`}>
+                EN
+              </span>
+              <span className={`px-2.5 py-2 transition-colors ${language === "np" ? "bg-[#D4AF37] text-[#0A2540]" : textColorClass === "light" ? "text-white/60 hover:text-white" : "text-gray-400 hover:text-gray-700"}`}>
+                NP
+              </span>
+            </motion.button>
+
             <Link to="/contact">
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className="ml-4 px-6 py-2.5 bg-gradient-to-r from-[#D4AF37] to-[#B8941F] text-[#0A2540] rounded-lg text-sm font-semibold shadow-lg hover:shadow-xl transition-all"
+                className="ml-2 px-6 py-2.5 bg-gradient-to-r from-[#D4AF37] to-[#B8941F] text-[#0A2540] rounded-lg text-sm font-semibold shadow-lg hover:shadow-xl transition-all"
               >
-                Get in Touch
+                {t("nav_cta")}
               </motion.button>
             </Link>
           </div>
@@ -224,16 +250,36 @@ export function Navigation() {
                   </motion.div>
                 ))}
                 
+                {/* Mobile Language Switcher */}
+                <motion.div
+                  initial={{ x: -50, opacity: 0 }}
+                  animate={{ x: 0, opacity: 1 }}
+                  transition={{ delay: navItems.length * 0.08 + 0.15 }}
+                  className="px-2 pt-2"
+                >
+                  <button
+                    onClick={() => setLanguage(language === "en" ? "np" : "en")}
+                    className="w-full flex items-center justify-center gap-0 rounded-lg border border-[#D4AF37]/40 overflow-hidden text-sm font-semibold"
+                  >
+                    <span className={`flex-1 py-3 transition-colors ${language === "en" ? "bg-[#D4AF37] text-[#0A2540]" : "text-gray-500"}`}>
+                      English
+                    </span>
+                    <span className={`flex-1 py-3 transition-colors ${language === "np" ? "bg-[#D4AF37] text-[#0A2540]" : "text-gray-500"}`}>
+                      नेपाली
+                    </span>
+                  </button>
+                </motion.div>
+
                 {/* Mobile CTA Button */}
                 <motion.div
                   initial={{ x: -50, opacity: 0 }}
                   animate={{ x: 0, opacity: 1 }}
                   transition={{ delay: navItems.length * 0.08 + 0.2 }}
-                  className="pt-4"
+                  className="pt-2"
                 >
                   <Link to="/contact" onClick={() => setIsOpen(false)}>
                     <button className="w-full px-4 py-3.5 bg-gradient-to-r from-[#D4AF37] to-[#B8941F] text-[#0A2540] rounded-lg text-base font-semibold shadow-lg hover:shadow-xl transition-all flex items-center justify-center space-x-2">
-                      <span>Get in Touch</span>
+                      <span>{t("nav_cta")}</span>
                       <motion.svg
                         animate={{ x: [0, 5, 0] }}
                         transition={{ repeat: Infinity, duration: 1.5 }}

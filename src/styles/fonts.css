@@ -1,2 +1,33 @@
-/* Modern Professional Fonts */
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Playfair+Display:wght@600;700;800&display=swap');
+/* English display font */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+
+/* Nepali heading font — force Devanagari subset via v1 API so it loads upfront */
+@import url('https://fonts.googleapis.com/css?family=Khand:400,600,700&subset=devanagari,latin&display=swap');
+
+/* Nepali body copy */
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap');
+
+/* Nepali mode: Khand for headings/display, Noto Sans Devanagari for body */
+.lang-np h1,
+.lang-np h2,
+.lang-np h3,
+.lang-np h4,
+.lang-np h5,
+.lang-np h6,
+.lang-np .font-display {
+  font-family: 'Khand', 'Noto Sans Devanagari', sans-serif;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.lang-np,
+.lang-np button,
+.lang-np a,
+.lang-np p,
+.lang-np span,
+.lang-np li,
+.lang-np label,
+.lang-np input,
+.lang-np textarea {
+  font-family: 'Noto Sans Devanagari', 'Plus Jakarta Sans', sans-serif;
+}

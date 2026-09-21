@@ -1,38 +1,47 @@
-import { Mail, Phone, MapPin, Linkedin, Facebook, Twitter, Award } from "lucide-react";
+import { Mail, Phone, MapPin, Linkedin, Facebook } from "lucide-react";
 import { motion } from "motion/react";
 import { Link } from "react-router";
+import drShahIllustration from "@/imports/image-1.png";
+import { useLanguage } from "../context/LanguageContext";
 
 export function Footer() {
   const currentYear = new Date().getFullYear();
+  const { language } = useLanguage();
+  const np = language === "np";
 
   return (
     <footer className="relative bg-[#0A2540] text-white overflow-hidden">
-      {/* Decorative Elements */}
       <div className="absolute inset-0 opacity-5">
         <div className="absolute top-0 left-0 w-96 h-96 bg-[#D4AF37] rounded-full blur-3xl"></div>
         <div className="absolute bottom-0 right-0 w-96 h-96 bg-[#D4AF37] rounded-full blur-3xl"></div>
       </div>
 
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 sm:gap-12 mb-10 sm:mb-12">
+
           {/* Brand */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-center md:text-left"
+            className="text-center sm:text-left"
           >
-            <div className="flex items-center space-x-3 mb-6 justify-center md:justify-start">
-              <div className="w-12 h-12 bg-gradient-to-br from-[#D4AF37] to-[#B8941F] rounded-xl flex items-center justify-center">
-                <Award className="text-[#0A2540]" size={24} />
+            <div className="flex items-center space-x-3 mb-5 justify-center sm:justify-start">
+              <div className="w-12 h-12 rounded-full overflow-hidden ring-2 ring-[#D4AF37] flex-shrink-0">
+                <img
+                  src={drShahIllustration}
+                  alt="Dr. Mogal Prasad Shah"
+                  className="w-full h-full object-cover object-top scale-110"
+                  style={{ filter: "sepia(0.25) contrast(1.1) brightness(1.03) saturate(1.1)" }}
+                />
               </div>
               <div>
-                <h3 className="font-display text-lg font-bold">Dr. Mogal Prasad Shah</h3>
-                <p className="text-xs text-[#D4AF37]">Livestock Development Expert</p>
+                <h3 className="font-display text-base sm:text-lg font-bold leading-tight">{np ? "डा. मोगल प्रसाद शाह" : "Dr. Mogal Prasad Shah"}</h3>
+                <p className="text-xs text-[#D4AF37]">{np ? "पशुपालन विकास विशेषज्ञ" : "Livestock Development Expert"}</p>
               </div>
             </div>
             <p className="text-sm text-gray-300 leading-relaxed">
-              27+ years of excellence in veterinary sciences, livestock development, and rural agricultural innovation.
+              {np ? "पशु चिकित्सा विज्ञान, पशुपालन विकास र ग्रामीण कृषि नवाचारमा २७+ वर्षको उत्कृष्टता।" : "27+ years of excellence in veterinary sciences, livestock development, and rural agricultural innovation."}
             </p>
           </motion.div>
 
@@ -42,17 +51,23 @@ export function Footer() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.1 }}
-            className="text-center md:text-left"
+            className="text-center sm:text-left"
           >
-            <h4 className="font-display text-lg font-bold mb-6">Quick Links</h4>
+            <h4 className="font-display text-base sm:text-lg font-bold mb-5">{np ? "द्रुत लिङ्कहरू" : "Quick Links"}</h4>
             <ul className="space-y-3 text-sm">
-              {[
+              {(np ? [
+                { label: "गृह", path: "/" },
+                { label: "परिचय", path: "/about" },
+                { label: "विशेषज्ञता", path: "/services" },
+                { label: "अनुभव", path: "/experience" },
+                { label: "सम्पर्क", path: "/contact" },
+              ] : [
                 { label: "Home", path: "/" },
                 { label: "About", path: "/about" },
                 { label: "Expertise", path: "/services" },
-                { label: "Experience", path: "/gallery" },
+                { label: "Experience", path: "/experience" },
                 { label: "Contact", path: "/contact" },
-              ].map((link) => (
+              ]).map((link) => (
                 <li key={link.path}>
                   <Link
                     to={link.path}
@@ -72,23 +87,25 @@ export function Footer() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.2 }}
-            className="text-center md:text-left"
+            className="text-center sm:text-left"
           >
-            <h4 className="font-display text-lg font-bold mb-6">Contact</h4>
+            <h4 className="font-display text-base sm:text-lg font-bold mb-5">{np ? "सम्पर्क" : "Contact"}</h4>
             <ul className="space-y-4 text-sm">
-              <li className="flex items-start space-x-3 justify-center md:justify-start">
-                <Phone size={16} className="mt-1 text-[#D4AF37] flex-shrink-0" />
-                <span className="text-gray-300">+977 XXX-XXXX-XXX</span>
+              <li className="flex items-start space-x-3 justify-center sm:justify-start">
+                <Phone size={15} className="mt-0.5 text-[#D4AF37] flex-shrink-0" />
+                <a href="tel:+977XXXXXXXXX" className="text-gray-300 hover:text-[#D4AF37] transition-colors">
+                  +977 XXX-XXXX-XXX
+                </a>
               </li>
-              <li className="flex items-start space-x-3 justify-center md:justify-start">
-                <Mail size={16} className="mt-1 text-[#D4AF37] flex-shrink-0" />
-                <a href="mailto:info@drmogalshah.com.np" className="text-gray-300 hover:text-[#D4AF37] transition-colors">
+              <li className="flex items-start space-x-3 justify-center sm:justify-start">
+                <Mail size={15} className="mt-0.5 text-[#D4AF37] flex-shrink-0" />
+                <a href="mailto:info@drmogalshah.com.np" className="text-gray-300 hover:text-[#D4AF37] transition-colors break-all">
                   info@drmogalshah.com.np
                 </a>
               </li>
-              <li className="flex items-start space-x-3 justify-center md:justify-start">
-                <MapPin size={16} className="mt-1 text-[#D4AF37] flex-shrink-0" />
-                <span className="text-gray-300">Bagamati Province<br />Nepal</span>
+              <li className="flex items-start space-x-3 justify-center sm:justify-start">
+                <MapPin size={15} className="mt-0.5 text-[#D4AF37] flex-shrink-0" />
+                <span className="text-gray-300">{np ? "बागमती प्रदेश" : "Bagamati Province"}<br />{np ? "नेपाल" : "Nepal"}</span>
               </li>
             </ul>
           </motion.div>
@@ -99,16 +116,27 @@ export function Footer() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.3 }}
-            className="text-center md:text-left"
+            className="text-center sm:text-left"
           >
-            <h4 className="font-display text-lg font-bold mb-6">Professional</h4>
-            <ul className="space-y-3 text-sm text-gray-300">
-              <li>✓ M.Sc. Animal Nutrition</li>
-              <li>✓ PG Diploma (Netherlands)</li>
-              <li>✓ Former Director, DLFD</li>
-              <li>✓ 27+ Years Experience</li>
-            </ul>
-            <div className="flex space-x-3 mt-6 justify-center md:justify-start">
+            <h4 className="font-display text-base sm:text-lg font-bold mb-5">{np ? "योग्यताहरू" : "Credentials"}</h4>
+            <ul className="space-y-2.5 text-sm text-gray-300">
+              {(np ? [
+                "एम.एस्सी. पशु पोषण",
+                "स्नातकोत्तर डिप्लोमा (नेदरल्याण्ड्स)",
+                "पूर्व निर्देशक, DLFD",
+                "२७+ वर्षको अनुभव",
+              ] : [
+                "M.Sc. Animal Nutrition",
+                "PG Diploma (Netherlands)",
+                "Former Director, DLFD",
+                "27+ Years Experience",
+              ]).map((cred) => (
+                <li key={cred} className="flex items-center space-x-2 justify-center sm:justify-start">
+                  <span className="text-[#D4AF37] text-xs">✓</span>
+                  <span>{cred}</span>
+                </li>
+              ))}</ul>
+            <div className="flex space-x-3 mt-5 justify-center sm:justify-start">
               <a
                 href="https://www.linkedin.com/in/dr-mogal-prasad-shah/"
                 target="_blank"
@@ -119,18 +147,20 @@ export function Footer() {
                 <Linkedin size={18} />
               </a>
               <a
-                href="#"
+                href="https://www.facebook.com/mpsah"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="w-10 h-10 bg-white/10 hover:bg-[#D4AF37] rounded-lg flex items-center justify-center transition-colors"
                 aria-label="Facebook"
               >
                 <Facebook size={18} />
               </a>
               <a
-                href="#"
+                href="mailto:info@drmogalshah.com.np"
                 className="w-10 h-10 bg-white/10 hover:bg-[#D4AF37] rounded-lg flex items-center justify-center transition-colors"
-                aria-label="Twitter"
+                aria-label="Email"
               >
-                <Twitter size={18} />
+                <Mail size={18} />
               </a>
             </div>
           </motion.div>
@@ -140,17 +170,17 @@ export function Footer() {
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
-          className="pt-8 border-t border-white/10"
+          className="pt-6 sm:pt-8 border-t border-white/10"
         >
-          <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0 text-sm text-center md:text-left">
-            <p className="text-gray-400">&copy; {currentYear} Dr. Mogal Prasad Shah. All rights reserved.</p>
+          <div className="flex flex-col sm:flex-row justify-between items-center space-y-3 sm:space-y-0 text-sm text-center">
+            <p className="text-gray-400">&copy; {currentYear} {np ? "डा. मोगल प्रसाद शाह। सर्वाधिकार सुरक्षित।" : "Dr. Mogal Prasad Shah. All rights reserved."}</p>
             <div className="flex items-center space-x-2 flex-wrap justify-center">
               <span className="text-gray-400">Site developed with love</span>
-              <span className="text-red-500 animate-pulse text-lg">❤️</span>
+              <span className="text-red-500 animate-pulse">❤️</span>
               <span className="text-gray-400">by</span>
-              <a 
-                href="https://www.amreshshah.com.np" 
-                target="_blank" 
+              <a
+                href="https://www.amreshshah.com.np"
+                target="_blank"
                 rel="noopener noreferrer"
                 className="text-[#D4AF37] hover:text-[#E5C158] font-semibold transition-colors hover:underline"
               >
