@@ -1,7 +1,8 @@
 import { Link, useLocation } from "react-router";
-import { Menu, X, Award } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
+import drShahIllustration from "@/imports/image-1.png";
 
 export function Navigation() {
   const location = useLocation();
@@ -64,14 +65,18 @@ export function Navigation() {
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-3 group">
             <motion.div
-              whileHover={{ scale: 1.05, rotate: 5 }}
+              whileHover={{ scale: 1.05 }}
               transition={{ type: "spring", stiffness: 400 }}
               className="relative flex-shrink-0"
             >
-              <div className="w-12 h-12 lg:w-14 lg:h-14 bg-gradient-to-br from-[#0A2540] to-[#1A3A5C] rounded-xl flex items-center justify-center shadow-lg">
-                <Award className="text-[#D4AF37]" size={24} />
+              <div className="w-12 h-12 lg:w-14 lg:h-14 rounded-full overflow-hidden ring-2 ring-[#D4AF37] ring-offset-2 ring-offset-transparent shadow-lg">
+                <img
+                  src={drShahIllustration}
+                  alt="Dr. Mogal Prasad Shah portrait"
+                  className="w-full h-full object-cover object-top scale-110"
+                  style={{ filter: "sepia(0.25) contrast(1.1) brightness(1.03) saturate(1.1)" }}
+                />
               </div>
-              <div className="absolute -top-1 -right-1 w-3 h-3 lg:w-4 lg:h-4 bg-[#D4AF37] rounded-full animate-pulse"></div>
             </motion.div>
             
             {/* Desktop Logo Text */}
@@ -169,8 +174,13 @@ export function Navigation() {
                 className="px-4 pt-4 pb-3 border-b border-gray-100"
               >
                 <div className="flex items-center space-x-3">
-                  <div className="w-10 h-10 bg-gradient-to-br from-[#0A2540] to-[#1A3A5C] rounded-lg flex items-center justify-center shadow-md">
-                    <Award className="text-[#D4AF37]" size={20} />
+                  <div className="w-10 h-10 rounded-full overflow-hidden ring-2 ring-[#D4AF37] shadow-md flex-shrink-0">
+                    <img
+                      src={drShahIllustration}
+                      alt="Dr. Mogal Prasad Shah portrait"
+                      className="w-full h-full object-cover object-top scale-110"
+                      style={{ filter: "sepia(0.25) contrast(1.1) brightness(1.03) saturate(1.1)" }}
+                    />
                   </div>
                   <div>
                     <div className="text-sm font-bold text-[#0A2540]">
