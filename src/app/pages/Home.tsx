@@ -2,6 +2,7 @@ import { Link } from "react-router";
 import { Award, TrendingUp, Users, Globe, BookOpen, Briefcase, GraduationCap, Target, ArrowRight, Download, Mail, Linkedin } from "lucide-react";
 import { Button } from "../components/ui/button";
 import { ImageWithFallback } from "../components/figma/ImageWithFallback";
+import drShahPhoto from "@/imports/image.png";
 import { Card, CardContent } from "../components/ui/card";
 import { SEO } from "../components/SEO";
 import { StructuredData } from "../components/StructuredData";
@@ -170,9 +171,9 @@ export function Home() {
                   <div className="absolute inset-0 bg-gradient-to-br from-[#D4AF37]/30 to-transparent rounded-3xl transform rotate-6"></div>
                   <div className="relative h-[600px] rounded-3xl overflow-hidden shadow-2xl border-4 border-[#D4AF37]/20">
                     <ImageWithFallback
-                      src="https://images.unsplash.com/photo-1635183067334-c0dbdac46c73?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxhZ3JpY3VsdHVyZSUyMGxpdmVzdG9jayUyMGRldmVsb3BtZW50JTIwcHJvZmVzc2lvbmFsfGVufDF8fHx8MTc3MjM3ODA3Mnww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral"
-                      alt="Dr. Mogal Prasad Shah"
-                      className="w-full h-full object-cover"
+                      src={drShahPhoto}
+                      alt="Dr. Mogal Prasad Shah, Livestock Development Expert"
+                      className="w-full h-full object-cover object-top"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-[#0A2540]/60 to-transparent"></div>
                   </div>
