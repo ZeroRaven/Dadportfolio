@@ -1,10 +1,12 @@
 import { GraduationCap, Briefcase, Award, Globe2, Target, Heart, TrendingUp, Users2 } from "lucide-react";
 import { ImageWithFallback } from "../components/figma/ImageWithFallback";
-import drShahHeadshot from "@/imports/image.png";
+import drShahHeadshot from "@/imports/portrait.webp";
+import imgKathmandu from "@/imports/img-kathmandu.webp";
 import { Card, CardContent } from "../components/ui/card";
 import { SEO } from "../components/SEO";
 import { motion } from "motion/react";
 import { useLanguage } from "../context/LanguageContext";
+import { toNepaliDigits } from "../i18n/format";
 
 export function About() {
   const { language } = useLanguage();
@@ -69,7 +71,7 @@ export function About() {
     {
       icon: Target,
       title: "Field First",
-      description: "From Sarlahi to Doti to Panchthar — 27 years of decisions made at the farm gate, not the desk"
+      description: "From Sarlahi to Doti to Panchthar — 29 years of decisions made at the farm gate, not the desk"
     },
     {
       icon: Heart,
@@ -92,7 +94,7 @@ export function About() {
     {
       icon: Target,
       title: "क्षेत्र सर्वप्रथम",
-      description: "सर्लाहीदेखि डोटीसम्म, पाँचथरसम्म — २७ वर्षका निर्णयहरू डेस्कमा नभई खेतको ढोकामा लिइयो"
+      description: "सर्लाहीदेखि डोटीसम्म, पाँचथरसम्म — २९ वर्षका निर्णयहरू डेस्कमा नभई खेतको ढोकामा लिइयो"
     },
     {
       icon: Heart,
@@ -119,7 +121,7 @@ export function About() {
         title="About Dr. Mogal Prasad Shah"
         description="Learn about Dr. Mogal Prasad Shah's distinguished career in livestock development, his education, and his commitment to rural agricultural transformation in Nepal."
         keywords="Dr. Mogal Prasad Shah, livestock expert biography, Nepal veterinary professional, M.Sc Animal Nutrition, Tribhuvan University, agricultural leader Nepal"
-        canonical="https://drmogalshah.com.np/about"
+        path="/about"
         type="profile"
       />
 
@@ -165,7 +167,7 @@ export function About() {
                 </div>
                 <div className="absolute -bottom-6 -right-4 sm:-right-6 bg-gradient-to-br from-[#D4AF37] to-[#B8941F] rounded-2xl p-4 sm:p-6 shadow-2xl">
                   <div className="text-center text-[#0A2540]">
-                    <div className="text-3xl sm:text-4xl font-display font-bold">27+</div>
+                    <div className="text-3xl sm:text-4xl font-display font-bold">{np ? toNepaliDigits("29+") : "29+"}</div>
                     <div className="text-xs sm:text-sm font-medium">{np ? "वर्ष नेतृत्व" : "Years Leadership"}</div>
                   </div>
                 </div>
@@ -182,8 +184,8 @@ export function About() {
                 <div className="space-y-6 text-gray-600 leading-relaxed">
                   <p>
                     {np
-                      ? "डा. मोगल प्रसाद शाह पशुपालन विकासका एक विशिष्ट विशेषज्ञ हुनुहुन्छ, जसले पशु चिकित्सा विज्ञान, पशु पोषण र ग्रामीण कृषि परिवर्तनमा २७ वर्षभन्दा बढीको वरिष्ठ नेतृत्व अनुभव राख्नुहुन्छ। नेपालभरि कृषक समुदायको जीविकोपार्जन सुधारमा उहाँको गहिरो प्रतिबद्धताले उहाँको करियरलाई परिभाषित गरेको छ।"
-                      : "Dr. Mogal Prasad Shah is a distinguished livestock development expert with over 27 years of senior leadership experience in veterinary sciences, animal nutrition, and rural agricultural transformation. His career has been defined by a deep commitment to improving the livelihoods of farming communities across Nepal."}
+                      ? "डा. मोगल प्रसाद शाह पशुपालन विकासका एक विशिष्ट विशेषज्ञ हुनुहुन्छ, जसले पशु चिकित्सा विज्ञान, पशु पोषण र ग्रामीण कृषि परिवर्तनमा २९ वर्षभन्दा बढीको वरिष्ठ नेतृत्व अनुभव राख्नुहुन्छ। नेपालभरि कृषक समुदायको जीविकोपार्जन सुधारमा उहाँको गहिरो प्रतिबद्धताले उहाँको करियरलाई परिभाषित गरेको छ।"
+                      : "Dr. Mogal Prasad Shah is a distinguished livestock development expert with over 29 years of senior leadership experience in veterinary sciences, animal nutrition, and rural agricultural transformation. His career has been defined by a deep commitment to improving the livelihoods of farming communities across Nepal."}
                   </p>
                   <p>
                     {np
@@ -355,12 +357,12 @@ export function About() {
                     { icon: Globe2, label: "१३ जिल्ला", desc: "बागमती प्रदेश कभरेज" },
                     { icon: Users2, label: "५०,०००+", desc: "किसानहरू सहयोग पाएका" },
                     { icon: Briefcase, label: "१००+", desc: "परियोजनाहरूको नेतृत्व" },
-                    { icon: Award, label: "२७ वर्ष", desc: "नेतृत्व अनुभव" },
+                    { icon: Award, label: "२९ वर्ष", desc: "नेतृत्व अनुभव" },
                   ] : [
                     { icon: Globe2, label: "13 Districts", desc: "Bagamati Province Coverage" },
                     { icon: Users2, label: "50,000+", desc: "Farmers Supported" },
                     { icon: Briefcase, label: "100+", desc: "Projects Led" },
-                    { icon: Award, label: "27 Years", desc: "Leadership Experience" },
+                    { icon: Award, label: "29+ Years", desc: "Leadership Experience" },
                   ]).map((stat, idx) => {
                     const Icon = stat.icon;
                     return (
@@ -388,8 +390,10 @@ export function About() {
                 className="relative h-[280px] sm:h-[380px] lg:h-[500px] rounded-3xl overflow-hidden shadow-2xl"
               >
                 <ImageWithFallback
-                  src="https://images.unsplash.com/photo-1754932814698-b6f9152ad60a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxuZXBhbCUyMGthdGhtYW5kdSUyMHZhbGxleSUyMGxhbmRzY2FwZSUyMG1vdW50YWluc3xlbnwxfHx8fDE3NzIzNzg0NTV8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral"
+                  src={imgKathmandu}
                   alt="Nepal Landscape"
+                  loading="lazy"
+                  decoding="async"
                   className="w-full h-full object-cover"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#0A2540]/60 to-transparent"></div>

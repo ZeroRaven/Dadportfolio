@@ -1,50 +1,111 @@
 import { Link } from "react-router";
-import { Award, TrendingUp, Users, Globe, BookOpen, Briefcase, GraduationCap, Target, ArrowRight, Download, Mail, Linkedin, Quote, Facebook } from "lucide-react";
+import { useState } from "react";
+import { AnimatePresence } from "motion/react";
+import { Award, TrendingUp, Users, Globe, BookOpen, Briefcase, GraduationCap, Target, ArrowRight, Download, Mail, Linkedin, Quote, Facebook, PawPrint, ChevronDown, CalendarCheck, Calculator, Map as MapIcon, Sparkles } from "lucide-react";
 import { useLanguage } from "../context/LanguageContext";
-import logoGoN from "@/imports/image-2.png";
-import logoWorldBank from "@/imports/image-3.png";
-import logoTU from "@/imports/image-4.png";
-import logoDLFD from "@/imports/image-5.png";
-import logoLarenstein from "@/imports/image-6.png";
-import logoGeoKrishi from "@/imports/image-7.png";
+import { OpenStatusChip } from "../components/OpenStatusChip";
+import logoGoN from "@/imports/logo-gon.webp";
+import logoWorldBank from "@/imports/logo-worldbank.webp";
+import logoTU from "@/imports/logo-tu.webp";
+import logoDLFD from "@/imports/logo-dlfd.webp";
+import logoLarenstein from "@/imports/logo-larenstein.webp";
+import logoGeoKrishi from "@/imports/logo-geokrishi.webp";
+import imgCattle from "@/imports/img-cattle.webp";
+import imgTerraces from "@/imports/img-terraces.webp";
+import imgRural from "@/imports/img-rural.webp";
+import imgProfessional from "@/imports/img-professional.webp";
 import { Button } from "../components/ui/button";
 import { ImageWithFallback } from "../components/figma/ImageWithFallback";
-import drShahPhoto from "@/imports/image.png";
+import drShahPhoto from "@/imports/portrait.webp";
 import { Card, CardContent } from "../components/ui/card";
 import { SEO } from "../components/SEO";
 import { StructuredData } from "../components/StructuredData";
 import { motion } from "motion/react";
 
+/** Accessible FAQ accordion row with animated expansion. */
+function FaqItem({ question, answer, isOpen, onToggle }: {
+  question: string;
+  answer: string;
+  isOpen: boolean;
+  onToggle: () => void;
+}) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 14 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      className={`rounded-2xl border-2 transition-colors duration-300 bg-white ${
+        isOpen ? "border-[#D4AF37]/60 shadow-lg" : "border-gray-100 hover:border-[#D4AF37]/30 shadow-sm"
+      }`}
+    >
+      <button
+        type="button"
+        onClick={onToggle}
+        aria-expanded={isOpen}
+        className="w-full flex items-center justify-between gap-4 text-left px-5 sm:px-7 py-4 sm:py-5"
+      >
+        <span className="text-sm sm:text-base font-semibold text-[#0A2540] leading-relaxed">{question}</span>
+        <span
+          className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center transition-colors duration-300 ${
+            isOpen ? "bg-gradient-to-br from-[#D4AF37] to-[#B8941F] text-[#0A2540]" : "bg-gray-100 text-gray-500"
+          }`}
+        >
+          <motion.span animate={{ rotate: isOpen ? 180 : 0 }} transition={{ duration: 0.25 }}>
+            <ChevronDown size={16} />
+          </motion.span>
+        </span>
+      </button>
+      <AnimatePresence initial={false}>
+        {isOpen && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.28, ease: "easeInOut" }}
+            className="overflow-hidden"
+          >
+            <p className="px-5 sm:px-7 pb-5 sm:pb-6 text-sm sm:text-base text-gray-600 leading-relaxed border-t border-gray-100 pt-4">
+              {answer}
+            </p>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.div>
+  );
+}
+
 export function Home() {
   const { language } = useLanguage();
   const np = language === "np";
+  const [openFaq, setOpenFaq] = useState<number | null>(0);
 
   const expertise = np ? [
-    { icon: TrendingUp, title: "पशुपालन विकास", description: "नेपालभरि परिवर्तनकारी पशुपालन र ग्रामीण विकास पहलहरूमा २७+ वर्षको नेतृत्व" },
+    { icon: TrendingUp, title: "पशुपालन विकास", description: "नेपालभरि परिवर्तनकारी पशुपालन र ग्रामीण विकास पहलहरूमा २९+ वर्षको नेतृत्व" },
     { icon: Globe,      title: "रणनीतिक नेतृत्व", description: "DLFD का पूर्व निर्देशक, राष्ट्रिय स्तरमा नीति र कार्यक्रम उत्कृष्टता सुनिश्चित गर्दै" },
     { icon: Users,      title: "खाद्य सुरक्षा",    description: "खाद्य प्रणाली, पोषण सुरक्षा र दिगो कृषि अभ्यासमा विशेषज्ञ" },
     { icon: Target,     title: "जलवायु समाधान",    description: "जोखिमयुक्त समुदायहरूको लागि जलवायु-अनुकूल पशुपालन रणनीतिहरूमा अग्रणी" },
   ] : [
-    { icon: TrendingUp, title: "Livestock Development", description: "27+ years leading transformative livestock and rural development initiatives across Nepal" },
+    { icon: TrendingUp, title: "Livestock Development", description: "29+ years leading transformative livestock and rural development initiatives across Nepal" },
     { icon: Globe,      title: "Strategic Leadership",  description: "Former Director at DLFD, driving policy and program excellence at national level" },
     { icon: Users,      title: "Food Security",         description: "Expert in food systems, nutrition security, and sustainable agricultural practices" },
     { icon: Target,     title: "Climate Solutions",     description: "Pioneering climate-resilient livestock strategies for vulnerable communities" },
   ];
 
+  // Achievement numbers — rendered with Devanagari digits in Nepali mode.
   const achievements = [
-    { number: "27+",  label: np ? "वर्षको अनुभव"         : "Years Experience",  icon: Award },
-    { number: "100+", label: np ? "परियोजनाहरू नेतृत्व"  : "Projects Led",      icon: Briefcase },
-    { number: "50K+", label: np ? "किसानहरू लाभान्वित"   : "Lives Impacted",    icon: Users },
-    { number: "13+",  label: np ? "जिल्ला समेटिएका"      : "Districts Covered", icon: Globe },
+    { number: np ? "२९+"    : "29+",   label: np ? "वर्षको अनुभव"         : "Years Experience",  icon: Award },
+    { number: np ? "१००+"   : "100+",  label: np ? "परियोजनाहरू नेतृत्व"  : "Projects Led",      icon: Briefcase },
+    { number: np ? "५०,०००+" : "50K+", label: np ? "किसानहरू लाभान्वित"   : "Lives Impacted",    icon: Users },
+    { number: np ? "१३+"    : "13+",   label: np ? "जिल्ला समेटिएका"      : "Districts Covered", icon: Globe },
   ];
 
   const partners = [
-    { src: logoGoN,        name: "Government of Nepal",         clip: true  },
-    { src: logoWorldBank,  name: "World Bank",                   clip: false },
-    { src: logoTU,         name: "Tribhuvan University",         clip: false },
-    { src: logoDLFD,       name: "Dept. of Livestock Services",  clip: false },
-    { src: logoLarenstein, name: "Larenstein University",        clip: false },
-    { src: logoGeoKrishi,  name: "GeoKrishi",                    clip: false },
+    { src: logoGoN,        name: "Government of Nepal",         nameNp: "नेपाल सरकार",                      clip: true  },
+    { src: logoWorldBank,  name: "World Bank",                   nameNp: "विश्व बैंक",                        clip: false },
+    { src: logoTU,         name: "Tribhuvan University",         nameNp: "त्रिभुवन विश्वविद्यालय",            clip: false },
+    { src: logoDLFD,       name: "Dept. of Livestock Services",  nameNp: "पशुपालन सेवा विभाग",               clip: false },
+    { src: logoLarenstein, name: "Larenstein University",        nameNp: "लारेन्स्टाइन विश्वविद्यालय",         clip: false },
+    { src: logoGeoKrishi,  name: "GeoKrishi",                    nameNp: "जिओकृषि",                          clip: false },
   ];
 
   const testimonials = [
@@ -68,10 +129,31 @@ export function Home() {
     }
   ];
 
-  const faqs = [
+  const faqs = np ? [
+    {
+      question: "डा. मोगल प्रसाद शाहको विशेषज्ञता क्षेत्र के हो?",
+      answer: "डा. मोगल प्रसाद शाह पशु पोषणमा एम.एस्सी. गर्नुभएका र नेपालभरि पशुपालन विकास, खाद्य सुरक्षा, ग्रामीण विकास र जलवायु-अनुकूल कृषिमा २९+ वर्षको अनुभव भएका पशुपालन विकास विशेषज्ञ हुनुहुन्छ।"
+    },
+    {
+      question: "डा. शाहले कुन कुन पदहरू सम्हाल्नुभएको छ?",
+      answer: "डा. शाह पशुपालन तथा मत्स्यपालन विकास निर्देशनालय (DLFD) का पूर्व निर्देशक हुनुहुन्छ र नेपालभरि कृषि तथा ग्रामीण विकास कार्यक्रमहरूमा वरिष्ठ नेतृत्व पदहरू सम्हाल्नुभएको छ — जसमा विश्व बैंक परियोजनाहरूसँगको कार्य पनि समावेश छ।"
+    },
+    {
+      question: "डा. शाहले कुन सेवाहरू प्रदान गर्नुहुन्छ?",
+      answer: "डा. शाह पशुपालन विकास, कृषि नीति निर्माण, परियोजना डिजाइन र व्यवस्थापन, प्राविधिक मूल्याङ्कन, क्षमता विकास कार्यक्रम र अनुसन्धान साझेदारीमा रणनीतिक परामर्श तथा सल्लाहकार सेवा प्रदान गर्नुहुन्छ।"
+    },
+    {
+      question: "डा. शाह कहाँ आधारित हुनुहुन्छ?",
+      answer: "डा. शाह बागमती प्रदेश, नेपालमा आधारित हुनुहुन्छ र नेपाल तथा दक्षिण एसियाभरि नै पशुपालन विकास र खाद्य सुरक्षा परियोजनाहरूमा कार्यरत हुनुहुन्छ।"
+    },
+    {
+      question: "म डा. शाहसँग कसरी सहकार्य गर्न सक्छु?",
+      answer: "परामर्श अवसर र साझेदारीका लागि डा. शाहलाई info@drmogalshah.com.np मा इमेल गर्नुहोस्, फोन/WhatsApp मार्फत सम्पर्क गर्नुहोस् वा LinkedIn मार्फत जोडिनुहोस्। पशुपालन विकास र कृषि नवाचारमा छोटो र लामो अवधिका लागि उपलब्ध हुनुहुन्छ।"
+    }
+  ] : [
     {
       question: "What is Dr. Mogal Prasad Shah's area of expertise?",
-      answer: "Dr. Mogal Prasad Shah is a livestock development expert with M.Sc. in Animal Nutrition and 27+ years of experience in livestock development, food security, rural development, and climate-resilient agriculture across Nepal."
+      answer: "Dr. Mogal Prasad Shah is a livestock development expert with M.Sc. in Animal Nutrition and 29+ years of experience in livestock development, food security, rural development, and climate-resilient agriculture across Nepal."
     },
     {
       question: "What positions has Dr. Shah held?",
@@ -87,7 +169,7 @@ export function Home() {
     },
     {
       question: "How can I collaborate with Dr. Shah?",
-      answer: "You can reach Dr. Shah for consulting opportunities and partnerships via email at info@drmogalshah.com.np or connect via LinkedIn. He is available for short-term and long-term engagements in livestock development and agricultural innovation."
+      answer: "You can reach Dr. Shah for consulting opportunities and partnerships via email at info@drmogalshah.com.np, by phone or WhatsApp, or connect via LinkedIn. He is available for short-term and long-term engagements in livestock development and agricultural innovation."
     }
   ];
 
@@ -95,9 +177,9 @@ export function Home() {
     <>
       <SEO
         title="Dr. Mogal Prasad Shah - Livestock Development Expert"
-        description="Dr. Mogal Prasad Shah - M.Sc. Animal Nutrition with 27+ years of senior leadership in livestock development, food security, and rural agricultural innovation in Nepal."
+        description="Dr. Mogal Prasad Shah - M.Sc. Animal Nutrition with 29+ years of senior leadership in livestock development, food security, and rural agricultural innovation in Nepal."
         keywords="livestock development, animal nutrition, food security, rural development, Nepal agriculture expert, veterinary sciences, climate change agriculture"
-        canonical="https://drmogalshah.com.np/"
+        path="/"
         type="profile"
       />
       <StructuredData faqs={faqs} />
@@ -111,7 +193,7 @@ export function Home() {
           </div>
           <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSAxMCAwIEwgMCAwIDAgMTAiIGZpbGw9Im5vbmUiIHN0cm9rZT0icmdiYSgyMTIsMTc1LDU1LDAuMSkiIHN0cm9rZS13aWR0aD0iMSIvPjwvcGF0dGVybj48L2RlZnM+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0idXJsKCNncmlkKSIvPjwvc3ZnPg==')] opacity-30"></div>
 
-          <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-32">
+          <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 sm:py-32">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
               {/* Left Content */}
               <motion.div
@@ -127,13 +209,10 @@ export function Home() {
                   className="inline-flex items-center space-x-2 bg-[#D4AF37]/20 backdrop-blur-sm px-5 py-2.5 rounded-full mb-6 border border-[#D4AF37]/30"
                 >
                   <Award className="text-[#D4AF37]" size={18} />
-                  <span className="text-sm font-medium">{np ? "एम.एस्सी. | २७+ वर्षको उत्कृष्टता" : "M.Sc. | 27+ Years Excellence"}</span>
+                  <span className="text-sm font-medium">{np ? "एम.एस्सी. | २९+ वर्षको उत्कृष्टता" : "M.Sc. | 29+ Years Excellence"}</span>
                 </motion.div>
 
-                <h1
-                  className="font-display text-4xl sm:text-5xl md:text-7xl font-bold mb-4 leading-tight"
-                  style={np ? { fontFamily: "'Khand', 'Noto Sans Devanagari', sans-serif", letterSpacing: "0.04em", fontWeight: 700 } : undefined}
-                >
+                <h1 className="hero-name text-4xl sm:text-5xl md:text-7xl mb-4 leading-tight">
                   <span className="text-white">{np ? "डा. मोगल" : "Dr. Mogal"}</span>
                   <br />
                   <span className="text-[#D4AF37]">{np ? "प्रसाद शाह" : "Prasad Shah"}</span>
@@ -156,36 +235,45 @@ export function Home() {
                   className="flex justify-center lg:hidden mb-8"
                 >
                   <div className="relative">
-                    <div className="w-44 h-44 sm:w-52 sm:h-52 rounded-full overflow-hidden ring-4 ring-[#D4AF37] shadow-2xl">
+                    <div className="w-36 h-36 sm:w-44 sm:h-44 rounded-full overflow-hidden ring-4 ring-[#D4AF37] shadow-2xl">
                       <img
                         src={drShahPhoto}
                         alt="Dr. Mogal Prasad Shah"
+                        width={144}
+                        height={144}
+                        fetchPriority="high"
+                        decoding="async"
                         className="w-full h-full object-cover object-top"
                       />
                     </div>
                     <div className="absolute -bottom-3 -right-3 bg-gradient-to-br from-[#D4AF37] to-[#B8941F] rounded-xl px-3 py-1.5 shadow-lg">
-                      <span className="text-[#0A2540] text-xs font-bold">{np ? "२७+ वर्ष" : "27+ Yrs"}</span>
+                      <span className="text-[#0A2540] text-xs font-bold">{np ? "२९+ वर्ष" : "29+ Yrs"}</span>
                     </div>
                   </div>
                 </motion.div>
 
                 <div className="flex flex-wrap gap-3 sm:gap-4">
-                  <Link to="/contact">
+                  <Link to="/booking">
                     <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                       <Button size="lg" className="bg-gradient-to-r from-[#D4AF37] to-[#B8941F] hover:from-[#B8941F] hover:to-[#D4AF37] text-[#0A2540] font-semibold text-base sm:text-lg px-6 sm:px-8 py-4 sm:py-6 shadow-xl">
+                        <CalendarCheck className="mr-2" size={18} />
+                        {np ? "परामर्श बुक गर्नुहोस्" : "Book a Consultation"}
+                      </Button>
+                    </motion.div>
+                  </Link>
+                  <Link to="/contact">
+                    <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                      <Button size="lg" variant="outline" className="border-2 border-[#D4AF37] text-[#D4AF37] hover:bg-[#D4AF37] hover:text-[#0A2540] hover:border-[#D4AF37] text-base sm:text-lg px-6 sm:px-8 py-4 sm:py-6 transition-all duration-300">
                         <Mail className="mr-2" size={18} />
                         {np ? "सम्पर्क गर्नुहोस्" : "Get in Touch"}
                       </Button>
                     </motion.div>
                   </Link>
-                  <Link to="/about">
-                    <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                      <Button size="lg" variant="outline" className="border-2 border-[#D4AF37] text-[#D4AF37] hover:bg-[#D4AF37] hover:text-[#0A2540] hover:border-[#D4AF37] text-base sm:text-lg px-6 sm:px-8 py-4 sm:py-6 transition-all duration-300">
-                        {np ? "प्रोफाइल हेर्नुहोस्" : "View Profile"}
-                        <ArrowRight className="ml-2" size={18} />
-                      </Button>
-                    </motion.div>
-                  </Link>
+                </div>
+
+                {/* Live clinic status (Nepal Time) */}
+                <div className="mt-5">
+                  <OpenStatusChip />
                 </div>
 
                 <div className="mt-6 flex items-center space-x-4">
@@ -234,6 +322,10 @@ export function Home() {
                     <ImageWithFallback
                       src={drShahPhoto}
                       alt="Dr. Mogal Prasad Shah, Livestock Development Expert"
+                      width={850}
+                      height={1024}
+                      fetchPriority="high"
+                      decoding="async"
                       className="w-full h-full object-cover object-top"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-[#0A2540]/60 to-transparent"></div>
@@ -249,7 +341,7 @@ export function Home() {
                         <GraduationCap className="text-[#0A2540]" size={28} />
                       </div>
                       <div>
-                        <div className="text-2xl font-bold text-[#0A2540]">{np ? "२७+" : "27+"}</div>
+                        <div className="text-2xl font-bold text-[#0A2540]">{np ? "२९+" : "29+"}</div>
                         <div className="text-sm text-gray-600">{np ? "वर्षको नेतृत्व" : "Years Leading"}</div>
                       </div>
                     </div>
@@ -299,35 +391,51 @@ export function Home() {
           </div>
         </section>
 
-        {/* Institutions & Partners Strip */}
-        <section className="py-10 sm:py-14 bg-gray-50 border-b border-gray-200">
+        {/* Institutions & Partners */}
+        <section className="py-14 sm:py-20 bg-gradient-to-b from-white to-gray-50 border-b border-gray-100">
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-            <p className="text-center text-xs font-semibold text-gray-400 uppercase tracking-widest mb-8">
-              {np ? "संस्थाहरू र साझेदारहरू" : "Institutions & Partners"}
-            </p>
-            <div className="grid grid-cols-3 sm:grid-cols-6 gap-3 sm:gap-5">
+            <div className="text-center mb-10 sm:mb-12">
+              <div className="inline-flex items-center gap-2 bg-[#D4AF37]/10 border border-[#D4AF37]/30 rounded-full px-4 py-1.5 mb-4">
+                <PawPrint size={13} className="text-[#B8941F]" />
+                <span className={`text-[11px] font-bold text-[#B8941F] ${np ? "" : "uppercase tracking-[0.18em]"}`}>
+                  {np ? "विश्वसनीय साझेदारी" : "Trusted Network"}
+                </span>
+              </div>
+              <h2 className="font-display text-2xl sm:text-3xl font-bold text-[#0A2540]">
+                {np ? "संस्थाहरू र साझेदारहरू" : "Institutions & Partners"}
+              </h2>
+              <p className="text-sm sm:text-base text-gray-500 mt-3 max-w-xl mx-auto leading-relaxed">
+                {np
+                  ? "सरकारी निकाय, विकास संस्थान, विश्वविद्यालय र नवाचार प्लेटफर्मसँगको लामो सहकार्य"
+                  : "Two decades of collaboration across government, development institutions, academia and innovation platforms"}
+              </p>
+            </div>
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 sm:gap-5">
               {partners.map((p, i) => (
                 <motion.div
                   key={i}
-                  initial={{ opacity: 0, y: 12 }}
+                  initial={{ opacity: 0, y: 16 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
-                  transition={{ delay: i * 0.08 }}
-                  className="flex flex-col items-center gap-2.5 group"
+                  transition={{ delay: i * 0.07 }}
+                  whileHover={{ y: -6 }}
+                  className="group"
                 >
                   <div
-                    className="w-full aspect-square rounded-xl flex items-center justify-center p-2.5 sm:p-3 shadow-sm border border-gray-100 bg-white transition-all duration-200 group-hover:shadow-md group-hover:scale-105"
+                    className="aspect-square rounded-2xl flex items-center justify-center p-5 sm:p-6 shadow-sm bg-white border border-gray-200/80 transition-all duration-300 group-hover:shadow-xl group-hover:border-[#D4AF37]/60 group-hover:bg-white"
                   >
                     <img
                       src={p.src}
-                      alt={p.name}
-                      className="w-full h-full object-contain"
+                      alt={np ? p.nameNp : p.name}
+                      loading="lazy"
+                      decoding="async"
+                      className="w-full h-full object-contain grayscale opacity-75 transition-all duration-300 group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-110"
                       style={p.clip ? { clipPath: "circle(46% at 50% 50%)" } : undefined}
                     />
                   </div>
-                  <span className="text-[10px] sm:text-[11px] font-medium text-gray-500 leading-tight text-center">
-                    {p.name}
-                  </span>
+                  <p className="mt-2.5 text-[11px] sm:text-xs font-semibold text-gray-500 text-center leading-snug group-hover:text-[#0A2540] transition-colors">
+                    {np ? p.nameNp : p.name}
+                  </p>
                 </motion.div>
               ))}
             </div>
@@ -409,8 +517,8 @@ export function Home() {
                 </h2>
                 <p className="text-base sm:text-lg text-gray-600 mb-6 leading-relaxed">
                   {np
-                    ? "२७ वर्षभन्दा बढीको विशिष्ट करियरमा, डा. शाह पशुपालन र ग्रामीण विकास पहलहरूमा अग्रणी भूमिकामा रहनुभएको छ — नेपालभरि कृषि परिदृश्य रूपान्तरण र समुदाय सशक्तीकरण गर्दै।"
-                    : "With a distinguished career spanning over 27 years, Dr. Shah has been at the forefront of livestock and rural development initiatives, transforming agricultural landscapes and empowering communities across Nepal."}
+                    ? "२९ वर्षभन्दा बढीको विशिष्ट करियरमा, डा. शाह पशुपालन र ग्रामीण विकास पहलहरूमा अग्रणी भूमिकामा रहनुभएको छ — नेपालभरि कृषि परिदृश्य रूपान्तरण र समुदाय सशक्तीकरण गर्दै।"
+                    : "With a distinguished career spanning over 29 years, Dr. Shah has been at the forefront of livestock and rural development initiatives, transforming agricultural landscapes and empowering communities across Nepal."}
                 </p>
                 <ul className="space-y-3 sm:space-y-4">
                   {(np ? [
@@ -457,15 +565,19 @@ export function Home() {
                 <div className="space-y-4">
                   <div className="h-48 sm:h-56 lg:h-64 rounded-2xl overflow-hidden shadow-xl">
                     <ImageWithFallback
-                      src="https://images.unsplash.com/photo-1771962152057-4c3015841488?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxsaXZlc3RvY2slMjBjYXR0bGUlMjBkYWlyeSUyMGZhcm1pbmd8ZW58MXx8fHwxNzcyMzc4MDc0fDA&ixlib=rb-4.1.0&q=80&w=1080"
+                      src={imgCattle}
                       alt="Livestock Development"
+                      loading="lazy"
+                      decoding="async"
                       className="w-full h-full object-cover hover:scale-110 transition-transform duration-500"
                     />
                   </div>
                   <div className="h-36 sm:h-40 lg:h-48 rounded-2xl overflow-hidden shadow-xl">
                     <ImageWithFallback
-                      src="https://images.unsplash.com/photo-1757311475960-aa4f1b0dca40?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxuZXBhbCUyMGFncmljdWx0dXJlJTIwZmllbGQlMjBsYW5kc2NhcGV8ZW58MXx8fHwxNzcyMzc4MDczfDA&ixlib=rb-4.1.0&q=80&w=1080"
+                      src={imgTerraces}
                       alt="Nepal Agriculture"
+                      loading="lazy"
+                      decoding="async"
                       className="w-full h-full object-cover hover:scale-110 transition-transform duration-500"
                     />
                   </div>
@@ -473,15 +585,19 @@ export function Home() {
                 <div className="space-y-4 sm:pt-12">
                   <div className="h-36 sm:h-40 lg:h-48 rounded-2xl overflow-hidden shadow-xl">
                     <ImageWithFallback
-                      src="https://images.unsplash.com/photo-1761296787557-5797a6897297?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxydXJhbCUyMGRldmVsb3BtZW50JTIwZm9vZCUyMHNlY3VyaXR5fGVufDF8fHx8MTc3MjM3ODA3M3ww&ixlib=rb-4.1.0&q=80&w=1080"
+                      src={imgRural}
                       alt="Rural Development"
+                      loading="lazy"
+                      decoding="async"
                       className="w-full h-full object-cover hover:scale-110 transition-transform duration-500"
                     />
                   </div>
                   <div className="h-48 sm:h-56 lg:h-64 rounded-2xl overflow-hidden shadow-xl">
                     <ImageWithFallback
-                      src="https://images.unsplash.com/photo-1635183067334-c0dbdac46c73?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxhZ3JpY3VsdHVyZSUyMGxpdmVzdG9jayUyMGRldmVsb3BtZW50JTIwcHJvZmVzc2lvbmFsfGVufDF8fHx8MTc3MjM3ODA3Mnww&ixlib=rb-4.1.0&q=80&w=1080"
+                      src={imgProfessional}
                       alt="Professional Work"
+                      loading="lazy"
+                      decoding="async"
                       className="w-full h-full object-cover hover:scale-110 transition-transform duration-500"
                     />
                   </div>
@@ -538,6 +654,149 @@ export function Home() {
                     </CardContent>
                   </Card>
                 </motion.div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Farmer Resources — free tools, knowledge base, Nepal agri-map */}
+        <section className="py-16 sm:py-24 bg-gradient-to-b from-[#0A2540] to-[#12365C] relative overflow-hidden">
+          <div
+            aria-hidden="true"
+            className="absolute inset-0 opacity-[0.06]"
+            style={{
+              backgroundImage: "radial-gradient(#D4AF37 1px, transparent 1px)",
+              backgroundSize: "26px 26px",
+            }}
+          />
+          <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="text-center mb-12 sm:mb-16"
+            >
+              <div className="inline-flex items-center gap-2 bg-[#D4AF37]/20 border border-[#D4AF37]/30 rounded-full px-4 py-1.5 mb-5">
+                <Sparkles className="text-[#D4AF37]" size={14} />
+                <span className="text-xs sm:text-sm font-semibold text-[#D4AF37] tracking-wide">
+                  {np ? "निःशुल्क · वैज्ञानिक स्रोतमा आधारित" : "Free · built on published science"}
+                </span>
+              </div>
+              <h2 className="font-display text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-4">
+                {np ? "किसान तथा पशुपालकका लागि स्रोतहरू" : "Resources for Farmers & Livestock Keepers"}
+              </h2>
+              <div className="w-24 h-1.5 bg-gradient-to-r from-[#D4AF37] to-[#B8941F] mx-auto rounded-full mb-6"></div>
+              <p className="text-base sm:text-lg text-gray-300 max-w-3xl mx-auto leading-relaxed">
+                {np
+                  ? "डा. शाहको फिल्ड अनुभव र प्रमाणित अनुसन्धानबाट तयार पारिएका औजार, ज्ञान र नक्सा — निःशुल्क, द्विभाषी र फोनमै चल्ने।"
+                  : "Tools, knowledge and maps distilled from Dr. Shah's field career and verified research — free, bilingual, and working on any phone."}
+              </p>
+            </motion.div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
+              {[
+                {
+                  path: "/tools",
+                  icon: Calculator,
+                  title: np ? "कृषि औजारहरू" : "Farm Tools & Calculators",
+                  desc: np
+                    ? "तौल अनुमान, गर्भावधि, रोपनी-बिघा रूपान्तरण, चारा हिसाब, खुराक र खोप सम्झना — ८ औजार।"
+                    : "Weight estimator, gestation planner, Ropani↔Bigha converter, feed rations, dosage checks, vaccination reminders — 8 tools.",
+                  points: np ? ["औजार: ८ वटा", "निःशुल्क, साइन-अप नचाहिने"] : ["8 calculators", "No sign-up, runs offline-fast"],
+                },
+                {
+                  path: "/knowledge",
+                  icon: BookOpen,
+                  title: np ? "ज्ञान भण्डार" : "Knowledge Base",
+                  desc: np
+                    ? "खोप तालिका, बाख्रा-कुखुरा-गाईभैंसी पालन, बाली मौसुम, सिलेज, जलवायु अनुकूलन — २० लेख, स्रोतसहित।"
+                    : "Vaccination calendars, goat-poultry-dairy systems, crop seasons, silage, climate adaptation — 20 cited articles.",
+                  points: np ? ["लेख: २०", "हरेक तथ्य स्रोतसहित"] : ["20 guides", "Every figure sourced"],
+                },
+                {
+                  path: "/agromap",
+                  icon: MapIcon,
+                  title: np ? "नेपाल कृषि नक्सा" : "Nepal Agriculture Map",
+                  desc: np
+                    ? "७७ जिल्ला, ७ प्रदेश — हरेक क्षेत्रको बाली, पशुपालन र जलवायु परिवर्तनको असर एकै नक्सामा।"
+                    : "77 districts, 7 provinces — each region's crops, livestock and climate pressure on one interactive map.",
+                  points: np ? ["जिल्ला: ७७", "प्रमाणित तथ्याङ्क"] : ["77 districts", "Verified statistics"],
+                },
+              ].map((r, index) => {
+                const Icon = r.icon;
+                return (
+                  <motion.div
+                    key={r.path}
+                    initial={{ opacity: 0, y: 24 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: index * 0.12 }}
+                    whileHover={{ y: -6 }}
+                  >
+                    <Link to={r.path} className="block h-full">
+                      <div className="h-full bg-white/[0.06] backdrop-blur-sm border-2 border-white/10 hover:border-[#D4AF37]/50 rounded-2xl p-6 sm:p-8 transition-all duration-300 group">
+                        <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#D4AF37] to-[#B8941F] flex items-center justify-center mb-5 shadow-lg">
+                          <Icon className="text-[#0A2540]" size={26} />
+                        </div>
+                        <h3 className="font-display text-xl sm:text-2xl font-bold text-white mb-3 group-hover:text-[#D4AF37] transition-colors">
+                          {r.title}
+                        </h3>
+                        <p className="text-sm text-gray-300 leading-relaxed mb-5">{r.desc}</p>
+                        <ul className="space-y-1.5 mb-6">
+                          {r.points.map((p) => (
+                            <li key={p} className="flex items-center gap-2 text-xs text-gray-400">
+                              <span className="w-1 h-1 rounded-full bg-[#D4AF37]" aria-hidden="true" />
+                              {p}
+                            </li>
+                          ))}
+                        </ul>
+                        <span className="inline-flex items-center gap-2 text-sm font-semibold text-[#D4AF37] group-hover:gap-3 transition-all">
+                          {np ? "खोल्नुहोस्" : "Open"}
+                          <ArrowRight size={15} />
+                        </span>
+                      </div>
+                    </Link>
+                  </motion.div>
+                );
+              })}
+            </div>
+          </div>
+        </section>
+
+        {/* FAQ */}
+        <section className="py-16 sm:py-24 bg-gradient-to-b from-white to-gray-50">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="text-center mb-12 sm:mb-16"
+            >
+              <div className="inline-flex items-center gap-2 bg-[#D4AF37]/10 border border-[#D4AF37]/30 rounded-full px-4 py-1.5 mb-4">
+                <BookOpen size={13} className="text-[#B8941F]" />
+                <span className={`text-[11px] font-bold text-[#B8941F] ${np ? "" : "uppercase tracking-[0.18em]"}`}>
+                  {np ? "जानकारी" : "Good to Know"}
+                </span>
+              </div>
+              <h2 className="font-display text-3xl sm:text-4xl font-bold text-[#0A2540] mb-4">
+                {np ? "बारम्बार सोधिने प्रश्नहरू" : "Frequently Asked Questions"}
+              </h2>
+              <div className="w-24 h-1.5 bg-gradient-to-r from-[#D4AF37] to-[#B8941F] mx-auto rounded-full mb-6"></div>
+              <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+                {np
+                  ? "डा. शाहको विशेषज्ञता, अनुभव र सहकार्यका बारेमा सामान्य जिज्ञासाहरू"
+                  : "Quick answers about Dr. Shah's expertise, experience and ways to collaborate"}
+              </p>
+            </motion.div>
+            <div className="space-y-3 sm:space-y-4">
+              {faqs.map((faq, index) => (
+                <FaqItem
+                  key={index}
+                  question={faq.question}
+                  answer={faq.answer}
+                  isOpen={openFaq === index}
+                  onToggle={() => setOpenFaq(openFaq === index ? null : index)}
+                />
               ))}
             </div>
           </div>

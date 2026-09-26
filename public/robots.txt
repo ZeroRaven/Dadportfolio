@@ -1,12 +1,8 @@
 # Robots.txt for Dr. Mogal Prasad Shah Portfolio
-# https://drmogalshah.com.np
+# https://www.drmogalshah.com.np
 
-# Allow all search engines
 User-agent: *
 Allow: /
 
-# Sitemap location
-Sitemap: https://drmogalshah.com.np/sitemap.xml
-
-# Crawl-delay (optional, helps prevent server overload)
-Crawl-delay: 1
+# Sitemap location (matches the served www canonical domain)
+Sitemap: https://www.drmogalshah.com.np/sitemap.xml

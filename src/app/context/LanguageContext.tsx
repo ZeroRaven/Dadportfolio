@@ -26,17 +26,12 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     document.documentElement.lang = language === "np" ? "ne" : "en";
     if (language === "np") {
       document.documentElement.classList.add("lang-np");
-      // Force Khand Devanagari to load if not already injected
-      if (!document.getElementById("khand-deva-link")) {
-        const link = document.createElement("link");
-        link.id = "khand-deva-link";
-        link.rel = "stylesheet";
-        link.href = "https://fonts.googleapis.com/css?family=Khand:400,600,700&subset=devanagari,latin&display=swap";
-        document.head.appendChild(link);
-      }
     } else {
       document.documentElement.classList.remove("lang-np");
     }
+    // Devanagari fonts need no on-demand injection: they are self-hosted in
+    // public/fonts/fonts.css with unicode-range, so browsers only fetch the
+    // Devanagari binaries when Devanagari glyphs actually render on screen.
   }, [language]);
 
   const setLanguage = (lang: Lang) => {

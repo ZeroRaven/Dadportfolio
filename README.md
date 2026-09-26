@@ -1,8 +1,10 @@
 # Dr. Mogal Prasad Shah - Professional Portfolio Website
 
-A modern, SEO-optimized portfolio website showcasing Dr. Mogal Prasad Shah's 27+ years of expertise in livestock development, food security, and rural agricultural innovation across Nepal.
+A modern, SEO-optimized portfolio website showcasing Dr. Mogal Prasad Shah's 29+ years of expertise in livestock development, food security, and rural agricultural innovation across Nepal.
 
-![Website Preview](https://images.unsplash.com/photo-1635183067334-c0dbdac46c73?w=1200&h=630&fit=crop)
+> **September 2026 release:** full audit implementation — SEO critical fixes (noindex removed, correct meta, www canonicals), working contact form with feedback states, 95% image weight reduction, route code-splitting, WhatsApp button infrastructure, and a central config at `src/app/config/site.ts`. **See [CHANGES.md](./CHANGES.md)** for the complete changelog and the two config values to set after deploying.
+
+![Website Preview](https://www.drmogalshah.com.np/og-image.jpg)
 
 ## 🌟 Features
 
@@ -308,7 +310,7 @@ Unauthorized copying, modification, distribution, or use of this software is str
 
 ## 👤 About Dr. Mogal Prasad Shah
 
-Dr. Mogal Prasad Shah is a distinguished livestock development expert with M.Sc. in Animal Nutrition and 27+ years of experience in:
+Dr. Mogal Prasad Shah is a distinguished livestock development expert with M.Sc. in Animal Nutrition and 29+ years of experience in:
 
 - 🐄 **Livestock Development** - Leading transformative initiatives across Nepal
 - 🌾 **Food Security** - Expert in nutrition security and sustainable agriculture

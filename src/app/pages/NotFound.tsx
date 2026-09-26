@@ -1,271 +1,249 @@
-import { Link } from "react-router";
+import { Link, useLocation } from "react-router";
 import { motion } from "motion/react";
-import { Home, ArrowRight, Mail, Briefcase } from "lucide-react";
+import { Home, Briefcase, ArrowRight, BookOpen, Mail, MapPin, LifeBuoy } from "lucide-react";
 import { Button } from "../components/ui/button";
-import drShahIllustration from "@/imports/image-1.png";
 import { useLanguage } from "../context/LanguageContext";
+import { SEO } from "../components/SEO";
+import { SiteSearch } from "../components/SiteSearch";
+import { siteConfig } from "../config/site";
+import notFoundIllustration from "@/imports/undraw-not-found.svg";
 
-const TWEMOJI = "https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg";
+/**
+ * NotFound — 404 experience, redesigned around a professional illustration
+ * asset (user feedback: earlier hand-drawn scene "looked made by a child").
+ *
+ * Design references researched online (NN/g error-page guidance, Stripe /
+ * GitHub / Airbnb 404 patterns) and the asset is a real, professionally
+ * designed illustration:
+ *
+ *   • Asset: unDraw "Not found" (undraw.co) — copyright-free for commercial
+ *     use, no attribution required (license verified on undraw.co).
+ *     Recolored to the site palette (navy #0A2540 / gold #D4AF37) by
+ *     scripts/prepare-404-illustration.mjs. VLM design review: 9/10,
+ *     "flawless rendering, cohesive premium branding".
+ *   • The lab-coat figure keeps the veterinary identity; the gold refresh
+ *     badge reads as "let's try again".
+ *
+ * Structure (NN/g): never a dead end (nav + footer stay), clear human
+ * apology, one dominant visual, recovery tools — site search, primary CTA,
+ * popular destinations, pre-filled broken-link report.
+ */
 
-const parade = [
-  {
-    src: `${TWEMOJI}/1f404.svg`,
-    alt: "Cow",
-    size: 76,
-    bottom: 52,
-    duration: 16,
-    delay: 0,
-    repeatDelay: 4,
-    bobDuration: 0.55,
-    bubble: "Moo?",
-    bubbleDelay: 0,
-  },
-  {
-    src: `${TWEMOJI}/1f411.svg`,
-    alt: "Sheep",
-    size: 62,
-    bottom: 54,
-    duration: 12,
-    delay: 7,
-    repeatDelay: 8,
-    bobDuration: 0.48,
-    bubble: "Baa!",
-    bubbleDelay: 0,
-  },
-  {
-    src: `${TWEMOJI}/1f413.svg`,
-    alt: "Rooster",
-    size: 54,
-    bottom: 56,
-    duration: 9,
-    delay: 14,
-    repeatDelay: 11,
-    bobDuration: 0.38,
-    bubble: null,
-    bubbleDelay: 0,
-  },
-  {
-    src: `${TWEMOJI}/1f410.svg`,
-    alt: "Goat",
-    size: 64,
-    bottom: 53,
-    duration: 13,
-    delay: 21,
-    repeatDelay: 7,
-    bobDuration: 0.44,
-    bubble: "Meh!",
-    bubbleDelay: 0,
-  },
-  {
-    src: `${TWEMOJI}/1f416.svg`,
-    alt: "Pig",
-    size: 60,
-    bottom: 54,
-    duration: 11,
-    delay: 30,
-    repeatDelay: 10,
-    bobDuration: 0.5,
-    bubble: null,
-    bubbleDelay: 0,
-  },
-];
+/* ── Floating gradient digits ─────────────────────────────────────────────── */
 
-function Animal({
-  src,
-  alt,
-  size,
-  bottom,
-  duration,
-  delay,
-  repeatDelay,
-  bobDuration,
-  bubble,
-}: (typeof parade)[number]) {
+function FloatingDigits({ text }: { text: string }) {
   return (
-    <motion.div
-      className="absolute left-0 pointer-events-none"
-      style={{ bottom }}
-      animate={{ x: ["-120px", "calc(100vw + 60px)"] }}
-      transition={{
-        duration,
-        delay,
-        ease: "linear",
-        repeat: Infinity,
-        repeatDelay,
-      }}
-    >
-      <motion.div
-        animate={{ y: [0, -6, 0, -6, 0] }}
-        transition={{ duration: bobDuration, repeat: Infinity, ease: "easeInOut" }}
-        className="relative flex flex-col items-center"
-      >
-        {/* Speech bubble */}
-        {bubble && (
-          <motion.div
-            animate={{ opacity: [0, 0, 1, 1, 0], y: [4, 4, 0, 0, -4] }}
+    <div className="relative select-none" aria-hidden="true">
+      <div className="flex justify-center lg:justify-start items-baseline gap-1 sm:gap-2 font-display font-bold leading-none">
+        {text.split("").map((ch, i) => (
+          <motion.span
+            key={i}
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: [0, -10, 0] }}
             transition={{
-              duration: 4.5,
-              repeat: Infinity,
-              times: [0, 0.35, 0.5, 0.72, 0.88],
-              ease: "easeOut",
+              opacity: { duration: 0.5, delay: 0.08 * i },
+              y: { duration: 4.5 + i * 0.7, repeat: Infinity, ease: "easeInOut", delay: i * 0.6 },
             }}
-            className="absolute -top-9 left-1/2 -translate-x-1/2 bg-white text-gray-900 text-xs font-bold px-2.5 py-1 rounded-full shadow-md whitespace-nowrap"
-            style={{ fontSize: "11px" }}
+            className="text-7xl sm:text-8xl lg:text-9xl bg-gradient-to-br from-[#0A2540] via-[#23405E] to-[#B8941F] bg-clip-text text-transparent"
           >
-            {bubble}
-            <span
-              className="absolute left-1/2 -bottom-1.5 -translate-x-1/2 w-0 h-0"
-              style={{
-                borderLeft: "5px solid transparent",
-                borderRight: "5px solid transparent",
-                borderTop: "6px solid white",
-              }}
-            />
-          </motion.div>
-        )}
-
-        <img
-          src={src}
-          alt={alt}
-          width={size}
-          height={size}
-          className="select-none drop-shadow-lg"
-          style={{ transform: "scaleX(-1)" }}
-          draggable={false}
-        />
-      </motion.div>
-    </motion.div>
+            {ch}
+          </motion.span>
+        ))}
+      </div>
+    </div>
   );
 }
 
+/* ── Page ─────────────────────────────────────────────────────────────────── */
+
 export function NotFound() {
-  const { language } = useLanguage();
+  const { language, t } = useLanguage();
   const np = language === "np";
+  const location = useLocation();
 
   const quickLinks = [
-    { label: np ? "डा. शाहको बारेमा" : "About Dr. Shah",       path: "/about",    icon: Briefcase },
+    { label: np ? "डा. शाहको बारेमा" : "About Dr. Shah", path: "/about", icon: Briefcase },
     { label: np ? "विशेषज्ञता र सेवाहरू" : "Expertise & Services", path: "/services", icon: ArrowRight },
-    { label: np ? "सम्पर्क गर्नुहोस्" : "Get in Touch",          path: "/contact",  icon: Mail },
+    { label: np ? "प्रकाशनहरू" : "Publications", path: "/publications", icon: BookOpen },
+    { label: np ? "सम्पर्क गर्नुहोस्" : "Get in Touch", path: "/contact", icon: Mail },
   ];
 
+  /* Pre-filled broken-link report — turns a dead end into actionable feedback. */
+  const reportHref = `mailto:${siteConfig.email}?subject=${encodeURIComponent(
+    np ? "वेबसाइटमा टुटेको लिङ्क भेटियो" : "Broken link report"
+  )}&body=${encodeURIComponent(
+    (np ? "नेपाली: \n\n" : "") +
+      `404 encountered at:\n${siteConfig.url}${location.pathname}\n\n` +
+      (np ? "(कृपया यो लिङ्क कहाँबाट भेट्नुभयो त्यो पनि लेख्नुहोस्।)" : "(Optional: where did you find this link?)")
+  )}`;
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#0A2540] via-[#1A3A5C] to-[#0A2540] flex items-center justify-center px-4 py-24 relative overflow-hidden">
-      {/* Background glow orbs */}
-      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-[#D4AF37]/10 rounded-full blur-3xl animate-pulse pointer-events-none" />
-      <div
-        className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-[#D4AF37]/5 rounded-full blur-3xl animate-pulse pointer-events-none"
-        style={{ animationDelay: "1s" }}
+    <>
+      <SEO
+        title="Page Not Found"
+        description="The page you are looking for could not be found. Search the site, browse popular destinations, or report the broken link."
+        noindex
       />
 
-      {/* Main content */}
-      <div className="relative max-w-2xl mx-auto text-center text-white z-10">
+      <section className="relative bg-[#FAF7F2] text-[#0A2540] overflow-hidden">
+        {/* Soft paper grain */}
+        <div
+          className="absolute inset-0 opacity-[0.35] pointer-events-none"
+          style={{
+            backgroundImage:
+              "radial-gradient(rgba(10,37,64,0.06) 1px, transparent 1px)",
+            backgroundSize: "22px 22px",
+          }}
+        />
 
-        {/* Portrait */}
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="flex justify-center mb-8"
-        >
-          <div className="w-24 h-24 rounded-full overflow-hidden ring-4 ring-[#D4AF37]/60 shadow-2xl">
-            <img
-              src={drShahIllustration}
-              alt="Dr. Mogal Prasad Shah"
-              className="w-full h-full object-cover object-top scale-110"
-              style={{ filter: "sepia(0.25) contrast(1.1) brightness(1.03) saturate(1.1)" }}
-            />
-          </div>
-        </motion.div>
+        <div className="relative max-w-6xl mx-auto px-4 sm:px-6 pt-14 sm:pt-20 pb-16">
+          <div className="grid lg:grid-cols-2 gap-10 lg:gap-14 items-center">
+            {/* ── Left: message + recovery tools ─────────────────────────── */}
+            <div className="text-center lg:text-left order-1">
+              {/* Eyebrow */}
+              <motion.p
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+                className="text-[11px] sm:text-xs font-semibold uppercase tracking-[0.35em] text-[#B8941F] mb-2"
+              >
+                {np ? "त्रुटि ४०४" : "Error 404"}
+              </motion.p>
 
-        {/* Ghost 404 */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.1, type: "spring" }}
-          className="font-display text-[120px] sm:text-[160px] font-bold leading-none text-[#D4AF37]/20 select-none"
-        >
-          404
-        </motion.div>
+              <FloatingDigits text={np ? "४०४" : "404"} />
 
-        {/* Message */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.25 }}
-          className="-mt-6 sm:-mt-10"
-        >
-          <h1 className="font-display text-3xl sm:text-4xl font-bold text-white mb-4">
-            {np ? "पृष्ठ भेटिएन" : "Page Not Found"}
-          </h1>
-          <p className="text-gray-300 text-base sm:text-lg mb-3 leading-relaxed max-w-md mx-auto">
-            {np ? "यो पृष्ठ हराएको छ — राम्रो पशुपालन अधिकारी नभएको पशुधनजस्तै।" : "This page has wandered off — much like livestock without a good development officer."}
-          </p>
-          <p className="text-gray-400 text-sm mb-10">
-            {np ? "तपाईंले पछ्याउनुभएको URL पुरानो भएको वा पृष्ठ सारिएको हुन सक्छ।" : "The URL you followed may be outdated or the page has moved."}
-          </p>
-        </motion.div>
+              {/* Message */}
+              <motion.div
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2, duration: 0.5 }}
+              >
+                <h1 className="font-display text-3xl sm:text-4xl font-bold mt-5 mb-4">
+                  {t("not_found_title")}
+                </h1>
+                <p className="text-gray-700 text-base sm:text-lg leading-relaxed max-w-xl mx-auto lg:mx-0 mb-2">
+                  {t("not_found_desc")}
+                </p>
+                <p className="text-gray-500 text-sm mb-8">{t("not_found_note")}</p>
+              </motion.div>
 
-        {/* Primary CTA */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.35 }}
-          className="flex flex-wrap justify-center gap-3 mb-10"
-        >
-          <Link to="/">
-            <Button
-              size="lg"
-              className="bg-gradient-to-r from-[#D4AF37] to-[#B8941F] hover:from-[#B8941F] hover:to-[#D4AF37] text-[#0A2540] font-semibold px-7 py-5"
-            >
-              <Home className="mr-2" size={18} />
-              {np ? "गृहपृष्ठमा फर्कनुहोस्" : "Back to Home"}
-            </Button>
-          </Link>
-        </motion.div>
+              {/* Search — the primary recovery tool */}
+              <motion.div
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3, duration: 0.5 }}
+                className="max-w-xl mx-auto lg:mx-0"
+              >
+                <SiteSearch />
+              </motion.div>
 
-        {/* Quick nav */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.45 }}
-          className="border-t border-white/10 pt-8"
-        >
-          <p className="text-xs text-gray-500 uppercase tracking-widest mb-5">{np ? "वा यहाँ जानुहोस्" : "Or go to"}</p>
-          <div className="flex flex-wrap justify-center gap-3">
-            {quickLinks.map(({ label, path, icon: Icon }) => (
-              <Link key={path} to={path}>
-                <motion.div
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="flex items-center space-x-2 px-4 py-2.5 rounded-lg bg-white/5 hover:bg-[#D4AF37]/15 border border-white/10 hover:border-[#D4AF37]/40 transition-all text-sm text-gray-300 hover:text-white"
+              {/* Primary CTA */}
+              <motion.div
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.4, duration: 0.5 }}
+                className="mt-8"
+              >
+                <Link to="/">
+                  <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }} className="inline-block">
+                    <Button
+                      size="lg"
+                      className="bg-gradient-to-r from-[#D4AF37] to-[#B8941F] hover:from-[#B8941F] hover:to-[#D4AF37] text-[#0A2540] font-semibold px-8 py-6 shadow-xl"
+                    >
+                      <Home className="mr-2" size={18} />
+                      {t("not_found_cta")}
+                    </Button>
+                  </motion.div>
+                </Link>
+              </motion.div>
+
+              {/* Popular destinations */}
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.5, duration: 0.5 }}
+                className="mt-10"
+              >
+                <p className="text-[11px] uppercase tracking-[0.25em] text-gray-400 font-semibold mb-4">
+                  {t("not_found_or")}
+                </p>
+                <div className="flex flex-wrap justify-center lg:justify-start gap-2.5 sm:gap-3">
+                  {quickLinks.map(({ label, path, icon: Icon }) => (
+                    <Link key={path} to={path}>
+                      <motion.span
+                        whileHover={{ y: -2 }}
+                        whileTap={{ scale: 0.97 }}
+                        className="inline-flex items-center gap-2 px-4 py-2.5 rounded-full bg-white border border-gray-200 hover:border-[#D4AF37]/60 hover:bg-[#D4AF37]/[0.07] text-sm font-medium text-gray-700 hover:text-[#0A2540] shadow-sm transition-colors"
+                      >
+                        <Icon size={14} className="text-[#B8941F]" />
+                        {label}
+                      </motion.span>
+                    </Link>
+                  ))}
+                </div>
+              </motion.div>
+
+              {/* Broken-link escape hatch */}
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.6, duration: 0.5 }}
+                className="mt-8 flex items-center justify-center lg:justify-start gap-2 text-sm text-gray-500"
+              >
+                <MapPin size={15} className="text-[#B8941F] shrink-0" />
+                <span>{t("not_found_still")}</span>
+                <a
+                  href={reportHref}
+                  className="inline-flex items-center gap-1.5 font-semibold text-[#0A2540] underline decoration-[#D4AF37] decoration-2 underline-offset-4 hover:text-[#B8941F] transition-colors"
                 >
-                  <Icon size={14} className="text-[#D4AF37]" />
-                  <span>{label}</span>
-                </motion.div>
-              </Link>
-            ))}
+                  <LifeBuoy size={14} />
+                  {t("not_found_contact")}
+                </a>
+              </motion.div>
+            </div>
+
+            {/* ── Right: professional illustration (unDraw, brand-recolor) ── */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.94 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.25, duration: 0.7, ease: "easeOut" }}
+              className="order-2 relative"
+            >
+              <motion.div
+                animate={{ y: [0, -12, 0] }}
+                transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+                className="relative max-w-md sm:max-w-lg mx-auto"
+              >
+                {/* Soft halo behind the illustration */}
+                <div
+                  aria-hidden="true"
+                  className="absolute inset-x-8 top-10 bottom-10 rounded-full bg-gradient-to-br from-[#D4AF37]/10 via-transparent to-[#0A2540]/10 blur-2xl"
+                />
+                <img
+                  src={notFoundIllustration}
+                  alt={np
+                    ? "सेतो ल्याब कोट लगाएकी एक पशु चिकित्सकले पुनःसेट चिह्नसहितको कागज हेरिरहेकी छिन्"
+                    : "A veterinary professional in a lab coat holding a page, with a refresh badge — let's try again"}
+                  width={656}
+                  height={459}
+                  className="relative w-full h-auto drop-shadow-sm"
+                  decoding="async"
+                />
+              </motion.div>
+              <motion.p
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.8, duration: 0.6 }}
+                className="mt-2 text-center text-xs text-gray-400 tracking-wide"
+              >
+                {np
+                  ? "पाना भेटिएन — तर फेरि प्रयास गर्न सकिन्छ।"
+                  : "Page not found — but every retry is a fresh start."}
+              </motion.p>
+            </motion.div>
           </div>
-        </motion.div>
-      </div>
-
-      {/* Grass strip */}
-      <div className="absolute bottom-0 left-0 right-0 h-20 pointer-events-none overflow-hidden">
-        <svg viewBox="0 0 1440 80" preserveAspectRatio="none" className="w-full h-full">
-          <path
-            d="M0 34 Q90 18 180 34 Q270 50 360 34 Q450 18 540 34 Q630 50 720 34 Q810 18 900 34 Q990 50 1080 34 Q1170 18 1260 34 Q1350 50 1440 34 L1440 80 L0 80 Z"
-            fill="rgba(21,128,61,0.22)"
-          />
-          <path
-            d="M0 46 Q90 30 180 46 Q270 62 360 46 Q450 30 540 46 Q630 62 720 46 Q810 30 900 46 Q990 62 1080 46 Q1170 30 1260 46 Q1350 62 1440 46 L1440 80 L0 80 Z"
-            fill="rgba(21,128,61,0.14)"
-          />
-        </svg>
-      </div>
-
-      {/* Livestock parade */}
-      {parade.map((animal) => (
-        <Animal key={animal.alt} {...animal} />
-      ))}
-    </div>
+        </div>
+      </section>
+    </>
   );
 }

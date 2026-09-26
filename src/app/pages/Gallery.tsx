@@ -140,12 +140,12 @@ export function Gallery() {
   const stats = np ? [
     { icon: Briefcase, number: "४", label: "प्रमुख पदहरू", color: "from-[#D4AF37] to-[#B8941F]" },
     { icon: MapPin, number: "१३+", label: "जिल्ला समेटिएका", color: "from-[#0A2540] to-[#1A3A5C]" },
-    { icon: Calendar, number: "२७+", label: "वर्षको अनुभव", color: "from-[#D4AF37] to-[#B8941F]" },
+    { icon: Calendar, number: "२९+", label: "वर्षको अनुभव", color: "from-[#D4AF37] to-[#B8941F]" },
     { icon: Users, number: "५०,०००+", label: "किसानहरू लाभान्वित", color: "from-[#0A2540] to-[#1A3A5C]" },
   ] : [
     { icon: Briefcase, number: "4", label: "Major Positions", color: "from-[#D4AF37] to-[#B8941F]" },
     { icon: MapPin, number: "13+", label: "Districts Covered", color: "from-[#0A2540] to-[#1A3A5C]" },
-    { icon: Calendar, number: "27+", label: "Years Experience", color: "from-[#D4AF37] to-[#B8941F]" },
+    { icon: Calendar, number: "29+", label: "Years Experience", color: "from-[#D4AF37] to-[#B8941F]" },
     { icon: Users, number: "50K+", label: "Farmers Impacted", color: "from-[#0A2540] to-[#1A3A5C]" },
   ];
 
@@ -197,9 +197,9 @@ export function Gallery() {
     <>
       <SEO
         title="Professional Experience"
-        description="Explore Dr. Mogal Prasad Shah's 27+ years of professional experience in livestock development, from grassroots field work to senior leadership positions in Nepal."
+        description="Explore Dr. Mogal Prasad Shah's 29+ years of professional experience in livestock development, from grassroots field work to senior leadership positions in Nepal."
         keywords="work experience, livestock development career, veterinary career Nepal, agriculture leadership"
-        canonical="https://drmogalshah.com.np/experience"
+        path="/experience"
       />
 
       <div className="pt-20">
@@ -220,7 +220,7 @@ export function Gallery() {
             </h1>
             <div className="w-24 h-1.5 bg-gradient-to-r from-[#D4AF37] to-[#B8941F] mx-auto rounded-full mb-6"></div>
             <p className="text-xl text-gray-300 max-w-3xl mx-auto">
-              {np ? "पशुपालन विकासमा क्षेत्रीय कार्यान्वयनदेखि कार्यकारी नेतृत्वसम्म, २७ वर्षको परिवर्तनकारी कार्यको यात्रा" : "A journey from field-level implementation to executive leadership, spanning 27 years of transformative work in livestock development"}
+              {np ? "पशुपालन विकासमा क्षेत्रीय कार्यान्वयनदेखि कार्यकारी नेतृत्वसम्म, २९ वर्षको परिवर्तनकारी कार्यको यात्रा" : "A journey from field-level implementation to executive leadership, spanning 29 years of transformative work in livestock development"}
             </p>
           </motion.div>
         </section>

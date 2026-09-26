@@ -1,17 +1,28 @@
 import { Link, useLocation } from "react-router";
-import { Menu, X } from "lucide-react";
-import { useState, useEffect, type CSSProperties } from "react";
+import { Menu, X, CalendarCheck, Search, ChevronDown, Calculator, BookOpen, Map } from "lucide-react";
+import { useState, useEffect, useCallback, type CSSProperties } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import drShahIllustration from "@/imports/image-1.png";
+import drShahIllustration from "@/imports/avatar.webp";
 import { useLanguage } from "../context/LanguageContext";
+import { SearchPalette, useSearchPaletteShortcut } from "./SearchPalette";
 
 export function Navigation() {
   const location = useLocation();
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [resourcesOpen, setResourcesOpen] = useState(false);
   const { language, setLanguage, t } = useLanguage();
 
   const isHomePage = location.pathname === "/";
+
+  /* Global ⌘K / Ctrl+K / "/" shortcut for the search palette */
+  useSearchPaletteShortcut(setSearchOpen);
+
+  const openSearch = useCallback(() => {
+    setIsOpen(false); // close the mobile menu if it's open
+    setSearchOpen(true);
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -21,13 +32,41 @@ export function Navigation() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const navItems = [
-    { path: "/", label: t("nav_home") },
-    { path: "/about", label: t("nav_about") },
-    { path: "/services", label: t("nav_expertise") },
-    { path: "/experience", label: t("nav_experience") },
-    { path: "/contact", label: t("nav_contact") },
+  const navItems: { path: string; label: string; labelEn: string }[] = [
+    { path: "/",            label: t("nav_home"),        labelEn: "Home" },
+    { path: "/about",       label: t("nav_about"),       labelEn: "About" },
+    { path: "/services",    label: t("nav_expertise"),   labelEn: "Expertise" },
+    { path: "/experience",  label: t("nav_experience"),  labelEn: "Experience" },
+    { path: "/publications", label: t("nav_publications"), labelEn: "Publications" },
+    { path: "/contact",     label: t("nav_contact"),     labelEn: "Contact" },
   ];
+
+  /* Farmer-resource pages — grouped under one nav entry so the bar never
+     overflows on narrower desktops. Each has an icon + bilingual blurb. */
+  const resourceItems: { path: string; label: string; labelEn: string; icon: typeof Calculator; blurb: string }[] = [
+    {
+      path: "/tools",
+      label: t("nav_tools"),
+      labelEn: "Tools",
+      icon: Calculator,
+      blurb: language === "np" ? "तौल, गर्भावधि, जग्गा, चारा, खुराक क्यालकुलेटर" : "Weight, gestation, land, feed & dosage calculators",
+    },
+    {
+      path: "/knowledge",
+      label: t("nav_knowledge"),
+      labelEn: "Knowledge",
+      icon: BookOpen,
+      blurb: language === "np" ? "कृषि तथा पशुपालन ज्ञान भण्डार" : "Agriculture & livestock knowledge base",
+    },
+    {
+      path: "/agromap",
+      label: t("nav_agromap"),
+      labelEn: "Nepal Map",
+      icon: Map,
+      blurb: language === "np" ? "अन्तरक्रियात्मक कृषि नक्सा — ७ प्रदेश" : "Interactive agriculture map — 7 provinces",
+    },
+  ];
+  const isResourceActive = resourceItems.some((r) => location.pathname === r.path);
 
   const isActive = (path: string) => {
     if (path === "/") {
@@ -88,7 +127,6 @@ export function Navigation() {
             <div className="hidden md:block">
               <div
                 className={`font-display text-xl font-bold transition-colors ${textColorClass === 'light' ? 'text-white' : 'text-[#0A2540]'}`}
-                style={language === "np" ? { fontFamily: "'Khand', 'Noto Sans Devanagari', sans-serif", letterSpacing: "0.04em" } : undefined}
               >
                 {t("nav_name")}
               </div>
@@ -101,7 +139,6 @@ export function Navigation() {
             <div className="block md:hidden">
               <div
                 className={`font-display text-base font-bold transition-colors leading-tight ${textColorClass === 'light' ? 'text-white' : 'text-[#0A2540]'}`}
-                style={language === "np" ? { fontFamily: "'Khand', 'Noto Sans Devanagari', sans-serif", letterSpacing: "0.04em" } : undefined}
               >
                 {language === "np" ? "डा. एम.पी. शाह" : "Dr. M.P. Shah"}
               </div>
@@ -114,14 +151,15 @@ export function Navigation() {
           {/* Desktop Navigation */}
           <div className="hidden lg:flex items-center space-x-1">
             {navItems.map((item) => (
-              <Link key={item.path} to={item.path}>
+              <div key={item.path}>
+                <Link to={item.path}>
                 <motion.div
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  className={`relative px-5 py-2.5 rounded-lg text-sm font-medium transition-all ${
+                  className={`nav-link relative px-4 sm:px-5 py-2.5 rounded-lg text-sm font-medium transition-all ${
                     isActive(item.path)
                       ? textColorClass === 'light'
-                        ? "text-white font-semibold" 
+                        ? "text-white font-semibold"
                         : "text-[#0A2540] font-semibold"
                       : textColorClass === 'light'
                       ? "text-gray-200 hover:text-white"
@@ -134,15 +172,110 @@ export function Navigation() {
                       layoutId="activeNav"
                       className={`absolute inset-0 rounded-lg ${
                         textColorClass === 'light'
-                          ? "bg-white/10 border-2 border-white/20" 
+                          ? "bg-white/10 border-2 border-white/20"
                           : "bg-[#D4AF37]/10 border-2 border-[#D4AF37]/30"
                       }`}
                       transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
                     />
                   )}
                 </motion.div>
-              </Link>
+                </Link>
+              </div>
             ))}
+
+            {/* Resources dropdown — Tools · Knowledge · Nepal Agro-Map */}
+            <div
+              className="relative"
+              onMouseEnter={() => setResourcesOpen(true)}
+              onMouseLeave={() => setResourcesOpen(false)}
+            >
+              <button
+                type="button"
+                onClick={() => setResourcesOpen((v) => !v)}
+                aria-expanded={resourcesOpen}
+                aria-haspopup="menu"
+                className={`nav-link relative flex items-center gap-1.5 px-4 sm:px-5 py-2.5 rounded-lg text-sm font-medium transition-all ${
+                  isResourceActive
+                    ? textColorClass === 'light'
+                      ? "text-white font-semibold"
+                      : "text-[#0A2540] font-semibold"
+                    : textColorClass === 'light'
+                    ? "text-gray-200 hover:text-white"
+                    : "text-gray-700 hover:text-[#0A2540]"
+                }`}
+              >
+                {t("nav_resources")}
+                <motion.span animate={{ rotate: resourcesOpen ? 180 : 0 }} transition={{ duration: 0.2 }}>
+                  <ChevronDown size={14} />
+                </motion.span>
+                {isResourceActive && (
+                  <motion.div
+                    layoutId="activeNav"
+                    className={`absolute inset-0 rounded-lg ${
+                      textColorClass === 'light'
+                        ? "bg-white/10 border-2 border-white/20"
+                        : "bg-[#D4AF37]/10 border-2 border-[#D4AF37]/30"
+                    }`}
+                    transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                  />
+                )}
+              </button>
+              <AnimatePresence>
+                {resourcesOpen && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 8, scale: 0.98 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: 6, scale: 0.98 }}
+                    transition={{ duration: 0.16 }}
+                    role="menu"
+                    className="absolute right-0 top-full mt-2 w-72 bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden z-50 py-2"
+                  >
+                    {resourceItems.map((r) => {
+                      const Icon = r.icon;
+                      const active = location.pathname === r.path;
+                      return (
+                        <Link key={r.path} to={r.path} role="menuitem" onClick={() => setResourcesOpen(false)}>
+                          <div
+                            className={`flex items-start gap-3 px-4 py-3 mx-2 rounded-xl transition-colors ${
+                              active ? "bg-[#D4AF37]/10" : "hover:bg-gray-50"
+                            }`}
+                          >
+                            <span
+                              className={`mt-0.5 w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0 ${
+                                active ? "bg-[#D4AF37]/20 text-[#B8941F]" : "bg-[#0A2540]/[0.06] text-[#0A2540]"
+                              }`}
+                            >
+                              <Icon size={17} />
+                            </span>
+                            <span className="min-w-0">
+                              <span className={`block text-sm font-semibold ${active ? "text-[#B8941F]" : "text-[#0A2540]"}`}>
+                                {r.label}
+                              </span>
+                              <span className="block text-xs text-gray-500 leading-snug mt-0.5">{r.blurb}</span>
+                            </span>
+                          </div>
+                        </Link>
+                      );
+                    })}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+            {/* Site search (⌘K) */}
+            <motion.button
+              whileTap={{ scale: 0.92 }}
+              onClick={openSearch}
+              title="Search (Ctrl+K)"
+              aria-label="Search the site"
+              className={`ml-2 flex items-center justify-center w-10 h-10 rounded-lg border transition-all ${
+                textColorClass === "light"
+                  ? "border-white/25 text-white/70 hover:text-white hover:border-white/50"
+                  : "border-gray-300 text-gray-500 hover:text-[#0A2540] hover:border-[#D4AF37]"
+              }`}
+            >
+              <Search size={17} />
+            </motion.button>
+
             {/* Language switcher */}
             <motion.button
               whileTap={{ scale: 0.95 }}
@@ -158,16 +291,29 @@ export function Navigation() {
               </span>
             </motion.button>
 
-            <Link to="/contact">
+            <Link to="/booking">
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className="ml-2 px-6 py-2.5 bg-gradient-to-r from-[#D4AF37] to-[#B8941F] text-[#0A2540] rounded-lg text-sm font-semibold shadow-lg hover:shadow-xl transition-all"
+                className="ml-2 flex items-center px-5 sm:px-6 py-2.5 bg-gradient-to-r from-[#D4AF37] to-[#B8941F] text-[#0A2540] rounded-lg text-sm font-semibold shadow-lg hover:shadow-xl transition-all"
               >
-                {t("nav_cta")}
+                <CalendarCheck className="mr-1.5" size={15} />
+                {t("nav_booking")}
               </motion.button>
             </Link>
           </div>
+
+          {/* Mobile Search Button */}
+          <motion.button
+            whileTap={{ scale: 0.9 }}
+            onClick={openSearch}
+            aria-label="Search the site"
+            className={`lg:hidden p-2 mr-1 rounded-lg ${
+              textColorClass === 'light' ? "text-white" : "text-gray-900"
+            }`}
+          >
+            <Search size={24} />
+          </motion.button>
 
           {/* Mobile Menu Button */}
           <motion.button
@@ -210,16 +356,27 @@ export function Navigation() {
                   </div>
                   <div>
                     <div className="text-sm font-bold text-[#0A2540]">
-                      Dr. Mogal Prasad Shah
+                      {language === "np" ? "डा. मोगल प्रसाद शाह" : "Dr. Mogal Prasad Shah"}
                     </div>
                     <div className="text-xs text-[#D4AF37] font-medium">
-                      Livestock Development Expert
+                      {language === "np" ? "पशुपालन विकास विशेषज्ञ" : "Livestock Development Expert"}
                     </div>
                   </div>
                 </div>
               </motion.div>
 
               <div className="py-4 space-y-1 px-2">
+                {/* Search trigger — opens the ⌘K palette */}
+                <motion.button
+                  initial={{ x: -50, opacity: 0 }}
+                  animate={{ x: 0, opacity: 1 }}
+                  transition={{ delay: 0.12 }}
+                  onClick={openSearch}
+                  className="w-full flex items-center gap-3 px-4 py-3 mb-2 rounded-lg border border-gray-200 bg-gray-50 text-gray-500 hover:border-[#D4AF37]/60 hover:text-[#0A2540] transition-all"
+                >
+                  <Search size={17} className="text-[#B8941F]" />
+                  <span className="text-sm">{t("not_found_search_ph")}</span>
+                </motion.button>
                 {navItems.map((item, index) => (
                   <motion.div
                     key={item.path}
@@ -237,7 +394,7 @@ export function Navigation() {
                       }`}
                     >
                       <div className="flex items-center justify-between">
-                        <span>{item.label}</span>
+                        <span className="leading-relaxed">{item.label}</span>
                         {isActive(item.path) && (
                           <motion.div
                             initial={{ scale: 0 }}
@@ -246,9 +403,59 @@ export function Navigation() {
                           />
                         )}
                       </div>
+                      {/* Roman subtitle — bilingual wayfinding under Devanagari labels */}
+                      {language === "np" && (
+                        <span className="block mt-0.5 text-[11px] font-normal text-gray-400 leading-tight">
+                          {item.labelEn}
+                        </span>
+                      )}
                     </Link>
                   </motion.div>
                 ))}
+
+                {/* Farmer resources — Tools · Knowledge · Nepal Agro-Map */}
+                <motion.div
+                  initial={{ x: -50, opacity: 0 }}
+                  animate={{ x: 0, opacity: 1 }}
+                  transition={{ delay: navItems.length * 0.08 + 0.15 }}
+                  className="px-4 pt-4 pb-2"
+                >
+                  <p className="text-[10px] uppercase tracking-[0.22em] font-bold text-[#B8941F]">
+                    {t("nav_resources")}
+                  </p>
+                </motion.div>
+                {resourceItems.map((r, index) => {
+                  const Icon = r.icon;
+                  const active = location.pathname === r.path;
+                  return (
+                    <motion.div
+                      key={r.path}
+                      initial={{ x: -50, opacity: 0 }}
+                      animate={{ x: 0, opacity: 1 }}
+                      transition={{ delay: navItems.length * 0.08 + 0.2 + index * 0.06 }}
+                    >
+                      <Link
+                        to={r.path}
+                        onClick={() => setIsOpen(false)}
+                        className={`flex items-center gap-3 px-4 py-3 rounded-lg text-base font-medium transition-all ${
+                          active
+                            ? "bg-gradient-to-r from-[#D4AF37]/15 to-[#D4AF37]/5 text-[#0A2540] font-semibold border-l-4 border-[#D4AF37]"
+                            : "text-gray-700 hover:bg-gray-50 hover:pl-5"
+                        }`}
+                      >
+                        <span className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${active ? "bg-[#D4AF37]/20 text-[#B8941F]" : "bg-[#0A2540]/[0.06] text-[#0A2540]"}`}>
+                          <Icon size={16} />
+                        </span>
+                        <span className="min-w-0">
+                          <span className="block leading-relaxed">{r.label}</span>
+                          <span className="block mt-0.5 text-[11px] font-normal text-gray-400 leading-tight truncate">
+                            {r.blurb}
+                          </span>
+                        </span>
+                      </Link>
+                    </motion.div>
+                  );
+                })}
                 
                 {/* Mobile Language Switcher */}
                 <motion.div
@@ -261,25 +468,26 @@ export function Navigation() {
                     onClick={() => setLanguage(language === "en" ? "np" : "en")}
                     className="w-full flex items-center justify-center gap-0 rounded-lg border border-[#D4AF37]/40 overflow-hidden text-sm font-semibold"
                   >
-                    <span className={`flex-1 py-3 transition-colors ${language === "en" ? "bg-[#D4AF37] text-[#0A2540]" : "text-gray-500"}`}>
+                    <span className={`font-deva flex-1 py-3 transition-colors ${language === "en" ? "bg-[#D4AF37] text-[#0A2540]" : "text-gray-500"}`}>
                       English
                     </span>
-                    <span className={`flex-1 py-3 transition-colors ${language === "np" ? "bg-[#D4AF37] text-[#0A2540]" : "text-gray-500"}`}>
+                    <span className={`font-deva flex-1 py-3 transition-colors ${language === "np" ? "bg-[#D4AF37] text-[#0A2540]" : "text-gray-500"}`}>
                       नेपाली
                     </span>
                   </button>
                 </motion.div>
 
-                {/* Mobile CTA Button */}
+                {/* Mobile CTA Button — the booking wizard */}
                 <motion.div
                   initial={{ x: -50, opacity: 0 }}
                   animate={{ x: 0, opacity: 1 }}
                   transition={{ delay: navItems.length * 0.08 + 0.2 }}
                   className="pt-2"
                 >
-                  <Link to="/contact" onClick={() => setIsOpen(false)}>
+                  <Link to="/booking" onClick={() => setIsOpen(false)}>
                     <button className="w-full px-4 py-3.5 bg-gradient-to-r from-[#D4AF37] to-[#B8941F] text-[#0A2540] rounded-lg text-base font-semibold shadow-lg hover:shadow-xl transition-all flex items-center justify-center space-x-2">
-                      <span>{t("nav_cta")}</span>
+                      <CalendarCheck size={17} />
+                      <span>{language === "np" ? "परामर्श बुक गर्नुहोस्" : "Book a Consultation"}</span>
                       <motion.svg
                         animate={{ x: [0, 5, 0] }}
                         transition={{ repeat: Infinity, duration: 1.5 }}
@@ -298,6 +506,9 @@ export function Navigation() {
           )}
         </AnimatePresence>
       </div>
+
+      {/* Global ⌘K search palette — available on every page */}
+      <SearchPalette open={searchOpen} onClose={() => setSearchOpen(false)} />
     </motion.nav>
   );
 }

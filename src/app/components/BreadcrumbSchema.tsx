@@ -1,3 +1,5 @@
+import { siteConfig } from "../config/site";
+
 interface BreadcrumbItem {
   name: string;
   url: string;
@@ -8,7 +10,7 @@ interface BreadcrumbSchemaProps {
 }
 
 export function BreadcrumbSchema({ items }: BreadcrumbSchemaProps) {
-  const baseUrl = "https://drmogalshah.com.np";
+  const baseUrl = siteConfig.url;
   
   const breadcrumbSchema = {
     "@context": "https://schema.org",

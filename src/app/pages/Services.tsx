@@ -4,6 +4,12 @@ import { ImageWithFallback } from "../components/figma/ImageWithFallback";
 import { SEO } from "../components/SEO";
 import { motion } from "motion/react";
 import { useLanguage } from "../context/LanguageContext";
+import imgHusbandry from "@/imports/img-husbandry.webp";
+import imgCattle from "@/imports/img-cattle.webp";
+import imgCrops from "@/imports/img-crops.webp";
+import imgClimate from "@/imports/img-climate.webp";
+import imgCommunity from "@/imports/img-community.webp";
+import imgProfessional from "@/imports/img-professional.webp";
 import { Link } from "react-router";
 import { Button } from "../components/ui/button";
 
@@ -15,7 +21,7 @@ export function Services() {
       icon: Sprout,
       title: "Livestock Development & Production",
       description: "Comprehensive livestock and poultry development programs focused on productivity enhancement and sustainable practices",
-      image: "https://images.unsplash.com/photo-1761284724050-3541146cd0b5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxsaXZlc3RvY2slMjBhbmltYWwlMjBodXNiYW5kcnklMjBmYXJtaW5nfGVufDF8fHx8MTc3MjM3ODUwMnww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
+      image: imgHusbandry,
       capabilities: [
         "Dairy and meat value chain development",
         "Poultry production systems",
@@ -27,7 +33,7 @@ export function Services() {
       icon: Shield,
       title: "Animal Health & Disease Management",
       description: "Expert leadership in infectious and zoonotic disease control, veterinary services, and animal health policy formulation",
-      image: "https://images.unsplash.com/photo-1771962152057-4c3015841488?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxsaXZlc3RvY2slMjBjYXR0bGUlMjBkYWlyeSUyMGZhcm1pbmd8ZW58MXx8fHwxNzcyMzc4MDc0fDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
+      image: imgCattle,
       capabilities: [
         "Disease surveillance and control",
         "Vaccination and immunization programs",
@@ -39,7 +45,7 @@ export function Services() {
       icon: DollarSign,
       title: "Food Security & Nutrition",
       description: "Strategic initiatives for food systems strengthening, nutrition security, and poverty alleviation through agricultural innovation",
-      image: "https://images.unsplash.com/photo-1759174469221-71382a2b5bce?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxmb29kJTIwc2VjdXJpdHklMjBhZ3JpY3VsdHVyZSUyMGNyb3BzfGVufDF8fHx8MTc3MjM3ODUwM3ww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
+      image: imgCrops,
       capabilities: [
         "Food system transformation",
         "Self-sufficiency in milk, meat, and eggs",
@@ -51,7 +57,7 @@ export function Services() {
       icon: Leaf,
       title: "Climate-Resilient Agriculture",
       description: "Developing and implementing climate-smart livestock systems that enhance resilience and adaptation in vulnerable communities",
-      image: "https://images.unsplash.com/photo-1760992004202-7df4128f7ac1?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjbGltYXRlJTIwY2hhbmdlJTIwc3VzdGFpbmFibGUlMjBhZ3JpY3VsdHVyZXxlbnwxfHx8fDE3NzIzNzg1MDN8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
+      image: imgClimate,
       capabilities: [
         "Climate adaptation strategies",
         "Sustainable grazing management",
@@ -63,7 +69,7 @@ export function Services() {
       icon: HeartHandshake,
       title: "Rural Livelihood Enhancement",
       description: "Community-centered programs for poverty reduction, entrepreneurship development, and economic empowerment",
-      image: "https://images.unsplash.com/photo-1768595701593-c84fd8143aea?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxydXJhbCUyMGRldmVsb3BtZW50JTIwY29tbXVuaXR5JTIwZW1wb3dlcm1lbnR8ZW58MXx8fHwxNzcyMzc4NTAzfDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
+      image: imgCommunity,
       capabilities: [
         "Farmer group formation and capacity building",
         "Commercial farm development",
@@ -75,7 +81,7 @@ export function Services() {
       icon: BarChart3,
       title: "Project Management & M&E",
       description: "Expertise in designing, implementing, and evaluating large-scale development projects funded by international donors",
-      image: "https://images.unsplash.com/photo-1635183067334-c0dbdac46c73?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxhZ3JpY3VsdHVyZSUyMGxpdmVzdG9jayUyMGRldmVsb3BtZW50JTIwcHJvZmVzc2lvbmFsfGVufDF8fHx8MTc3MjM3ODA3Mnww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
+      image: imgProfessional,
       capabilities: [
         "World Bank project management",
         "Program design and implementation",
@@ -90,7 +96,7 @@ export function Services() {
       icon: Sprout,
       title: "पशुपालन विकास र उत्पादन",
       description: "उत्पादकता वृद्धि र दिगो अभ्यासमा केन्द्रित व्यापक पशुपालन र कुखुरापालन विकास कार्यक्रमहरू",
-      image: "https://images.unsplash.com/photo-1761284724050-3541146cd0b5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxsaXZlc3RvY2slMjBhbmltYWwlMjBodXNiYW5kcnklMjBmYXJtaW5nfGVufDF8fHx8MTc3MjM3ODUwMnww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
+      image: imgHusbandry,
       capabilities: [
         "डेरी र मासु मूल्य श्रृङ्खला विकास",
         "कुखुरापालन उत्पादन प्रणाली",
@@ -102,7 +108,7 @@ export function Services() {
       icon: Shield,
       title: "पशु स्वास्थ्य र रोग व्यवस्थापन",
       description: "संक्रामक र जुनोटिक रोग नियन्त्रण, पशुचिकित्सा सेवाहरू र पशु स्वास्थ्य नीति निर्माणमा विशेषज्ञ नेतृत्व",
-      image: "https://images.unsplash.com/photo-1771962152057-4c3015841488?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxsaXZlc3RvY2slMjBjYXR0bGUlMjBkYWlyeSUyMGZhcm1pbmd8ZW58MXx8fHwxNzcyMzc4MDc0fDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
+      image: imgCattle,
       capabilities: [
         "रोग निगरानी र नियन्त्रण",
         "खोप र प्रतिरक्षण कार्यक्रमहरू",
@@ -114,7 +120,7 @@ export function Services() {
       icon: DollarSign,
       title: "खाद्य सुरक्षा र पोषण",
       description: "खाद्य प्रणाली सुदृढीकरण, पोषण सुरक्षा र कृषि नवाचारमार्फत गरिबी न्यूनीकरणका रणनीतिक पहलहरू",
-      image: "https://images.unsplash.com/photo-1759174469221-71382a2b5bce?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxmb29kJTIwc2VjdXJpdHklMjBhZ3JpY3VsdHVyZSUyMGNyb3BzfGVufDF8fHx8MTc3MjM3ODUwM3ww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
+      image: imgCrops,
       capabilities: [
         "खाद्य प्रणाली परिवर्तन",
         "दूध, मासु र अण्डामा आत्मनिर्भरता",
@@ -126,7 +132,7 @@ export function Services() {
       icon: Leaf,
       title: "जलवायु-अनुकूलित कृषि",
       description: "कमजोर समुदायहरूमा लचकता र अनुकूलन बढाउने जलवायु-स्मार्ट पशुपालन प्रणालीहरूको विकास र कार्यान्वयन",
-      image: "https://images.unsplash.com/photo-1760992004202-7df4128f7ac1?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjbGltYXRlJTIwY2hhbmdlJTIwc3VzdGFpbmFibGUlMjBhZ3JpY3VsdHVyZXxlbnwxfHx8fDE3NzIzNzg1MDN8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
+      image: imgClimate,
       capabilities: [
         "जलवायु अनुकूलन रणनीतिहरू",
         "दिगो चरन व्यवस्थापन",
@@ -138,7 +144,7 @@ export function Services() {
       icon: HeartHandshake,
       title: "ग्रामीण जीविकोपार्जन सुधार",
       description: "गरिबी न्यूनीकरण, उद्यमशीलता विकास र आर्थिक सशक्तीकरणका समुदायकेन्द्रित कार्यक्रमहरू",
-      image: "https://images.unsplash.com/photo-1768595701593-c84fd8143aea?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxydXJhbCUyMGRldmVsb3BtZW50JTIwY29tbXVuaXR5JTIwZW1wb3dlcm1lbnR8ZW58MXx8fHwxNzcyMzc4NTAzfDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
+      image: imgCommunity,
       capabilities: [
         "किसान समूह गठन र क्षमता निर्माण",
         "व्यावसायिक खेत विकास",
@@ -150,7 +156,7 @@ export function Services() {
       icon: BarChart3,
       title: "परियोजना व्यवस्थापन र M&E",
       description: "अन्तर्राष्ट्रिय दाताहरूद्वारा वित्तपोषित ठूला विकास परियोजनाहरूको डिजाइन, कार्यान्वयन र मूल्यांकनमा विशेषज्ञता",
-      image: "https://images.unsplash.com/photo-1635183067334-c0dbdac46c73?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxhZ3JpY3VsdHVyZSUyMGxpdmVzdG9jayUyMGRldmVsb3BtZW50JTIwcHJvZmVzc2lvbmFsfGVufDF8fHx8MTc3MjM3ODA3Mnww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
+      image: imgProfessional,
       capabilities: [
         "विश्व बैंक परियोजना व्यवस्थापन",
         "कार्यक्रम डिजाइन र कार्यान्वयन",
@@ -216,7 +222,7 @@ export function Services() {
         title="Expertise & Services"
         description="Comprehensive livestock development, food security, climate-resilient agriculture, and rural livelihood services. Expert consulting and project management for sustainable development."
         keywords="livestock development services, animal health consulting, food security programs, climate agriculture, rural development expertise"
-        canonical="https://drmogalshah.com.np/services"
+        path="/services"
       />
 
       <div className="pt-20">
@@ -280,6 +286,8 @@ export function Services() {
                         <ImageWithFallback
                           src={area.image}
                           alt={area.title}
+                          loading="lazy"
+                          decoding="async"
                           className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-[#0A2540]/60 to-transparent"></div>

@@ -1,12 +1,14 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-  <!-- Navy background with rounded corners -->
-  <rect width="64" height="64" rx="12" fill="#0A2540"/>
-  <!-- Gold top accent bar -->
-  <rect x="12" y="10" width="40" height="3" rx="1.5" fill="#D4AF37"/>
-  <!-- Stylized "S" monogram -->
-  <text x="32" y="46" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="32" font-weight="700" fill="#D4AF37">S</text>
-  <!-- Gold bottom accent dots -->
-  <circle cx="22" cy="55" r="2" fill="#D4AF37" opacity="0.6"/>
-  <circle cx="32" cy="55" r="2" fill="#D4AF37"/>
-  <circle cx="42" cy="55" r="2" fill="#D4AF37" opacity="0.6"/>
+  <!-- Veterinary paw mark — Dr. Mogal Prasad Shah -->
+  <!-- Navy rounded square -->
+  <rect width="64" height="64" rx="14" fill="#0A2540"/>
+  <!-- subtle inner border -->
+  <rect x="2.5" y="2.5" width="59" height="59" rx="12" fill="none" stroke="#D4AF37" stroke-opacity="0.35" stroke-width="1.5"/>
+  <!-- main pad -->
+  <path d="M32 30.5c5.2 0 9.6 3.1 11.3 7.3 1.9 4.6.4 10-3.8 12.6-2.3 1.4-4.9 1.6-7.5 1.6s-5.2-.2-7.5-1.6c-4.2-2.6-5.7-8-3.8-12.6 1.7-4.2 6.1-7.3 11.3-7.3z" fill="#D4AF37"/>
+  <!-- toe pads (left to right) -->
+  <ellipse cx="17.6" cy="27.2" rx="4.6" ry="5.6" transform="rotate(-22 17.6 27.2)" fill="#D4AF37"/>
+  <ellipse cx="25.6" cy="21.6" rx="5" ry="6.2" transform="rotate(-9 25.6 21.6)" fill="#D4AF37"/>
+  <ellipse cx="38.4" cy="21.6" rx="5" ry="6.2" transform="rotate(9 38.4 21.6)" fill="#D4AF37"/>
+  <ellipse cx="46.4" cy="27.2" rx="4.6" ry="5.6" transform="rotate(22 46.4 27.2)" fill="#D4AF37"/>
 </svg>

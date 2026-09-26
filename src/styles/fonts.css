@@ -1,13 +1,48 @@
-/* English display font */
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+/*
+ * Font binaries are SELF-HOSTED from public/fonts/fonts.css (linked in
+ * index.html with preloads for the two critical Latin faces). No Google
+ * Fonts CDN request is made at runtime — deterministic rendering even on
+ * intermittent connections.
+ *
+ * Bilingual typography system — serif display + clean sans body in BOTH languages:
+ *   EN: Playfair Display (display) · Plus Jakarta Sans (body)
+ *   NP: Noto Serif Devanagari (display) · Mukta (body)
+ *
+ * Noto Serif Devanagari mirrors Playfair Display's high-contrast elegance
+ * for headings; Mukta is a highly legible Devanagari sans whose Latin
+ * companion glyphs blend naturally with Plus Jakarta Sans.
+ *
+ * The hero name follows each language's own display voice:
+ *   EN — Playfair Display bold (the site's signature display serif)
+ *   NP — Noto Serif Devanagari bold (elegant serif for Devanagari)
+ *
+ * NOTE: no letter-spacing on Devanagari — tracking breaks the visual bond
+ * between matras and conjuncts. Both families ship with correct sidebearings.
+ */
 
-/* Nepali heading font — force Devanagari subset via v1 API so it loads upfront */
-@import url('https://fonts.googleapis.com/css?family=Khand:400,600,700&subset=devanagari,latin&display=swap');
+/* ── English display utility ────────────────────────────────────────────────
+   Makes the `font-display` class work on non-heading elements (nav logo,
+   card titles) — headings already get Playfair via theme.css base layer. */
+.font-display {
+  font-family: 'Playfair Display', serif;
+}
 
-/* Nepali body copy */
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap');
+/* ── Hero name ──────────────────────────────────────────────────────────────
+   EN: Playfair Display bold — the site's signature display serif.
+   NP: Noto Serif Devanagari (serif display, mirrors Playfair's elegance)
+       — Devanagari ONLY (user preference). */
+.hero-name {
+  font-family: 'Playfair Display', serif;
+  font-weight: 700;
+}
 
-/* Nepali mode: Khand for headings/display, Noto Sans Devanagari for body */
+.lang-np .hero-name {
+  font-family: 'Noto Serif Devanagari', 'Mukta', serif;
+  font-weight: 700; /* variable font covers 400-800 */
+  line-height: 1.3; /* matra clearance at display sizes */
+}
+
+/* ── Nepali mode: display / headings ─────────────────────────────────────── */
 .lang-np h1,
 .lang-np h2,
 .lang-np h3,
@@ -15,11 +50,19 @@
 .lang-np h5,
 .lang-np h6,
 .lang-np .font-display {
-  font-family: 'Khand', 'Noto Sans Devanagari', sans-serif;
+  font-family: 'Noto Serif Devanagari', 'Mukta', serif;
   font-weight: 700;
-  letter-spacing: 0.04em;
+  letter-spacing: normal; /* neutralizes any Tailwind tracking-* utilities */
 }
 
+/* Devanagari stacked vowel signs (ै ौ ि ी) need slightly more leading
+   than Latin display type — prevents clipping at tight line-heights. */
+.lang-np h1,
+.lang-np h2 {
+  line-height: 1.3;
+}
+
+/* ── Nepali mode: body / UI text ─────────────────────────────────────────── */
 .lang-np,
 .lang-np button,
 .lang-np a,
@@ -29,5 +72,27 @@
 .lang-np label,
 .lang-np input,
 .lang-np textarea {
-  font-family: 'Noto Sans Devanagari', 'Plus Jakarta Sans', sans-serif;
+  font-family: 'Mukta', 'Plus Jakarta Sans', sans-serif;
+}
+
+/* ── Nepali mode: navigation links ──────────────────────────────────────────
+   Devanagari menu labels need a touch more size, weight and vertical
+   leading than Latin labels — stacked matras (ि ी ै ौ) otherwise clip
+   inside the pill/active borders and read visually "loose". */
+.lang-np .nav-link {
+  font-family: 'Mukta', 'Plus Jakarta Sans', sans-serif;
+  font-weight: 600;
+  font-size: 0.95rem; /* 15px — x-height parity with 14px Latin labels */
+  line-height: 1.6;   /* matra clearance inside rounded pill backgrounds */
+  letter-spacing: normal;
+  padding-top: 0.4rem;
+  padding-bottom: 0.4rem;
+}
+
+/* Language switcher — "नेपाली" renders in Mukta whenever it is on screen,
+   including EN mode (Google Fonts only ships the Devanagari subset when
+   those glyphs are actually used). */
+.font-deva {
+  font-family: 'Mukta', 'Noto Sans Devanagari', sans-serif;
+  letter-spacing: normal;
 }

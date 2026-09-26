@@ -1,13 +1,16 @@
-import { Mail, Phone, MapPin, Linkedin, Facebook } from "lucide-react";
+import { Mail, Phone, MapPin, Linkedin, Facebook, MessageCircle } from "lucide-react";
 import { motion } from "motion/react";
 import { Link } from "react-router";
-import drShahIllustration from "@/imports/image-1.png";
+import drShahIllustration from "@/imports/avatar.webp";
 import { useLanguage } from "../context/LanguageContext";
+import { siteConfig, telLink, whatsappLink, whatsappHandle } from "../config/site";
 
 export function Footer() {
   const currentYear = new Date().getFullYear();
   const { language } = useLanguage();
   const np = language === "np";
+  const phone = telLink();
+  const wa = whatsappLink();
 
   return (
     <footer className="relative bg-[#0A2540] text-white overflow-hidden">
@@ -41,7 +44,7 @@ export function Footer() {
               </div>
             </div>
             <p className="text-sm text-gray-300 leading-relaxed">
-              {np ? "पशु चिकित्सा विज्ञान, पशुपालन विकास र ग्रामीण कृषि नवाचारमा २७+ वर्षको उत्कृष्टता।" : "27+ years of excellence in veterinary sciences, livestock development, and rural agricultural innovation."}
+              {np ? "पशु चिकित्सा विज्ञान, पशुपालन विकास र ग्रामीण कृषि नवाचारमा २९+ वर्षको उत्कृष्टता।" : "29+ years of excellence in veterinary sciences, livestock development, and rural agricultural innovation."}
             </p>
           </motion.div>
 
@@ -60,12 +63,20 @@ export function Footer() {
                 { label: "परिचय", path: "/about" },
                 { label: "विशेषज्ञता", path: "/services" },
                 { label: "अनुभव", path: "/experience" },
+                { label: "प्रकाशनहरू", path: "/publications" },
+                { label: "कृषि औजारहरू", path: "/tools" },
+                { label: "ज्ञान भण्डार", path: "/knowledge" },
+                { label: "नेपाल कृषि नक्सा", path: "/agromap" },
                 { label: "सम्पर्क", path: "/contact" },
               ] : [
                 { label: "Home", path: "/" },
                 { label: "About", path: "/about" },
                 { label: "Expertise", path: "/services" },
                 { label: "Experience", path: "/experience" },
+                { label: "Publications", path: "/publications" },
+                { label: "Farm Tools", path: "/tools" },
+                { label: "Knowledge Base", path: "/knowledge" },
+                { label: "Nepal Agri-Map", path: "/agromap" },
                 { label: "Contact", path: "/contact" },
               ]).map((link) => (
                 <li key={link.path}>
@@ -91,16 +102,34 @@ export function Footer() {
           >
             <h4 className="font-display text-base sm:text-lg font-bold mb-5">{np ? "सम्पर्क" : "Contact"}</h4>
             <ul className="space-y-4 text-sm">
-              <li className="flex items-start space-x-3 justify-center sm:justify-start">
-                <Phone size={15} className="mt-0.5 text-[#D4AF37] flex-shrink-0" />
-                <a href="tel:+977XXXXXXXXX" className="text-gray-300 hover:text-[#D4AF37] transition-colors">
-                  +977 XXX-XXXX-XXX
-                </a>
-              </li>
+              {phone ? (
+                <li className="flex items-start space-x-3 justify-center sm:justify-start">
+                  <Phone size={15} className="mt-0.5 text-[#D4AF37] flex-shrink-0" />
+                  <a href={phone} className="text-gray-300 hover:text-[#D4AF37] transition-colors">
+                    {siteConfig.phone}
+                  </a>
+                </li>
+              ) : null}
+              {wa ? (
+                <li className="flex items-start space-x-3 justify-center sm:justify-start">
+                  <MessageCircle size={15} className="mt-0.5 text-[#25D366] flex-shrink-0" />
+                  <a
+                    href={wa}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-gray-300 hover:text-[#25D366] transition-colors"
+                  >
+                    {np ? "WhatsApp मा सन्देश पठाउनुहोस्" : "Message on WhatsApp"}
+                    {whatsappHandle()?.startsWith("@") && (
+                      <span className="ml-1.5 font-mono text-xs text-gray-400">{whatsappHandle()}</span>
+                    )}
+                  </a>
+                </li>
+              ) : null}
               <li className="flex items-start space-x-3 justify-center sm:justify-start">
                 <Mail size={15} className="mt-0.5 text-[#D4AF37] flex-shrink-0" />
-                <a href="mailto:info@drmogalshah.com.np" className="text-gray-300 hover:text-[#D4AF37] transition-colors break-all">
-                  info@drmogalshah.com.np
+                <a href={`mailto:${siteConfig.email}`} className="text-gray-300 hover:text-[#D4AF37] transition-colors break-all">
+                  {siteConfig.email}
                 </a>
               </li>
               <li className="flex items-start space-x-3 justify-center sm:justify-start">
@@ -124,12 +153,12 @@ export function Footer() {
                 "एम.एस्सी. पशु पोषण",
                 "स्नातकोत्तर डिप्लोमा (नेदरल्याण्ड्स)",
                 "पूर्व निर्देशक, DLFD",
-                "२७+ वर्षको अनुभव",
+                "२९+ वर्षको अनुभव",
               ] : [
                 "M.Sc. Animal Nutrition",
                 "PG Diploma (Netherlands)",
                 "Former Director, DLFD",
-                "27+ Years Experience",
+                "29+ Years Experience",
               ]).map((cred) => (
                 <li key={cred} className="flex items-center space-x-2 justify-center sm:justify-start">
                   <span className="text-[#D4AF37] text-xs">✓</span>
@@ -138,7 +167,7 @@ export function Footer() {
               ))}</ul>
             <div className="flex space-x-3 mt-5 justify-center sm:justify-start">
               <a
-                href="https://www.linkedin.com/in/dr-mogal-prasad-shah/"
+                href={siteConfig.linkedin}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-10 h-10 bg-white/10 hover:bg-[#D4AF37] rounded-lg flex items-center justify-center transition-colors"
@@ -147,7 +176,7 @@ export function Footer() {
                 <Linkedin size={18} />
               </a>
               <a
-                href="https://www.facebook.com/mpsah"
+                href={siteConfig.facebook}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-10 h-10 bg-white/10 hover:bg-[#D4AF37] rounded-lg flex items-center justify-center transition-colors"
@@ -156,7 +185,7 @@ export function Footer() {
                 <Facebook size={18} />
               </a>
               <a
-                href="mailto:info@drmogalshah.com.np"
+                href={`mailto:${siteConfig.email}`}
                 className="w-10 h-10 bg-white/10 hover:bg-[#D4AF37] rounded-lg flex items-center justify-center transition-colors"
                 aria-label="Email"
               >
@@ -179,12 +208,12 @@ export function Footer() {
               <span className="text-red-500 animate-pulse">❤️</span>
               <span className="text-gray-400">by</span>
               <a
-                href="https://www.amreshshah.com.np"
+                href={siteConfig.developer.url}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-[#D4AF37] hover:text-[#E5C158] font-semibold transition-colors hover:underline"
               >
-                Amresh Shah
+                {siteConfig.developer.name}
               </a>
             </div>
           </div>

@@ -1,0 +1,91 @@
+/*
+ * 404 landscape scene animations — imported by NotFound.tsx so these rules
+ * are code-split with the lazy 404 chunk and never ship to other pages.
+ *
+ * All animations are transform/opacity only (GPU-composited, no layout
+ * thrash) and respect reduced-motion preferences.
+ */
+
+@keyframes nf-drift {
+  0%, 100% { transform: translateX(0); }
+  50%      { transform: translateX(-12px); }
+}
+
+@keyframes nf-drift-far {
+  0%, 100% { transform: translateX(0); }
+  50%      { transform: translateX(-18px); }
+}
+
+@keyframes nf-breathe {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-6px); }
+}
+
+@keyframes nf-cloud {
+  0%   { transform: translateX(0); opacity: 0.55; }
+  50%  { transform: translateX(24px); opacity: 0.8; }
+  100% { transform: translateX(0); opacity: 0.55; }
+}
+
+@keyframes nf-sun-ring {
+  0%, 100% { transform: scale(1); opacity: 0.5; }
+  50%      { transform: scale(1.12); opacity: 0.9; }
+}
+
+@keyframes nf-bob {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-3px); }
+}
+
+@keyframes nf-fly {
+  0%   { transform: translate(0, 0); }
+  50%  { transform: translate(26px, -10px); }
+  100% { transform: translate(0, 0); }
+}
+
+/* Sun — gentle bob with a breathing halo ring */
+.nf-sun {
+  animation: nf-breathe 9s ease-in-out infinite;
+  transform-origin: 1150px 88px;
+}
+.nf-sun circle:nth-child(2) {
+  animation: nf-sun-ring 5s ease-in-out infinite;
+  transform-origin: 1150px 88px;
+}
+.nf-sun circle:nth-child(3) {
+  animation: nf-sun-ring 7s ease-in-out infinite reverse;
+  transform-origin: 1150px 88px;
+}
+
+/* Clouds */
+.nf-cloud-a { animation: nf-cloud 26s ease-in-out infinite; }
+.nf-cloud-b { animation: nf-cloud 34s ease-in-out infinite reverse; }
+
+/* Ridge parallax — far moves slowest and furthest, near barely moves */
+.nf-ridge-far { animation: nf-drift-far 42s ease-in-out infinite; }
+.nf-ridge-mid { animation: nf-drift 30s ease-in-out infinite; }
+.nf-ridge-near,
+.nf-base { animation: nf-drift 22s ease-in-out infinite; }
+
+/* Livestock — grazing micro-motion */
+.nf-cow  { animation: nf-bob 6s ease-in-out infinite; }
+.nf-goat { animation: nf-bob 5s ease-in-out infinite 0.8s; }
+
+/* Birds */
+.nf-birds { animation: nf-fly 14s ease-in-out infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  .nf-sun,
+  .nf-sun circle,
+  .nf-cloud-a,
+  .nf-cloud-b,
+  .nf-ridge-far,
+  .nf-ridge-mid,
+  .nf-ridge-near,
+  .nf-base,
+  .nf-cow,
+  .nf-goat,
+  .nf-birds {
+    animation: none !important;
+  }
+}
