@@ -1,0 +1,31 @@
+{
+  "name": "Dr. Mogal Prasad Shah — Livestock Development Expert",
+  "short_name": "Dr. Mogal Shah",
+  "description": "Official portfolio and consulting services of Dr. Mogal Prasad Shah, livestock development expert with 29+ years of experience in Nepal. Bilingual English–Nepali.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0A2540",
+  "theme_color": "#0A2540",
+  "lang": "en",
+  "dir": "ltr",
+  "categories": ["education", "business", "productivity"],
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/favicon.png",
+      "sizes": "64x64",
+      "type": "image/png"
+    },
+    {
+      "src": "/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+# Robots.txt for Dr. Mogal Prasad Shah Portfolio
+# https://www.drmogalshah.com.np
+
+User-agent: *
+Allow: /
+
+# Sitemap location (matches the served www canonical domain)
+Sitemap: https://www.drmogalshah.com.np/sitemap.xml
