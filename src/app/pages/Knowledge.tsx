@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from "motion/react";
 import {
   BookOpen, Search, ChevronLeft, ChevronRight, Clock, Info,
   Stethoscope, Milk, Mountain, Bird, Wheat, Leaf, ThermometerSun, ClipboardList,
-  Lightbulb, AlertTriangle, BookMarked, CalendarDays,
+  Lightbulb, AlertTriangle, BookMarked, CalendarDays, BarChart3, Printer,
 } from "lucide-react";
 import { useLanguage } from "../context/LanguageContext";
 import { SEO } from "../components/SEO";
@@ -40,6 +40,50 @@ const CATEGORY_ICONS: Record<string, typeof Stethoscope> = {
 };
 
 const fmtN = (n: number, np: boolean) => (np ? toNepaliDigits(String(n)) : String(n));
+
+const fmtVal = (v: number, np: boolean) =>
+  np ? toNepaliDigits(String(v)) : String(v);
+
+/** Horizontal labelled bars — a lightweight chart with no dependency. */
+function KBChartBars({
+  title, unit, data, source, np,
+}: {
+  title: string;
+  unit?: string;
+  data: { label: string; value: number }[];
+  source: string;
+  np: boolean;
+}) {
+  const max = Math.max(...data.map((d) => d.value), 1);
+  return (
+    <figure className="mt-8 rounded-xl border border-gray-100 bg-gray-50/70 p-5">
+      <figcaption className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.15em] text-[#B8941F] mb-4">
+        <BarChart3 size={14} />
+        {title}
+        {unit && <span className="font-medium normal-case tracking-normal text-gray-400">({unit})</span>}
+      </figcaption>
+      <div className="space-y-3">
+        {data.map((d, i) => (
+          <div key={i}>
+            <div className="flex justify-between text-xs font-medium text-gray-700 mb-1">
+              <span>{d.label}</span>
+              <span className="font-bold text-[#0A2540]">{fmtVal(d.value, np)}</span>
+            </div>
+            <div className="h-3 rounded-full bg-gray-200/70 overflow-hidden" role="img" aria-label={`${d.label}: ${d.value}`}>
+              <motion.div
+                initial={{ width: 0 }}
+                animate={{ width: `${(d.value / max) * 100}%` }}
+                transition={{ duration: 0.6, delay: i * 0.06, ease: "easeOut" }}
+                className="kb-chart-bar h-full rounded-full bg-gradient-to-r from-[#0A2540] to-[#4C7FB5]"
+              />
+            </div>
+          </div>
+        ))}
+      </div>
+      <p className="mt-4 text-[11px] text-gray-400 leading-snug">{source}</p>
+    </figure>
+  );
+}
 
 function npDatestamp(s: string, np: boolean): string {
   if (!np) {
@@ -183,10 +227,78 @@ export function Knowledge() {
                   <p className="mt-3 text-gray-300 leading-relaxed max-w-3xl">
                     {np ? selected.summary.np : selected.summary.en}
                   </p>
+                  <div className="mt-4 flex flex-wrap gap-2">
+                    <button
+                      type="button"
+                      onClick={() => window.print()}
+                      className="inline-flex items-center gap-1.5 text-xs font-semibold bg-white/10 border border-white/20 rounded-full px-3 py-1.5 text-gray-200 hover:text-white hover:border-[#D4AF37]/60 transition-colors"
+                    >
+                      <Printer size={12} />
+                      {np ? "प्रिन्ट गर्नुहोस्" : "Print article"}
+                    </button>
+                  </div>
                 </div>
+
+                {/* Hero image */}
+                {selected.image && (
+                  <div className="relative h-44 sm:h-64 bg-gray-100">
+                    <img
+                      src={selected.image}
+                      alt={np ? selected.imageAlt?.np ?? selected.title.np : selected.imageAlt?.en ?? selected.title.en}
+                      className="w-full h-full object-cover"
+                      loading="lazy"
+                      width={1200}
+                      height={500}
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/25 to-transparent" aria-hidden="true" />
+                  </div>
+                )}
 
                 {/* Reader body */}
                 <div className="px-6 sm:px-10 py-8 sm:py-10">
+                  {/* Factsheet — key technical figures */}
+                  {selected.facts && selected.facts.length > 0 && (
+                    <div className="mb-8 rounded-xl border border-[#0A2540]/10 bg-[#0A2540]/[0.02] overflow-hidden">
+                      <p className="flex items-center gap-2 px-5 py-3 bg-[#0A2540] text-white text-xs font-bold uppercase tracking-[0.18em]">
+                        <ClipboardList size={14} className="text-[#D4AF37]" />
+                        {np ? "मुख्य तथ्य — तथ्यपत्र" : "Key facts — factsheet"}
+                      </p>
+                      <dl className="divide-y divide-gray-100">
+                        {selected.facts.map((f, i) => (
+                          <div key={i} className="grid grid-cols-1 sm:grid-cols-[minmax(9rem,2fr)_3fr] gap-1 sm:gap-4 px-5 py-3">
+                            <dt className="text-xs font-bold text-gray-500 uppercase tracking-wide">
+                              {np ? f.label.np : f.label.en}
+                            </dt>
+                            <dd>
+                              <span className="font-display font-bold text-[#0A2540] text-[15px]">
+                                {np ? f.value.np : f.value.en}
+                              </span>
+                              {f.note && (
+                                <span className="block text-xs text-gray-500 mt-0.5 leading-snug">
+                                  {np ? f.note.np : f.note.en}
+                                </span>
+                              )}
+                            </dd>
+                          </div>
+                        ))}
+                      </dl>
+                    </div>
+                  )}
+
+                  {/* Data chart */}
+                  {selected.chart && (
+                    <KBChartBars
+                      title={np ? selected.chart.title.np : selected.chart.title.en}
+                      unit={selected.chart.unit ? np ? selected.chart.unit.np : selected.chart.unit.en : undefined}
+                      data={selected.chart.data.map((d) => ({
+                        label: np ? d.label.np : d.label.en,
+                        value: d.value,
+                      }))}
+                      source={selected.chart.source}
+                      np={np}
+                    />
+                  )}
+
                   {selected.sections.map((s, i) => (
                     <section key={i} className={i === 0 ? "" : "mt-8"}>
                       <h3 className="font-display text-xl sm:text-2xl font-bold text-[#0A2540] mb-3">
@@ -371,8 +483,29 @@ export function Knowledge() {
                             setSelected(a);
                             window.scrollTo({ top: 0, behavior: "smooth" });
                           }}
-                          className="text-left bg-white rounded-2xl shadow-md hover:shadow-xl border border-transparent hover:border-[#D4AF37]/40 transition-all p-6 flex flex-col group"
+                          className="text-left bg-white rounded-2xl shadow-md hover:shadow-xl border border-transparent hover:border-[#D4AF37]/40 transition-all overflow-hidden flex flex-col group"
                         >
+                          {a.image && (
+                            <div className="relative h-36 bg-gray-100 flex-shrink-0">
+                              <img
+                                src={a.image}
+                                alt=""
+                                aria-hidden="true"
+                                loading="lazy"
+                                width={1200}
+                                height={500}
+                                className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-300"
+                              />
+                              <span className="absolute inset-0 bg-gradient-to-t from-black/45 via-black/10 to-transparent" aria-hidden="true" />
+                              {a.facts && a.facts.length > 0 && (
+                                <span className="absolute bottom-2 left-3 inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-[0.12em] text-white drop-shadow bg-black/35 rounded-full px-2.5 py-1">
+                                  <ClipboardList size={11} className="text-[#D4AF37]" />
+                                  {np ? "तथ्यपत्र" : "Factsheet"}
+                                </span>
+                              )}
+                            </div>
+                          )}
+                          <div className="p-5 sm:p-6 flex flex-col flex-1">
                           <div className="flex items-center justify-between gap-3 mb-3">
                             <span className="inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-[0.12em] text-[#B8941F]">
                               <Icon size={13} />
@@ -393,6 +526,7 @@ export function Knowledge() {
                             {np ? "पढ्नुहोस्" : "Read article"}
                             <ChevronRight size={15} className="text-[#B8941F]" />
                           </span>
+                          </div>
                         </motion.button>
                       );
                     })}

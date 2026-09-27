@@ -1,0 +1,277 @@
+/*
+ * ACCESSIBILITY MODES — applied as classes on <html> by AccessibilityContext.
+ *
+ *  .a11y-font-lg / xl / xxl      — global text scaling (rem-based utilities
+ *                                  scale with the root font size)
+ *  .a11y-readable-font           — Atkinson Hyperlegible for Latin text
+ *                                  (designed for low vision; Devanagari keeps
+ *                                  its own high-quality Noto/Mukta fonts)
+ *  .a11y-dyslexia                — WCAG 1.4.12 letter/word/line spacing on
+ *                                  reading content (nav & controls untouched)
+ *  .a11y-contrast                — layout-preserving dark high-contrast theme
+ *  .a11y-reduce-motion           — kills CSS animations & transitions
+ *                                  (JS animations handled by MotionConfig)
+ *  .a11y-underline               — always underline links
+ *
+ * Reading engine (always available, not a mode):
+ *  .speech-active                — the block currently being read aloud
+ *  .reading-guide-band           — the cursor-following reading guide
+ *
+ * Plus baseline improvements that are ALWAYS on:
+ *  · a visible :focus-visible ring (WCAG 2.4.7 / 2.4.11)
+ *  · .skip-link — first focusable element on every page
+ */
+
+/* ── Always-on: keyboard focus ring ─────────────────────────────────────── */
+:focus-visible {
+  outline: 3px solid #d4af37;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+html.a11y-contrast :focus-visible {
+  outline: 4px solid #ffffff;
+}
+
+/* ── Always-on: skip-to-content link ────────────────────────────────────── */
+.skip-link {
+  position: fixed;
+  top: -100px;
+  left: 1rem;
+  z-index: 200; /* above the fixed nav (z-50) and floating buttons */
+  padding: 0.75rem 1.25rem;
+  background: #d4af37;
+  color: #0a2540;
+  font-weight: 700;
+  font-size: 0.95rem;
+  border-radius: 0 0 0.75rem 0.75rem;
+  box-shadow: 0 10px 25px rgba(10, 37, 64, 0.35);
+  transition: top 0.15s ease;
+}
+.skip-link:focus-visible,
+.skip-link:focus {
+  top: 0;
+  outline: 3px solid #ffffff;
+}
+
+/* ── Text size scaling ──────────────────────────────────────────────────── */
+html.a11y-font-lg {
+  font-size: 112.5%;
+}
+html.a11y-font-xl {
+  font-size: 125%;
+}
+html.a11y-font-xxl {
+  font-size: 140%;
+}
+/* Enlarged text must never push UI chrome around: let dense components
+   wrap gracefully instead of overflowing their containers. */
+html.a11y-font-xl,
+html.a11y-font-xxl {
+  --a11y-scale: 1;
+}
+html.a11y-font-xl :is(p, li, dd, dt, td, th, figcaption, blockquote),
+html.a11y-font-xxl :is(p, li, dd, dt, td, th, figcaption, blockquote) {
+  overflow-wrap: break-word;
+}
+
+/* ── Readable font (Atkinson Hyperlegible) ──────────────────────────────── */
+html.a11y-readable-font body,
+html.a11y-readable-font :is(p, li, dd, dt, td, th, figcaption, blockquote,
+  h1, h2, h3, h4, h5, h6, span, a, button, label, small, strong, em) {
+  font-family: "Atkinson Hyperlegible", "Mukta", "Noto Sans", ui-sans-serif,
+    system-ui, sans-serif;
+  font-variation-settings: normal;
+  letter-spacing: 0.01em;
+}
+/* Headings keep a serif ONLY if the visitor didn't ask for the readable
+   font — respect the legibility request over the brand serif. */
+html.a11y-readable-font :is(h1, h2, h3, .font-display) {
+  font-family: "Atkinson Hyperlegible", "Noto Serif Devanagari", "Mukta", serif;
+}
+html.a11y-readable-font :is(code, kbd, pre, .font-mono) {
+  font-family: ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+
+/* ── Dyslexia-friendly text spacing (WCAG 1.4.12) ───────────────────────── */
+html.a11y-dyslexia :is(main p, main li, main dd, main dt, main td, main th,
+  main figcaption, main blockquote, main .prose) {
+  letter-spacing: 0.12em;
+  word-spacing: 0.16em;
+  line-height: 1.8 !important;
+  column-gap: 2em;
+}
+
+/* ── Reduced motion ─────────────────────────────────────────────────────── */
+html.a11y-reduce-motion *,
+html.a11y-reduce-motion *::before,
+html.a11y-reduce-motion *::after {
+  animation-duration: 0.001s !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.001s !important;
+  transition-delay: 0s !important;
+  scroll-behavior: auto !important;
+}
+
+/* ── Underline links ────────────────────────────────────────────────────── */
+html.a11y-underline a {
+  text-decoration: underline !important;
+  text-underline-offset: 3px;
+  text-decoration-thickness: 2px;
+}
+
+/* ── High contrast — layout-preserving dark theme ─────────────────────────
+   Strategy: flatten decorative gradients/images to solid black, force white
+   text with yellow accents, and give card-like surfaces a solid black fill
+   plus a white hairline so the page KEEPS its structure instead of melting
+   into an undifferentiated black field. Overriding at the element level
+   (not the utility-class level) survives Tailwind arbitrary-value classes. */
+html.a11y-contrast {
+  color-scheme: dark;
+}
+html.a11y-contrast body,
+html.a11y-contrast #root {
+  background: #000 !important;
+}
+
+html.a11y-contrast :is(main, header, footer, nav, section, aside, article,
+div, ul, ol, li, dl, dt, dd, p, span, a, button, h1, h2, h3, h4, h5, h6,
+label, td, th, tr, table, form, fieldset, small, strong, em, b, i, u) {
+  background-image: none !important;
+  background-color: transparent !important;
+  color: #fff !important;
+  text-shadow: none !important;
+}
+/* Keep soft shadows from smearing light onto the black field */
+html.a11y-contrast :is(div, section, article, aside, li, p) {
+  box-shadow: none !important;
+}
+
+/* Card-like surfaces regain structure: solid edge instead of shadow */
+html.a11y-contrast :is(.rounded-xl, .rounded-2xl, .rounded-3xl, .shadow-sm,
+.shadow-md, .shadow-lg, .shadow-xl, .shadow-2xl) {
+  background-color: #000 !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.55) !important;
+  box-shadow: none !important;
+}
+
+/* Hairline borders (gray-100/200) become visible white */
+html.a11y-contrast * {
+  border-color: rgba(255, 255, 255, 0.45);
+}
+html.a11y-contrast hr {
+  border-color: #fff !important;
+}
+
+html.a11y-contrast a,
+html.a11y-contrast button,
+html.a11y-contrast [role='menuitem'],
+html.a11y-contrast [role='switch'],
+html.a11y-contrast summary {
+  border: 2px solid #fff !important;
+  text-decoration: underline !important;
+}
+
+html.a11y-contrast a:hover,
+html.a11y-contrast a:focus,
+html.a11y-contrast button:hover,
+html.a11y-contrast button:focus,
+html.a11y-contrast [role='switch'][aria-checked='true'] {
+  color: #ffd700 !important;
+  border-color: #ffd700 !important;
+}
+
+/* Headings & key figures pop in yellow — instant visual hierarchy */
+html.a11y-contrast :is(h1, h2, h3) {
+  color: #ffd700 !important;
+}
+
+/* Media stays readable: no inversion, no opacity games, light outline on
+   photos only (icons/SVG charts keep their fills) */
+html.a11y-contrast img,
+html.a11y-contrast video,
+html.a11y-contrast canvas {
+  filter: none !important;
+  opacity: 1 !important;
+  outline: 2px solid #fff;
+}
+
+html.a11y-contrast input,
+html.a11y-contrast select,
+html.a11y-contrast textarea {
+  background: #000 !important;
+  color: #fff !important;
+  border: 2px solid #fff !important;
+}
+
+html.a11y-contrast ::placeholder {
+  color: #ddd !important;
+}
+
+html.a11y-contrast input[type='range'] {
+  accent-color: #ffd700 !important;
+}
+
+/* Chart bars keep a visible accent + track in high contrast */
+html.a11y-contrast .kb-chart-bar {
+  background: #ffd700 !important;
+  outline: 1px solid #fff;
+}
+html.a11y-contrast :is(.bg-gray-100, .bg-gray-50) {
+  background: #111 !important;
+}
+
+/* The a11y panel + speech player keep their dark navy surfaces with a
+   gold ring so they stand out from the black page */
+html.a11y-contrast .a11y-panel,
+html.a11y-contrast .speech-player {
+  background: linear-gradient(135deg, #000, #1a1a1a) !important;
+  border: 2px solid #ffd700 !important;
+  color: #fff !important;
+}
+html.a11y-contrast .a11y-panel :is(h2, p, span, button),
+html.a11y-contrast .speech-player :is(p, button, span) {
+  color: #fff !important;
+}
+
+/* Reading-guide band in high contrast */
+html.a11y-contrast .reading-guide-band {
+  background: rgba(255, 215, 0, 0.22) !important;
+  border-color: #ffd700 !important;
+}
+
+/* ── Read-aloud highlight ───────────────────────────────────────────────── */
+.speech-active {
+  position: relative;
+  border-radius: 6px;
+  box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.45) !important;
+  background-color: rgba(212, 175, 55, 0.14) !important;
+  transition: background-color 0.18s ease;
+}
+html.a11y-contrast .speech-active {
+  background-color: rgba(255, 215, 0, 0.28) !important;
+  box-shadow: 0 0 0 3px #ffd700 !important;
+}
+
+/* ── Reading guide band ─────────────────────────────────────────────────── */
+.reading-guide-band {
+  background: linear-gradient(
+    to right,
+    rgba(212, 175, 55, 0.06),
+    rgba(212, 175, 55, 0.18) 12%,
+    rgba(212, 175, 55, 0.18) 88%,
+    rgba(212, 175, 55, 0.06)
+  );
+  border-top: 2px solid rgba(212, 175, 55, 0.55);
+  border-bottom: 2px solid rgba(212, 175, 55, 0.55);
+}
+
+/* ── Layout hygiene: never a horizontal scrollbar ─────────────────────────
+   Below-fold entrance animations start with ±x offsets; while they wait
+   for whileInView they can push the page 10–30 px wider than the viewport.
+   overflow-x:clip (not hidden) kills that without creating a scroll
+   container, so position:sticky panels (map factsheet, etc.) keep working. */
+html,
+body {
+  overflow-x: clip;
+}

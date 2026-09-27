@@ -41,7 +41,7 @@ export const siteConfig = {
   //                                        is set)
   phone: "+977 9851162780",
   whatsappUsername: "drmogalshah", // ⚠️ demo placeholder — reserve & paste the real one
-  whatsapp: "9779851162780",
+  whatsapp: "9851162780", // ⚠️ demo placeholder — paste the real number if no username is set
 
   email: "info@drmogalshah.com.np",
   location: {

@@ -31,6 +31,209 @@ Open **`src/app/config/site.ts`** — the single source of truth for all site se
 
 ---
 
+## Release 6 — Real text-to-speech player, full accessibility suite, analytical agro-map, mobile hero & drawer redesign (Sept 2026)
+
+### NEW: Read-aloud SPEECH PLAYER (replaces the one-shot "read this page" button)
+- **`SpeechContext` engine** walks `<main>`, splits content into
+  sentence-sized reading blocks (Devanagari danda + Latin stops) and speaks
+  them in a chained queue — with a **live gold highlight + smart
+  auto-scroll** on the exact block being read (respects reduce-motion).
+- **Floating mini-player** (bottom-centre; lifts above the floating buttons
+  on phones): play/pause · resume · stop · previous/next block · reading
+  speed (0.75×–1.5×) · **voice picker** (Nepali → Hindi-for-Devanagari →
+  English fallback, or the user's saved choice per language). Progress bar
+  + "Section N of M" counter.
+- Engine hardening: async `voiceschanged` loading, utterances kept
+  referenced (Chrome GC bug), delayed `speak()` after `cancel()` (dropped
+  utterance bug), sentence-sized chunks (Chrome long-utterance cutoff),
+  emulated pause (native `pause()` is broken on Android/some Windows
+  builds), guarded voice assignment, and speech auto-stops on route change.
+- Persisted: reading speed + voice choice per language (localStorage).
+
+### EXPANDED: accessibility suite — more features, design-safe
+- **Text size: 4 steps** (100 / 112.5 / 125 / 140%).
+- **Readable font** — self-hosted **Atkinson Hyperlegible** (Braille
+  Institute, OFL; latin + latin-ext woff2, lazy unicode-range) swaps in for
+  Latin text; Devanagari keeps Noto/Mukta.
+- **Dyslexia-friendly spacing** — WCAG 1.4.12 letter/word/line spacing
+  applied to reading content only (nav & controls untouched).
+- **Reading guide** — translucent gold band tracking the cursor (fine
+  pointers only, rAF-throttled, pointer-events none).
+- **High contrast rewritten to preserve the design**: card-like surfaces
+  regain a white hairline (no more melting into an undifferentiated black
+  field), gray hairlines become white, headings pop in yellow,
+  `color-scheme: dark` for native controls, chart bars keep tracks, the
+  panel/player keep their navy + gold ring.
+- Panel regrouped into **SEE / READ / MOTION** sections, focus-trapped,
+  Esc + click-outside, **Alt+A opens it from anywhere**, footer hint shows
+  the shortcut.
+
+### FIXED: floating buttons never overlap again
+- **Unified right-hand dock** (`FloatingDock`): scroll-to-top sits ABOVE the
+  accessibility launcher in one column; the settings panel anchors above
+  the whole dock. WhatsApp aligned to the same baseline (safe-area aware).
+  Speech player bottom-centre, above the buttons on phones. Verified
+  geometrically: 8 px clearance, zero overlaps at 390 px.
+
+### REDESIGNED: mobile hero (phones only)
+- Compact centred composition: gold-ringed portrait first (with 29+ badge),
+  badge pill, name at 2.6rem, role, clamped description, **full-width
+  stacked CTAs** (thumb reach), live clinic chip, centred socials; `100svh`
+  so browser toolbars never crop the fold; smaller glow blobs; scroll
+  indicator hidden on phones. Desktop (≥lg) layout untouched.
+
+### REDESIGNED: mobile menu — a real slide-in drawer
+- Portal-rendered right-side drawer (86vw, max 360px): backdrop blur,
+  **transform-only glide** (no height animation → no stutter), header with
+  avatar/name/close, search row, grouped links **with icons** (Pages +
+  Resources), language toggle, **sticky booking CTA** with safe-area
+  padding, internal scrolling, body lock, focus trap, Esc, focus return.
+
+### UPGRADED: `/agromap` — from factsheet picker to analytical map
+- **Three workspaces: Map & layers · Compare districts · Data explorer.**
+- **Thematic layers** (per-district fills on the accurate MIT-licensed
+  geometry): Provinces · **Ecological belts** (Terai 22 / Hills 40 /
+  Mountains 15 — classified from each district's own verified belt text) ·
+  **Crop spotlight** (20 crop tags, e.g. "Tea → 4 gold districts") ·
+  **Livestock spotlight** (7 tags incl. yaks & Chyangra, rare local
+  breeds) · **Climate pressure** (7 colour-coded tags: flood, heat,
+  landslide, drought, drying springs, glacier retreat, hail & frost) with
+  custom legends and match counters.
+- **Compare workspace**: any two districts side by side (zone header, HQ,
+  known-for, crop/livestock/climate tag chips, belt) + swap button;
+  "Compare this district" button on every factsheet.
+- **Data explorer**: all 77 districts searchable/sortable (name, province,
+  HQ, zone, crop tags), zone filters, click-through to the map, and
+  **one-click CSV export** of the full bilingual dataset (offline blob,
+  no server).
+- Factsheet panel upgraded: zone chip, tag chips under Crops/Livestock/
+  Climate tabs, spotlights bilingual (Devanagari digit counters).
+- Data provenance: the zone/tag classification is derived from the same
+  verified MoALD SINA / DNPWC / DHM-ICIMOD profiles — noted in the
+  sources block; CSV export labelled as a copy of the same dataset.
+
+### FIXED: layout & polish
+- **Horizontal overflow killed site-wide** (`overflow-x: clip` on html/body
+  — below-fold entrance animations used to push the page 10–30px wider;
+  `clip` keeps position:sticky working).
+- Reduced-motion now also honoured by the scroll-to-top smooth scroll and
+  the reading highlight's auto-scroll.
+
+### Validation performed (this release)
+- `tsc --noEmit` clean; production build clean (AgroMap 232.9 KB /
+  Knowledge 256.6 KB / Tools 109.3 KB lazy chunks); all 12 routes 200;
+  zero console/page errors on the final bundle (the only logged errors
+  trace to a deliberately stubbed speech engine during testing).
+- Browser-verified: dock geometry (no overlap at 390px); Alt+A; a11y
+  classes + localStorage persistence after reload; Atkinson font applied
+  (computed style); dyslexia spacing (3.02px letter / 4.03px word /
+  1.8+ line-height); contrast body black + color-scheme dark; speech
+  engine end-to-end with a stubbed synth (46 blocks collected, highlight
+  moves H1→P, auto-advance chain, pause/resume, next/prev, stop clears
+  highlight, player hidden with zero voices); drawer (portal, transform
+  glide, focus trap, Esc, route-close, CTA reachable); hero metrics
+  (portrait 128px at top, h1 centred, CTAs full-width); map layers
+  (zone fills 22/40/15 exact; Tea → 4 gold + note; climate 7-colour
+  distribution across 77; NP layer buttons + चिया ४); compare (Ilam vs
+  Jumla cards, swap, factsheet hook); data explorer (77 rows, search,
+  zone filters, CSV = 78 lines bilingual); desktop regressions (hero
+  two-column intact, About dropdown items).
+- VLM review: mobile hero 8/10, drawer 9/10, a11y panel 9/10 (after the
+  overlap fix), high contrast 9/10, map layers 9/10 ×3, compare 9/10,
+  desktop home 8/10 — no defects flagged.
+
+---
+
+## Release 5 — Accessibility, 77 district factsheets, deeper knowledge base, 12 tools (Sept 2026)
+
+### NEW: Site-wide accessibility system
+- **Floating Accessibility panel** (bottom-right, bilingual EN/NP) with
+  persisted settings (localStorage `a11y-settings`):
+  - Text size — A / A+ / A++ (112.5% / 125% root scaling)
+  - High-contrast mode — black/white/yellow override stylesheet
+  - Reduce motion — CSS kill-switch **+ global `MotionConfig
+    reducedMotion="always"`** (also auto-on when the OS requests
+    `prefers-reduced-motion`)
+  - Underline-links toggle for low-vision scanning
+  - **Read aloud** — Web Speech API, language-aware (picks a Nepali voice,
+    falls back to Hindi for Devanagari, then English)
+- Baseline upgrades always on: **skip-to-content link** on every page
+  (first focusable), visible `:focus-visible` ring, nav landmarks +
+  `aria-label`, `aria-expanded/controls` on the mobile menu with a focus
+  trap, Esc-to-close on menu/dropdowns/panel, `main` landmark.
+
+### FIXED: navigation de-cluttered + mobile menu scroll
+- Desktop bar reduced from 8 top-level items + controls to **5 items +
+  2 dropdowns + search + language + CTA**: About / Experience /
+  Publications now group under an "About ▾" dropdown; Tools / Knowledge /
+  Nepal Map stay under "Resources ▾". The logo **never wraps** anymore
+  (`truncate` + `whitespace-nowrap` + min-width guards).
+- Mobile menu rebuilt: one smooth panel animation (per-item stagger that
+  read as "stuttery" removed), **internally scrollable**
+  (`max-h: calc(100dvh − 5rem)` + momentum scrolling + overscroll-contain),
+  body scroll locked while open, Esc closes, focus returns to the hamburger.
+
+### EXPANDED: `/agromap` — 77 district factsheets (not just provinces)
+- **Every district now opens a full bilingual factsheet**: administrative HQ,
+  ecological belt, signature identity ("known for"), crops, livestock,
+  **ecology — flora, fauna, protected areas (DNPWC network, RAMSAR sites)**
+  and **climate-crisis pressure with the local adaptation frontier**.
+  District keys verified 77/77 against the map engine.
+- View-mode toggle (By district / By province), district quick-select
+  dropdown grouped by province, tabbed panel
+  (Overview · Crops · Livestock · Ecology · Climate) for both granularities,
+  ecological-belt legend, and highlighted-district glow on selection.
+- Verified hooks include: Ilam tea, Sankhuwasabha cardamom, Jumla Marsi
+  rice at 2,200 m+, Mustang apples, Gulmi coffee (≈160 ha / ≈35 t / ≈219
+  kg/ha case study), Chitwan poultry capital, Makwanpur ginger, Sindhuli
+  junar, Baitadi goats, Achhami — the world's smallest cattle breed — and
+  the full park network from Shey Phoksundo to Shuklaphanta.
+
+### EXPANDED: `/knowledge` — 32 articles, now with images, factsheets & charts
+- **+12 researched bilingual articles** (20 → 32): dairy income economics,
+  water for dairy animals, khasi finishing for Dashain, incubation &
+  hatchery management, layer flock economics, off-season vegetables &
+  plastic tunnels, coffee in the mid-hills, high-hill apples, soil health
+  & composting, drying springs (ICIMOD), beekeeping basics, zoonoses &
+  farm-family safety.
+- **Every article now carries a hero image** (3 new AI-generated WebP images
+  — goats, poultry, polytunnel — VLM-verified 8–9/10; rest mapped from the
+  existing photo library), a **technical factsheet table** (4–6 key figures
+  with sources), and — where data supports — an **animated bar chart**
+  (14 articles: revaccination intervals, cereals production, water by
+  animal, incubation periods, laying curve, tomato farm-gate vs retail,
+  honey yield by hive system, dairy model).
+- Article reader adds a **Print** button; cards show image thumbnails with a
+  "Factsheet" badge.
+
+### EXPANDED: `/tools` — 4 new calculators (now 12 tools, grouped rail)
+- **Dairy income** — litres × price − feed − other costs → monthly/yearly
+  margin, cost per litre, break-even price (farm-gate 55–70, retail 80–120
+  NPR/L benchmarks).
+- **Water requirement** — herd-level daily litres (4–4.5 L per kg milk;
+  buffalo 80–120 L summer; Nepal-measured 112–131 L/adult/day), summer peak
+  +20% and a 1.5-day storage target.
+- **Incubation & hatch calendar** — set date + species (chicken 21 d, duck
+  28 d, turkey 28 d, quail 17 d) → hatch, candling (day 7/14) and lockdown
+  dates, with the 37.8 °C / humidity reference card.
+- **Live animal market value** — live weight × editable local rate with a
+  ±10% planning band (festival-season note).
+- Tab rail regrouped into **Livestock · Farm & business · Health** with
+  labelled sections.
+
+### IMPROVED: meta thumbnail with the doctor's actual headshot
+- `og-image.jpg` regenerated (1200×630, 84 KB) with **Dr. Shah's real
+  headshot photo** in a gold-ringed frame, name in Playfair, credentials
+  badges (M.Sc. / 29+ Years / Ex-Director DLFD) and the domain — all inside
+  the 80% safe zone per OG best practice (VLM review: 9/10).
+
+### Misc
+- Site-search index: +4 tool entries, updated knowledge (32) and map
+  (77-district) descriptions.
+- README refreshed with the new feature set.
+
+---
+
 ## Release 4 — Farmer knowledge platform (Sept 2026)
 
 ### NEW: `/knowledge` — Agriculture & Animal Husbandry Knowledge Base

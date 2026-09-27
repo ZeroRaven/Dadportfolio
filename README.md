@@ -2,7 +2,7 @@
 
 A modern, SEO-optimized portfolio website showcasing Dr. Mogal Prasad Shah's 29+ years of expertise in livestock development, food security, and rural agricultural innovation across Nepal.
 
-> **September 2026 release:** full audit implementation — SEO critical fixes (noindex removed, correct meta, www canonicals), working contact form with feedback states, 95% image weight reduction, route code-splitting, WhatsApp button infrastructure, and a central config at `src/app/config/site.ts`. **See [CHANGES.md](./CHANGES.md)** for the complete changelog and the two config values to set after deploying.
+> **September 2026 release:** full audit implementation — SEO critical fixes (noindex removed, correct meta, www canonicals), working contact form with feedback states, 95% image weight reduction, route code-splitting, WhatsApp button infrastructure, and a central config at `src/app/config/site.ts`. **Release 5 added:** a site-wide accessibility system, 77-district interactive agro-map, a 32-article knowledge base with factsheets and charts, 12 farm calculators, and an Open Graph thumbnail with Dr. Shah's headshot. **Release 6 adds:** a real read-aloud speech player with highlighting and voice/speed controls, a deeper accessibility suite (readable font, dyslexia spacing, reading guide, 4 text sizes), an analytical agro-map (thematic layers, district comparison, CSV data export), a redesigned mobile hero and slide-in drawer menu, and a unified floating-button dock. **See [CHANGES.md](./CHANGES.md)** for the complete changelog and the two config values to set after deploying.
 
 ![Website Preview](https://www.drmogalshah.com.np/og-image.jpg)
 
@@ -10,10 +10,12 @@ A modern, SEO-optimized portfolio website showcasing Dr. Mogal Prasad Shah's 29+
 
 ### Design & User Experience
 - ✨ **Modern UI/UX** - Sophisticated design with Deep Navy (#0A2540) and Luxurious Gold (#D4AF37) color palette
-- 🎨 **Premium Typography** - Playfair Display (headings) + Plus Jakarta Sans (body text)
+- 🎨 **Premium Typography** - Playfair Display (headings) + Plus Jakarta Sans (body text); Noto Serif Devanagari + Mukta for Nepali; Atkinson Hyperlegible for the readability toggle
 - 🎭 **Smooth Animations** - Motion React (formerly Framer Motion) for engaging interactions
 - 📱 **Fully Responsive** - Optimized for desktop, tablet, and mobile devices
-- ♿ **Accessible** - WCAG compliant with proper ARIA labels and semantic HTML
+- ♿ **Accessibility Suite** - Floating panel (bottom-right dock, or **Alt+A** anywhere) with persisted settings: 4 text sizes, **readable font (Atkinson Hyperlegible)**, dyslexia-friendly spacing (WCAG 1.4.12), **layout-preserving high contrast**, reduce-motion (respects `prefers-reduced-motion`), underline links, **cursor-tracking reading guide**, and a full **read-aloud player** — sentence highlighting, auto-scroll, play/pause/next/prev, 0.75–1.5× speed and a voice picker (Nepali → Hindi fallback → English); skip-to-content link, focus-visible rings and keyboard-safe menus site-wide
+- 🗺️ **Unified floating dock** - scroll-to-top + accessibility launcher in one right-hand column (never overlap); WhatsApp aligned on the same baseline; speech player bottom-centre
+- 📱 **Mobile-first touches** - Centred phone hero (portrait-first, full-width CTAs, `100svh` fold), slide-in drawer menu (transform glide, focus-trapped, sticky CTA), `overflow-x: clip` so no horizontal scrollbar ever
 
 ### SEO & Performance
 - 🔍 **Advanced SEO** - Comprehensive meta tags, Open Graph, Twitter Cards
@@ -33,8 +35,35 @@ A modern, SEO-optimized portfolio website showcasing Dr. Mogal Prasad Shah's 29+
   - Home - Hero section with achievements and expertise overview
   - About - Detailed professional background and qualifications
   - Services - Comprehensive service offerings
+  - Experience - 29+ years of leadership roles
   - Publications - Research papers and technical articles
   - Contact - Professional contact form with validation
+  - Booking - 4-step consultation wizard with WhatsApp handoff
+  - Tools - 12 farm calculators (see below)
+  - Knowledge - 32-article agriculture & livestock library (see below)
+  - Nepal Map - Interactive 77-district agro-map (see below)
+
+### 🧰 Farm Tools & Calculators (12)
+- **Livestock**: weight estimator (Schaeffer heart-girth rule), gestation calendar (10 species), feed & dry-matter, medicine dosage (mg/kg → mL), daily water requirement, live-animal market value
+- **Farm & business**: dairy income economics (margin, cost per litre, break-even), Nepal land-unit converter (Ropani/Bigha), poultry feed & FCR, incubation & hatch calendar, vaccination reminder generator (.ics download)
+- **Health**: symptom checker covering 11 common conditions
+- All tools run client-side (no data leaves the browser), bilingual EN/NP with Nepali digits
+
+### 📚 Knowledge Base (32 articles, bilingual)
+- 8 categories: animal health, cattle & buffalo, goat farming, poultry, crop production, fodder & feed, climate adaptation, farm management
+- Every article: hero image, technical factsheet table, sourced citations with dates, field tips & cautions; animated data charts on 14 articles
+- Live bilingual search + category filters + print-friendly reader
+
+### 🗺️ Nepal Agriculture Map — analytical edition
+- **Three workspaces**: Map & layers · Compare districts · Data explorer
+- **Thematic layers** with per-district colouring: provinces · ecological belts (Terai / Hills / Mountains) · **crop spotlight** (20 tags — watch the tea belt light up) · **livestock spotlight** (7 tags incl. yaks & Chyangra) · **climate pressure** (7 colour-coded hazards) — all with legends and match counters
+- Interactive map of all **77 districts and 7 provinces** (MIT-licensed engine, correct Limpiyadhura–Kalapani–Lipulekh boundary, keyboard accessible); click any district for its factsheet: headquarters, ecological belt, crops, livestock, flora & fauna (DNPWC protected-area network, RAMSAR sites) and climate-crisis adaptation notes
+- **District comparison**: any two districts side by side with tag chips
+- **Data explorer**: searchable/sortable 77-district table with **one-click CSV export** (bilingual, offline)
+
+### 🌐 SEO & Sharing
+- Open Graph thumbnail featuring Dr. Shah's headshot + credentials (1200×630), Twitter card, JSON-LD (Person, WebSite), sitemap and robots.txt
+
 - 🎓 **Professional Presentation** - Focus on livestock development, food security, and rural development
 - 📝 **Well-Structured Content** - Clear hierarchy and easy navigation
 

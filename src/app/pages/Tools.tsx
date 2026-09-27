@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "motion/react";
 import {
   Scale, Ruler, Syringe, BellRing, Download, Calculator, RotateCcw,
   Info, CalendarDays, AlertTriangle, Weight, Stethoscope, Map, Wheat, Pill, Bird,
+  Droplets, Wallet, Egg, Landmark,
 } from "lucide-react";
 import { useLanguage } from "../context/LanguageContext";
 import { Button } from "../components/ui/button";
@@ -16,6 +17,10 @@ import { LandConverter } from "../components/tools/LandConverter";
 import { FeedCalculator } from "../components/tools/FeedCalculator";
 import { DosageCalculator } from "../components/tools/DosageCalculator";
 import { PoultryCalculator } from "../components/tools/PoultryCalculator";
+import { MilkIncomeCalculator } from "../components/tools/MilkIncomeCalculator";
+import { WaterRequirementCalculator } from "../components/tools/WaterRequirementCalculator";
+import { IncubationCalculator } from "../components/tools/IncubationCalculator";
+import { MarketValueCalculator } from "../components/tools/MarketValueCalculator";
 import { toNepaliDigits } from "../i18n/format";
 
 /* ─────────────────────────────────────────────────────────────────────────────
@@ -513,18 +518,53 @@ function VaccineReminder({ np }: { np: boolean }) {
 
 /* ════════════════════════════════════════════════ Page shell ═══════════════ */
 
-const TABS = [
-  { value: "weight",   icon: Weight,       en: "Weight",      np: "तौल" },
-  { value: "gestation",icon: CalendarDays, en: "Gestation",   np: "गर्भावधि" },
-  { value: "feed",     icon: Wheat,        en: "Feed",        np: "चारा" },
-  { value: "dosage",   icon: Pill,         en: "Dosage",      np: "खुराक" },
-  { value: "land",     icon: Map,          en: "Land units",  np: "जग्गा" },
-  { value: "poultry",  icon: Bird,         en: "Poultry",     np: "कुखुरा" },
-  { value: "vaccine",  icon: BellRing,     en: "Vaccination", np: "खोप" },
-  { value: "health",   icon: Stethoscope,  en: "Health guide",np: "रोग लक्षण" },
-] as const;
+interface ToolTab {
+  value: string;
+  icon: typeof Weight;
+  en: string;
+  np: string;
+}
 
-type TabValue = (typeof TABS)[number]["value"];
+/** Twelve tools grouped into three labelled sections. */
+const TOOL_GROUPS: { id: string; en: string; np: string; tools: ToolTab[] }[] = [
+  {
+    id: "livestock",
+    en: "Livestock",
+    np: "पशुधन",
+    tools: [
+      { value: "weight",    icon: Weight,       en: "Weight",      np: "तौल" },
+      { value: "gestation", icon: CalendarDays, en: "Gestation",   np: "गर्भावधि" },
+      { value: "feed",      icon: Wheat,        en: "Feed",        np: "चारा" },
+      { value: "dosage",    icon: Pill,         en: "Dosage",      np: "खुराक" },
+      { value: "water",     icon: Droplets,     en: "Water",       np: "पानी" },
+      { value: "market",    icon: Scale,        en: "Live value",  np: "जीवित मूल्य" },
+    ],
+  },
+  {
+    id: "farm",
+    en: "Farm & business",
+    np: "खेत तथा व्यवसाय",
+    tools: [
+      { value: "dairy",   icon: Wallet,        en: "Dairy income",  np: "दुग्ध आम्दानी" },
+      { value: "land",    icon: Map,           en: "Land units",    np: "जग्गा" },
+      { value: "poultry", icon: Bird,          en: "Poultry",       np: "कुखुरा" },
+      { value: "hatch",   icon: Egg,           en: "Hatchery",      np: "कलाउने" },
+      { value: "vaccine", icon: BellRing,      en: "Vaccination",   np: "खोप" },
+    ],
+  },
+  {
+    id: "health",
+    en: "Health",
+    np: "स्वास्थ्य",
+    tools: [
+      { value: "health", icon: Stethoscope, en: "Health guide", np: "रोग लक्षण" },
+    ],
+  },
+];
+
+const TABS: ToolTab[] = TOOL_GROUPS.flatMap((g) => g.tools);
+
+type TabValue = string;
 
 export function Tools() {
   const { language } = useLanguage();
@@ -534,9 +574,9 @@ export function Tools() {
   return (
     <>
       <SEO
-        title="Farm Tools & Calculators"
-        description="Free farm tools and calculators for Nepali farmers and livestock keepers — estimate cattle and goat live weight from heart-girth measurements, plan gestation and dry-off dates, convert Ropani-Aana and Bigha-Kattha land units, compute feed and dry-matter needs, verify medicine dosages, size poultry feed with FCR, generate vaccination calendar reminders, and check disease symptoms in the health guide."
-        keywords="farm calculator Nepal, livestock weight estimator, gestation calculator cattle buffalo goat, ropani aana converter, bigha kattha dhur conversion, dry matter intake calculator, feed requirement buffalo, veterinary dosage calculator mg kg, poultry feed FCR calculator, vaccination reminder FMD HS PPR, livestock symptom checker, किसान क्यालकुलेटर, रोपनी रूपान्तरण, गर्भावधि हिसाब, चारा गणना, खुराक क्यालकुलेटर"
+        title="Farm Tools & Calculators — 12 Free Tools for Nepali Farmers"
+        description="Free farm tools and calculators for Nepali farmers and livestock keepers — estimate cattle and goat live weight from heart-girth measurements, plan gestation and dry-off dates, compute feed and dry-matter needs, verify medicine dosages, size daily water requirements, estimate live-animal market value, run dairy income economics, convert Ropani-Aana and Bigha-Kattha land units, plan poultry feed with FCR, run an incubation/hatchery calendar, generate vaccination reminders, and check disease symptoms."
+        keywords="farm calculator Nepal, livestock weight estimator, gestation calculator cattle buffalo goat, dairy income calculator Nepal, water requirement livestock, goat market price Nepal, live animal value estimator, incubation hatch calendar chicken duck quail, ropani aana converter, bigha kattha dhur conversion, dry matter intake calculator, feed requirement buffalo, veterinary dosage calculator mg kg, poultry feed FCR calculator, vaccination reminder FMD HS PPR, livestock symptom checker, किसान क्यालकुलेटर, दुग्ध आम्दानी गणना, पशु पानी आवश्यकता, खसी मूल्य, अन्डा कलाउने पात्रो, रोपनी रूपान्तरण, गर्भावधि हिसाब, चारा गणना, खुराक क्यालकुलेटर"
         path="/tools"
       />
       <div className="bg-gray-50 min-h-screen pb-20">
@@ -558,8 +598,8 @@ export function Tools() {
             </h1>
             <p className="text-gray-300 text-base sm:text-lg max-w-2xl leading-relaxed">
               {np
-                ? "नापले तौल अनुमान, गर्भावधि हिसाब, रोपनी–बिघा रूपान्तरण, चारा तथा खुराक गणना, कुखुराको दाना योजना, खोपका सम्झना र रोगका लक्षण जाँच — किसान, पशुपालक र कृषकका लागि वैज्ञानिक स्रोतमा आधारित निःशुल्क औजारहरू।"
-                : "Weigh animals with a measuring tape, plan gestation and dry-off dates, convert Ropani↔Bigha land units, size feed rations, verify medicine dosages, plan poultry feed, keep vaccinations on autopilot, and triage disease symptoms — free tools built on published livestock science."}
+                ? "नापले तौल अनुमान, गर्भावधि हिसाब, चारा-खुराक-पानी गणना, जीवित मूल्य र दुग्ध आम्दानीको लेखा, रोपनी–बिघा रूपान्तरण, कुखुराको दाना र कलाउने पात्रो, खोपका सम्झना र रोगका लक्षण जाँच — किसान र पशुपालकका लागि वैज्ञानिक स्रोतमा आधारित निःशुल्क औजारहरू।"
+                : "Weigh animals with a measuring tape, plan gestation and dry-off dates, size feed, dosage and daily water, estimate live-animal value, run dairy income economics, convert Ropani↔Bigha land units, plan poultry feed and hatching, keep vaccinations on autopilot, and triage disease symptoms — free tools built on published livestock science."}
             </p>
           </div>
         </div>
@@ -568,28 +608,34 @@ export function Tools() {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 -mt-6">
           <Card className="border-0 shadow-xl">
             <CardContent className="p-5 sm:p-10">
-              {/* Tool rail — wraps on small screens, scrolls if ever needed */}
-              <div
-                className="flex flex-wrap gap-2 mb-8"
-                role="tablist"
-                aria-label={np ? "औजार छान्नुहोस्" : "Choose a tool"}
-              >
-                {TABS.map(({ value, icon: Icon, en, np: npLabel }) => (
-                  <button
-                    key={value}
-                    type="button"
-                    role="tab"
-                    aria-selected={tab === value}
-                    onClick={() => setTab(value)}
-                    className={`flex items-center gap-1.5 px-3.5 py-2 rounded-full text-sm font-semibold transition-all border-2 ${
-                      tab === value
-                        ? "bg-[#0A2540] text-white border-[#0A2540] shadow-md"
-                        : "bg-white text-gray-600 border-gray-200 hover:border-[#D4AF37]/60 hover:text-[#0A2540]"
-                    }`}
-                  >
-                    <Icon size={15} className={tab === value ? "text-[#D4AF37]" : "text-gray-400"} />
-                    {np ? npLabel : en}
-                  </button>
+              {/* Tool rail — grouped, wraps on small screens */}
+              <div className="mb-8 -mx-1 px-1">
+                {TOOL_GROUPS.map((group) => (
+                  <div key={group.id} className="mb-3 last:mb-0">
+                    <p className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.22em] text-[#B8941F] mb-1.5 pl-1">
+                      <Landmark size={10} aria-hidden="true" />
+                      {np ? group.np : group.en}
+                    </p>
+                    <div className="flex flex-wrap gap-2" role="tablist" aria-label={np ? group.np : group.en}>
+                      {group.tools.map(({ value, icon: Icon, en, np: npLabel }) => (
+                        <button
+                          key={value}
+                          type="button"
+                          role="tab"
+                          aria-selected={tab === value}
+                          onClick={() => setTab(value)}
+                          className={`flex items-center gap-1.5 px-3.5 py-2 rounded-full text-sm font-semibold transition-all border-2 ${
+                            tab === value
+                              ? "bg-[#0A2540] text-white border-[#0A2540] shadow-md"
+                              : "bg-white text-gray-600 border-gray-200 hover:border-[#D4AF37]/60 hover:text-[#0A2540]"
+                          }`}
+                        >
+                          <Icon size={15} className={tab === value ? "text-[#D4AF37]" : "text-gray-400"} />
+                          {np ? npLabel : en}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
                 ))}
               </div>
 
@@ -601,10 +647,18 @@ export function Tools() {
                 <FeedCalculator np={np} />
               ) : tab === "dosage" ? (
                 <DosageCalculator np={np} />
+              ) : tab === "water" ? (
+                <WaterRequirementCalculator np={np} />
+              ) : tab === "market" ? (
+                <MarketValueCalculator np={np} />
+              ) : tab === "dairy" ? (
+                <MilkIncomeCalculator np={np} />
               ) : tab === "land" ? (
                 <LandConverter np={np} />
               ) : tab === "poultry" ? (
                 <PoultryCalculator np={np} />
+              ) : tab === "hatch" ? (
+                <IncubationCalculator np={np} />
               ) : tab === "vaccine" ? (
                 <VaccineReminder np={np} />
               ) : (

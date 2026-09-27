@@ -185,85 +185,86 @@ export function Home() {
       <StructuredData faqs={faqs} />
 
       <div>
-        {/* Hero Section */}
-        <section className="relative min-h-screen flex items-center overflow-hidden bg-gradient-to-br from-[#0A2540] via-[#1A3A5C] to-[#0A2540]">
+        {/* Hero Section — mobile: compact centred composition; ≥lg: two-column
+            editorial layout (unchanged). svh units keep phones with dynamic
+            toolbars from cropping the fold. */}
+        <section className="relative min-h-[100svh] flex items-center overflow-hidden bg-gradient-to-br from-[#0A2540] via-[#1A3A5C] to-[#0A2540]">
           <div className="absolute inset-0">
-            <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-[#D4AF37]/20 rounded-full blur-3xl animate-pulse"></div>
-            <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-[#D4AF37]/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: "1s" }}></div>
+            <div className="absolute top-1/4 left-1/4 w-56 h-56 sm:w-96 sm:h-96 bg-[#D4AF37]/20 rounded-full blur-3xl animate-pulse"></div>
+            <div className="absolute bottom-1/4 right-1/4 w-56 h-56 sm:w-96 sm:h-96 bg-[#D4AF37]/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: "1s" }}></div>
           </div>
           <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSAxMCAwIEwgMCAwIDAgMTAiIGZpbGw9Im5vbmUiIHN0cm9rZT0icmdiYSgyMTIsMTc1LDU1LDAuMSkiIHN0cm9rZS13aWR0aD0iMSIvPjwvcGF0dGVybj48L2RlZnM+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0idXJsKCNncmlkKSIvPjwvc3ZnPg==')] opacity-30"></div>
 
-          <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 sm:py-32">
+          <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-16 sm:py-28 lg:py-32 w-full">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-              {/* Left Content */}
+              {/* Left Content — centred on phones, left-aligned from lg */}
               <motion.div
                 initial={{ opacity: 0, x: -50 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.8, ease: "easeOut" }}
-                className="text-white"
+                className="text-white text-center lg:text-left flex flex-col items-center lg:items-start"
               >
+                {/* Mobile portrait — first thing a phone visitor sees */}
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: 0.15, type: "spring" }}
+                  className="relative lg:hidden mb-6"
+                >
+                  <div className="w-32 h-32 rounded-full overflow-hidden ring-4 ring-[#D4AF37] ring-offset-4 ring-offset-[#0A2540] shadow-2xl">
+                    <img
+                      src={drShahPhoto}
+                      alt="Dr. Mogal Prasad Shah"
+                      width={128}
+                      height={128}
+                      fetchPriority="high"
+                      decoding="async"
+                      className="w-full h-full object-cover object-top"
+                    />
+                  </div>
+                  <div className="absolute -bottom-2 -right-2 bg-gradient-to-br from-[#D4AF37] to-[#B8941F] rounded-xl px-3 py-1.5 shadow-lg ring-2 ring-[#0A2540]">
+                    <span className="text-[#0A2540] text-xs font-bold">{np ? "२९+ वर्ष" : "29+ Yrs"}</span>
+                  </div>
+                </motion.div>
+
                 <motion.div
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
                   transition={{ delay: 0.3, type: "spring" }}
-                  className="inline-flex items-center space-x-2 bg-[#D4AF37]/20 backdrop-blur-sm px-5 py-2.5 rounded-full mb-6 border border-[#D4AF37]/30"
+                  className="inline-flex items-center space-x-2 bg-[#D4AF37]/20 backdrop-blur-sm px-4 sm:px-5 py-2 sm:py-2.5 rounded-full mb-5 sm:mb-6 border border-[#D4AF37]/30"
                 >
-                  <Award className="text-[#D4AF37]" size={18} />
-                  <span className="text-sm font-medium">{np ? "एम.एस्सी. | २९+ वर्षको उत्कृष्टता" : "M.Sc. | 29+ Years Excellence"}</span>
+                  <Award className="text-[#D4AF37]" size={16} />
+                  <span className="text-xs sm:text-sm font-medium">{np ? "एम.एस्सी. | २९+ वर्षको उत्कृष्टता" : "M.Sc. | 29+ Years Excellence"}</span>
                 </motion.div>
 
-                <h1 className="hero-name text-4xl sm:text-5xl md:text-7xl mb-4 leading-tight">
+                <h1 className="hero-name text-[2.6rem] leading-[1.12] sm:text-5xl md:text-6xl lg:text-7xl lg:leading-tight mb-4">
                   <span className="text-white">{np ? "डा. मोगल" : "Dr. Mogal"}</span>
                   <br />
                   <span className="text-[#D4AF37]">{np ? "प्रसाद शाह" : "Prasad Shah"}</span>
                 </h1>
 
-                <p className="text-lg sm:text-xl md:text-2xl text-gray-300 mb-3 leading-relaxed">
+                <p className="text-lg sm:text-xl md:text-2xl text-gray-300 mb-2.5 leading-relaxed">
                   {np ? "पशुपालन विकास विशेषज्ञ" : "Livestock Development Expert"}
                 </p>
-                <p className="text-base sm:text-lg text-gray-400 mb-6 leading-relaxed max-w-xl">
+                <p className="text-base sm:text-lg text-gray-400 mb-7 leading-relaxed max-w-xl mx-auto lg:mx-0">
                   {np
                     ? "नवाचारी पशुपालन समाधान, खाद्य सुरक्षा पहल र नेपालभरि दिगो कृषि अभ्यासद्वारा ग्रामीण जीविकोपार्जन रूपान्तरण।"
                     : "Transforming rural livelihoods through innovative livestock solutions, food security initiatives, and sustainable agricultural practices across Nepal."}
                 </p>
 
-                {/* Mobile portrait — visible only below lg */}
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: 0.5, type: "spring" }}
-                  className="flex justify-center lg:hidden mb-8"
-                >
-                  <div className="relative">
-                    <div className="w-36 h-36 sm:w-44 sm:h-44 rounded-full overflow-hidden ring-4 ring-[#D4AF37] shadow-2xl">
-                      <img
-                        src={drShahPhoto}
-                        alt="Dr. Mogal Prasad Shah"
-                        width={144}
-                        height={144}
-                        fetchPriority="high"
-                        decoding="async"
-                        className="w-full h-full object-cover object-top"
-                      />
-                    </div>
-                    <div className="absolute -bottom-3 -right-3 bg-gradient-to-br from-[#D4AF37] to-[#B8941F] rounded-xl px-3 py-1.5 shadow-lg">
-                      <span className="text-[#0A2540] text-xs font-bold">{np ? "२९+ वर्ष" : "29+ Yrs"}</span>
-                    </div>
-                  </div>
-                </motion.div>
-
-                <div className="flex flex-wrap gap-3 sm:gap-4">
-                  <Link to="/booking">
-                    <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                      <Button size="lg" className="bg-gradient-to-r from-[#D4AF37] to-[#B8941F] hover:from-[#B8941F] hover:to-[#D4AF37] text-[#0A2540] font-semibold text-base sm:text-lg px-6 sm:px-8 py-4 sm:py-6 shadow-xl">
+                {/* CTAs — full-width stacked on phones for easy thumb reach */}
+                <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 w-full sm:w-auto mb-5">
+                  <Link to="/booking" className="w-full sm:w-auto">
+                    <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }} className="w-full">
+                      <Button size="lg" className="w-full justify-center bg-gradient-to-r from-[#D4AF37] to-[#B8941F] hover:from-[#B8941F] hover:to-[#D4AF37] text-[#0A2540] font-semibold text-base sm:text-lg px-6 sm:px-8 py-4 sm:py-6 shadow-xl">
                         <CalendarCheck className="mr-2" size={18} />
                         {np ? "परामर्श बुक गर्नुहोस्" : "Book a Consultation"}
                       </Button>
                     </motion.div>
                   </Link>
-                  <Link to="/contact">
-                    <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                      <Button size="lg" variant="outline" className="border-2 border-[#D4AF37] text-[#D4AF37] hover:bg-[#D4AF37] hover:text-[#0A2540] hover:border-[#D4AF37] text-base sm:text-lg px-6 sm:px-8 py-4 sm:py-6 transition-all duration-300">
+                  <Link to="/contact" className="w-full sm:w-auto">
+                    <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }} className="w-full">
+                      <Button size="lg" variant="outline" className="w-full justify-center border-2 border-[#D4AF37] text-[#D4AF37] hover:bg-[#D4AF37] hover:text-[#0A2540] hover:border-[#D4AF37] text-base sm:text-lg px-6 sm:px-8 py-4 sm:py-6 transition-all duration-300">
                         <Mail className="mr-2" size={18} />
                         {np ? "सम्पर्क गर्नुहोस्" : "Get in Touch"}
                       </Button>
@@ -272,11 +273,11 @@ export function Home() {
                 </div>
 
                 {/* Live clinic status (Nepal Time) */}
-                <div className="mt-5">
+                <div className="mb-4">
                   <OpenStatusChip />
                 </div>
 
-                <div className="mt-6 flex items-center space-x-4">
+                <div className="flex items-center justify-center lg:justify-start gap-3">
                   <span className="text-sm text-gray-400">{np ? "जोडिनुहोस्:" : "Connect:"}</span>
                   <motion.a
                     whileHover={{ scale: 1.1, y: -2 }}
@@ -354,7 +355,8 @@ export function Home() {
           <motion.div
             animate={{ y: [0, 10, 0] }}
             transition={{ duration: 2, repeat: Infinity }}
-            className="absolute bottom-8 left-1/2 transform -translate-x-1/2"
+            className="absolute bottom-8 left-1/2 transform -translate-x-1/2 hidden sm:block"
+            aria-hidden="true"
           >
             <div className="w-8 h-12 border-2 border-[#D4AF37]/30 rounded-full flex justify-center pt-2">
               <motion.div

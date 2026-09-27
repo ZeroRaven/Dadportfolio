@@ -49,7 +49,8 @@ export function WhatsAppButton() {
         onPointerLeave={() => setHovering(false)}
         onFocus={() => setHovering(true)}
         onBlur={() => setHovering(false)}
-        className="fixed bottom-8 left-6 sm:left-8 z-40"
+        className="fixed left-4 sm:left-6 z-40"
+        style={{ bottom: "calc(1rem + env(safe-area-inset-bottom))" }}
       >
         {/* Label pill floats ABOVE the circle — never reaches sideways into page content */}
         <AnimatePresence>
