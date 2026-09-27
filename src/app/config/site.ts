@@ -39,7 +39,7 @@ export const siteConfig = {
   //   whatsapp:        "97798XXXXXXXX"     (fallback: country code + number,
   //                                        digits only — used ONLY if no username
   //                                        is set)
-  phone: "+977 9851162780",
+  phone: "+977 9768544758",
   whatsappUsername: "drmogalshah", // ⚠️ demo placeholder — reserve & paste the real one
   whatsapp: "9851162780", // ⚠️ demo placeholder — paste the real number if no username is set
 
@@ -56,9 +56,9 @@ export const siteConfig = {
   // Office hours in Nepal Time — powers the live "Open now / Closed" chip.
   // JS day numbers: 0 = Sunday … 6 = Saturday. Edit to match the real schedule.
   hours: {
-    days: [1, 2, 3, 4, 5], // Mon–Fri
+    days: [0, 1, 2, 3, 4, 5, 6], // Mon–Fri
     openMinute: 9 * 60,    // 09:00 NPT
-    closeMinute: 17 * 60,  // 17:00 NPT
+    closeMinute: 20 * 60,  // 20:00 NPT
     tzOffsetMinutes: 345,  // Nepal Standard Time = UTC+5:45
   },
 
