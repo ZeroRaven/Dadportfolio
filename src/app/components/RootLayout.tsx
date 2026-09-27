@@ -7,6 +7,7 @@ import { FloatingDock } from "./FloatingDock";
 import { WhatsAppButton } from "./WhatsAppButton";
 import { SpeechPlayer } from "./SpeechPlayer";
 import { ReadingGuide } from "./ReadingGuide";
+import { LayoutBreadcrumb } from "./PageBreadcrumb";
 import { useLanguage } from "../context/LanguageContext";
 import { useSpeech } from "../context/SpeechContext";
 
@@ -29,6 +30,7 @@ export function RootLayout() {
         {language === "np" ? "मुख्य सामग्रीमा जानुहोस्" : "Skip to main content"}
       </a>
       <Navigation />
+      <LayoutBreadcrumb />
       <main id="main-content" tabIndex={-1} className="flex-1">
         <Outlet />
       </main>

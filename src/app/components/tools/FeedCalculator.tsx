@@ -5,6 +5,7 @@ import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import { toNepaliDigits } from "../../i18n/format";
+import { ResultCardActions } from "./ResultActions";
 
 /**
  * Feed & dry-matter calculator — body weight → daily dry-matter requirement.
@@ -189,6 +190,15 @@ export function FeedCalculator({ np }: { np: boolean }) {
                   : "For dry animals keep roughage as the main ration and reduce concentrate."}
             </p>
           </motion.div>
+
+          {/* Save / copy / share / print + recent results */}
+          <ResultCardActions
+            np={np}
+            toolId="feed"
+            label={`${ANIMALS.find((a) => a.value === animal)?.[np ? "np" : "en"] ?? animal} · ${weight} kg${showMilk ? ` · ${milk} L ${np ? "दुध" : "milk"}` : ""}`}
+            summary={`${np ? "सुख्खा पदार्थ" : "Dry matter"}: ${F(r.dmLow, 1)}–${F(r.dmHigh, 1)} kg`}
+            detail={`${np ? "हरियो चारा" : "Green fodder"}: ${F(r.freshLow, 0)}–${F(r.freshHigh, 0)} kg · ${np ? "पानी" : "Water"}: ${F(r.waterLow, 0)}–${F(r.waterHigh, 0)} L`}
+          />
         </div>
 
         <p className="mt-4 text-[11px] text-gray-400 leading-relaxed flex items-start gap-1.5">

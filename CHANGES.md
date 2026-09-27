@@ -31,6 +31,135 @@ Open **`src/app/config/site.ts`** — the single source of truth for all site se
 
 ---
 
+## Release 7 — Implementation plan execution: reliability, SEO infrastructure, PWA offline, deep links, shareable results (Sept 2026)
+
+*Every item below was implemented from a detailed external implementation plan
+(verification-first: each claim was re-checked against the codebase before
+patching — plan line numbers were already stale in places, values were
+re-read from source).*
+
+### RELIABILITY
+- **Root `ErrorBoundary`** (`RouteErrorBoundary.tsx`, React Router 7 data
+  mode) on the root route + the three heaviest lazy routes (Tools, AgroMap,
+  Knowledge): a render error or **stale-chunk load failure** (common right
+  after a deploy) now renders a styled bilingual recovery screen offering
+  "Reload" (chunk case) or "Go home" — verified by renaming a hashed chunk
+  and hard-reloading. Previously: blank white screen.
+- **Cookie consent wired up** (was built but dormant): bilingual banner,
+  `useConsent` hook (localStorage + cross-tab storage events, legacy-value
+  mapping), and **analytics now gated — GA + Clarity mount only after
+  "granted"**. Verified: fresh visit = zero analytics network requests;
+  accept → scripts inject; decline → never loads; persists across reload.
+  Dismissing (X) hides without recording — analytics stay off, banner
+  returns next visit.
+- `isDemoContact` now also checks the `phone` placeholder (the WhatsApp
+  half already matched) so a partial real-config swap can't silence the
+  dev warning.
+
+### SEO — knowledge base gets real URLs (the highest-leverage fix)
+- **`/knowledge/:slug`** — every one of the 32 articles is now deep-linkable,
+  bookmarkable and individually indexable (was client-side `useState`).
+  Article selection derives from the URL; bad slugs fall back to the grid
+  with an inline notice; Back returns to the list.
+- **Per-article SEO** (title, description, canonical, `og:type=article`)
+  + **`Article` JSON-LD** (headline/dates padded to NPT from the honest
+  `YYYY-MM` data — datePublished == dateModified noted in-code) + 3-level
+  **`BreadcrumbList`** mirrored by a visible trail in the reader.
+- **Fixed a pre-existing site-wide SEO bug**: `react-helmet` v6 under
+  React 18 only ever applied `<title>` — meta description / og / canonical /
+  robots NEVER updated on any route, and the static `index.html` tags then
+  DUPLICATED helmet's (two conflicting canonicals!). Migrated to
+  **`react-helmet-async` 3** (`HelmetProvider` in App) and stripped the
+  duplicate-prone static tags from `index.html`. Verified: exactly ONE
+  description/og/canonical per page, article-specific on article URLs.
+- **Sitemap generator** (`scripts/generate-sitemap.mjs`, runs inside
+  `npm run build`): 43 URLs = 11 static routes + **32 article URLs**,
+  with duplicate/count validation guards so data drift fails the build
+  loudly. Was: 10 hand-maintained flat entries.
+- **Visible breadcrumb bar** (`LayoutBreadcrumb` in RootLayout) on every
+  non-home route with matching `BreadcrumbList` schema — one wiring point;
+  knowledge articles own their 3-level trail instead (Google's
+  markup-must-match-visible-content policy honoured).
+- **`llms.txt`** added (llmstxt.org shape, key pages + honest descriptions).
+  Explicitly speculative for non-Google AI crawlers — Google has stated
+  it ignores such files; shipped as a low-cost bet for Bing Copilot /
+  Perplexity traffic, matching the README's own claim. FAQPage schema was
+  NOT expanded (Google retired FAQ rich results in May 2026 — expanding it
+  would ship inert markup).
+
+### SITE SEARCH — auto-generated article entries
+- Every KB article is now searchable in the ⌘K palette and 404 search
+  (title + summary, both languages) and jumps to its **deep URL** — derived
+  from `kbArticles` at load so new articles are searchable automatically.
+- **Bundle regression caught and fixed during implementation**: the naive
+  static import pulled the whole 256 KB knowledge dataset into the eager
+  bundle (index chunk 144 → 388 KB!). The KB entries now **lazy-load on
+  first search-UI use** (`useSearchIndex(active)` + module cache) — index
+  chunk back to ~151 KB, KB data fetched only when search opens or the
+  Knowledge page loads.
+
+### PWA — offline support (farmers on rural connectivity)
+- **`vite-plugin-pwa`** (generateSW, `registerType: 'prompt'`, reusing the
+  existing manifest): 49 precached entries (~2.5 MB incl. fonts/og-image) —
+  the whole site works offline. Verified: SW active, network off,
+  `/knowledge` renders fully from cache.
+- **Update prompt** (`PWAUpdatePrompt`, bilingual): a waiting service
+  worker asks before activating — verified end-to-end (old SW active →
+  new SW waiting → prompt → accept → new bundle live). Complements the
+  RouteErrorBoundary's stale-chunk recovery.
+- `engines: { node: ">=18" }` added to package.json.
+
+### CI safety net
+- **`.github/workflows/ci.yml`**: npm ci → `typecheck` (tsc --noEmit) →
+  build → **fail on stale generated sitemap**. Note: the repo's `lint`
+  script requires ESLint, which is not installed as a devDependency —
+  CI gates on typecheck instead (noted in the workflow itself).
+
+### TOOLS — results you can keep, share and link to
+- **All 12 calculators** gained a shared **Save / Copy / Share / Print**
+  row (`ResultCardActions`) + a collapsible per-tool **Recent results**
+  list (localStorage, bounded at 50, cross-tab synced, fail-silent in
+  private browsing). Share uses Web Share API on mobile, WhatsApp fallback
+  on desktop. Verified: save → reload → history intact.
+- **`/tools/:toolId` deep links** — every calculator has its own URL
+  (tab state derived from the route; invalid ids fall back to weight).
+  Verified: `/tools/vaccine` hard-load selects the vaccination tool.
+- Print stylesheet added (`globals.css` + `print:hidden` chrome): printing
+  a result shows the content, not nav/tab-rail/footer/floating buttons.
+
+### AGROMAP — findable, linkable, shareable
+- **Live district search** on the map: typing "ilam" (English or देवनागरी)
+  green-highlights matches live and offers click-through chips that open
+  the factsheet.
+- **URL params** (`?view=`, `?district=`, `?compare=A,B`): the workspace,
+  open district and comparison are bookmarkable/shareable and restored on
+  hard navigation (verified: `?district=Jumla` and `?view=compare&
+  compare=Ilam,Jumla` both restore exactly).
+- **Factsheet Save/Copy/Share/Print** (light variant of ResultCardActions)
+  under the "Compare this district" hook — the share text carries HQ,
+  belt, known-for, crop/livestock tags and the deep-link URL.
+
+### Validation performed (this release)
+- `tsc --noEmit` clean after every phase; production build clean; all
+  routes (incl. deep links + query-param URLs) 200; **zero console/page
+  errors across a 13-route sweep** on the final bundle.
+- Browser-verified: consent gating (before/accept/decline/persist), PWA
+  update cycle end-to-end, offline load of /knowledge, chunk-failure →
+  styled recovery screen, article deep load (single clean SEO tag set:
+  title/description/og/canonical all article-specific), bad-slug fallback
+  notice, palette "mastitis" → deep article navigation, tools deep link +
+  save/history-across-reload, AgroMap search/chips/URL restore/factsheet
+  actions, breadcrumb bars.
+- VLM review: KB article (breadcrumb + complete layout), AgroMap (tabs +
+  search box), tools result card (action buttons visible), mobile consent
+  banner (no overlap with floating buttons) — all clean.
+- Out-of-scope items honored from the plan: Consent Mode v2 legal calls,
+  per-district path URLs, opportunistic rewrites, choropleth numeric
+  layer (blocked on sourcing a real per-district numeric dataset — will
+  NOT be invented).
+
+---
+
 ## Release 6 — Real text-to-speech player, full accessibility suite, analytical agro-map, mobile hero & drawer redesign (Sept 2026)
 
 ### NEW: Read-aloud SPEECH PLAYER (replaces the one-shot "read this page" button)
@@ -141,6 +270,42 @@ Open **`src/app/config/site.ts`** — the single source of truth for all site se
 - VLM review: mobile hero 8/10, drawer 9/10, a11y panel 9/10 (after the
   overlap fix), high contrast 9/10, map layers 9/10 ×3, compare 9/10,
   desktop home 8/10 — no defects flagged.
+
+### Independent verification pass (follow-up audit)
+Every Release 6 claim was re-verified from a fresh build on a cold preview
+server, with no reliance on the original test session:
+- **Dock geometry re-measured**: scroll-to-top y 768–816 vs a11y launcher
+  y 828–884 (12px gap, one column) at 1440px; at 390px the WhatsApp button
+  (bottom-left, x 16–72) and the dock (bottom-right, x 318–374) share a
+  baseline without intersecting; the speech player is bottom-centre. Zero
+  overlaps anywhere.
+- **Speech engine re-driven end-to-end** with a stubbed synth: 46 blocks
+  collected, highlight verified on H1 then H2 "Institutions & Partners"
+  as it advanced, pause→Resume label flip, next/prev, rate cycler persisted
+  across sessions (1.25× after reload of the session), voice picker
+  populated (Auto + English/Hindi/Nepali) and choice persisted to
+  localStorage, stop tears down player + highlight, full-page completion
+  (all 46 spoken) ends cleanly.
+- **All 7 a11y toggles re-verified by computed style**: font scale 20px
+  root, Atkinson Hyperlegible on body, color-scheme dark + gold headings,
+  dyslexia 2.16px/2.88px/32.4px spacing, underline on links, reduce-motion
+  class, reading-guide band present after mousemove; reset restores
+  defaults.
+- **AgroMap re-verified**: Tea spotlight = exactly 4 gold paths; zone
+  filters return exactly 22/40/15 rows; CSV blob = 78 lines bilingual;
+  row-click (Dolpa) switches to Map tab with the factsheet open; compare
+  Ilam vs Jumla shows both zone-headed cards + tag chips; NP mode renders
+  चिया ४ etc. across the UI.
+- **Two refinements shipped from this audit**:
+  1. Data-explorer search now also matches **crop & livestock tags** in
+     both scripts ("tea" and "चिया" both return the 4 tea districts;
+     previously only name/HQ/known-for were searched, so Tehrathum was
+     missed despite the placeholder promising "signature crop" search).
+  2. The read-aloud highlight was strengthened (gold tint 0.14 → 0.22,
+     ring 0.45 → 0.55) so the block being spoken is unmistakable — VLM
+     re-confirmed the heading is now visibly highlighted.
+- 12-route sweep (incl. a 404 route) on the final bundle: **zero console
+  or page errors**. VLM re-review of 8 fresh screenshots: all clean.
 
 ---
 

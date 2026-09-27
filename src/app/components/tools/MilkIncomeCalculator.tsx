@@ -4,6 +4,7 @@ import { Wallet, Info } from "lucide-react";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import { toNepaliDigits } from "../../i18n/format";
+import { ResultCardActions } from "./ResultActions";
 
 /**
  * DAIRY INCOME CALCULATOR — the arithmetic of a small dairy.
@@ -174,6 +175,15 @@ export function MilkIncomeCalculator({ np }: { np: boolean }) {
               {np ? " लिटर" : " L/month"}
             </p>
           </div>
+
+          {/* Save / copy / share / print + recent results */}
+          <ResultCardActions
+            np={np}
+            toolId="dairy"
+            label={`${animals} ${np ? "पशु" : "animals"} · ${litres} L/day · रु.${price}/L`}
+            summary={`${np ? "मासिक नाफा" : "Monthly net"}: रु. ${r.netMonth.toLocaleString()} (${r.netMonth >= 0 ? "+" : ""})`}
+            detail={`${np ? "वार्षिक" : "Yearly"}: रु. ${r.netYear.toLocaleString()} · ${np ? "प्रति लिटर नाफा" : "Margin/L"}: रु. ${r.marginPerL.toFixed(1)} · ${np ? "नोक्सान नहुने भाउ" : "Break-even"}: रु. ${r.breakEven.toFixed(1)}/L`}
+          />
         </div>
       </div>
     </div>

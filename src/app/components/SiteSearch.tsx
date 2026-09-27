@@ -34,7 +34,7 @@ export interface SearchItem {
   keywords: string; // space-separated lowercase search terms (both languages)
 }
 
-export const SEARCH_INDEX: SearchItem[] = [
+const HAND_WRITTEN_INDEX: SearchItem[] = [
   {
     path: "/",
     icon: Home,
@@ -269,6 +269,59 @@ export const SEARCH_INDEX: SearchItem[] = [
   },
 ];
 
+/* ── Auto-generated: every knowledge-base article gets its own entry ──────
+ * Derived from kbArticles — but LAZILY. The knowledge dataset is ~256 KB and
+ * must never ship in the eager bundle (rural connectivity): it is fetched the
+ * first time a search UI is actually used, then a module-level cache serves
+ * every later search. Until it arrives, the hand-written entries above give
+ * instant results. */
+let kbEntriesCache: SearchItem[] | null = null;
+let kbLoadStarted = false;
+
+function mapKbArticles(
+  articles: { id: string; title: { en: string; np: string }; summary: { en: string; np: string } }[]
+): SearchItem[] {
+  return articles.map((a) => ({
+    path: `/knowledge/${a.id}`,
+    icon: BookOpen,
+    section: { en: "Knowledge", np: "ज्ञान" },
+    title: a.title,
+    desc: a.summary,
+    keywords: [a.title.en, a.title.np, a.summary.en, a.summary.np]
+      .join(" ")
+      .toLowerCase(),
+  }));
+}
+
+/**
+ * Full search index for active search UIs. Pass `active` = true when the
+ * search UI is mounted/open — that moment triggers the one-time KB chunk
+ * load (new articles then become searchable automatically, each linking to
+ * its deep URL /knowledge/<id> rather than the generic library page).
+ */
+export function useSearchIndex(active: boolean): SearchItem[] {
+  const [kb, setKb] = useState<SearchItem[] | null>(kbEntriesCache);
+
+  useEffect(() => {
+    if (!active || kbLoadStarted || kbEntriesCache) return;
+    kbLoadStarted = true;
+    import("../data/kb")
+      .then((m) => {
+        kbEntriesCache = mapKbArticles(m.kbArticles);
+        setKb(kbEntriesCache);
+      })
+      .catch(() => {
+        // Chunk load failed — searches still work over the hand-written index.
+        kbLoadStarted = false;
+      });
+  }, [active]);
+
+  return useMemo(
+    () => (kb ? [...HAND_WRITTEN_INDEX, ...kb] : HAND_WRITTEN_INDEX),
+    [kb]
+  );
+}
+
 /** Word-level match: substring either way, or shared stem ≥ 5 chars
  *  (so "vaccine" matches "vaccination", "consult" matches "consulting"). */
 function wordMatch(term: string, word: string): boolean {
@@ -303,16 +356,17 @@ export function SiteSearch({ autoFocus = false }: { autoFocus?: boolean }) {
   const [open, setOpen] = useState(false);
   const [active, setActive] = useState(0);
   const boxRef = useRef<HTMLDivElement>(null);
+  const index = useSearchIndex(true); // mounted → KB entries load once
 
   const results = useMemo(() => {
     const q = query.trim();
     if (q.length < 2) return [];
-    return SEARCH_INDEX.map((item) => ({ item, score: scoreItem(item, q) }))
+    return index.map((item) => ({ item, score: scoreItem(item, q) }))
       .filter((r) => r.score > 0)
       .sort((a, b) => b.score - a.score)
       .slice(0, 6)
       .map((r) => r.item);
-  }, [query]);
+  }, [query, index]);
 
   /* Close on outside click / Escape */
   useEffect(() => {

@@ -5,6 +5,7 @@ import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import { toNepaliDigits } from "../../i18n/format";
+import { ResultCardActions } from "./ResultActions";
 
 /**
  * Veterinary dosage calculator — converts a prescribed mg/kg dose into the
@@ -177,6 +178,18 @@ export function DosageCalculator({ np }: { np: boolean }) {
                 : "Round carefully — split tablets only when the label allows. Follow label guidance on fasting/feeding."}
             </p>
           </motion.div>
+
+          {/* Save / copy / share / print + recent results */}
+          <ResultCardActions
+            np={np}
+            toolId="dosage"
+            label={`${weight} kg · ${dose} mg/kg`}
+            summary={`${np ? "कुल खुराक" : "Total dose"}: ${F(r.totalMg, 1)} mg`}
+            detail={[
+              r.ml !== null && r.ml > 0 ? `${np ? "सिरिन्ज" : "Syringe"}: ${F(r.ml, 2)} mL` : null,
+              r.tablets !== null && r.tablets > 0 ? `${np ? "ट्याब्लेट" : "Tablets"}: ≈ ${F(r.tablets, 2)}` : null,
+            ].filter(Boolean).join(" · ")}
+          />
         </div>
 
         <p className="mt-4 text-[11px] text-gray-400 leading-relaxed flex items-start gap-1.5">

@@ -6,6 +6,7 @@ import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import { toNepaliDigits } from "../../i18n/format";
+import { ResultCardActions } from "./ResultActions";
 
 /**
  * Gestation calculator — breeding date + species → expected delivery date.
@@ -193,6 +194,21 @@ export function GestationCalculator({ np }: { np: boolean }) {
             </motion.div>
           ) : (
             <p className="text-gray-300 text-sm">{np ? "मिति छान्नुहोस्।" : "Pick a date to see the due date."}</p>
+          )}
+
+          {/* Save / copy / share / print + recent results */}
+          {result && (
+            <ResultCardActions
+              np={np}
+              toolId="gestation"
+              label={`${np ? spec.np : spec.en} · ${np ? "मिलन" : "bred"} ${npDate(new Date(bredOn + "T00:00:00"), np)}`}
+              summary={`${np ? "प्रसूति" : "Due"}: ${npDate(result.due, np)} (${result.remaining >= 0 ? `${fmtD(result.remaining)} ${np ? "दिन बाँकी" : "days left"}` : np ? "प्रसूति भइसकेको" : "delivered"})`}
+              detail={
+                (spec.value === "cattle" || spec.value === "buffalo") && result.remaining > 0
+                  ? `${np ? "सुकाउने" : "Dry-off"}: ${npDate(result.dryOff, np)}`
+                  : undefined
+              }
+            />
           )}
         </div>
 

@@ -3,7 +3,7 @@ import { useNavigate } from "react-router";
 import { motion, AnimatePresence } from "motion/react";
 import { Search, X, CornerDownLeft } from "lucide-react";
 import { useLanguage } from "../context/LanguageContext";
-import { SEARCH_INDEX, scoreItem, type SearchItem } from "./SiteSearch";
+import { useSearchIndex, scoreItem, type SearchItem } from "./SiteSearch";
 
 /**
  * SearchPalette — a ⌘K / Ctrl+K command-palette that puts site search on
@@ -25,16 +25,18 @@ export function SearchPalette({
   const [query, setQuery] = useState("");
   const [active, setActive] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
+  // KB entries lazy-load the first time the palette actually opens.
+  const index = useSearchIndex(open);
 
   const results = useMemo(() => {
     const q = query.trim();
     if (q.length < 2) return [];
-    return SEARCH_INDEX.map((item) => ({ item, score: scoreItem(item, q) }))
+    return index.map((item) => ({ item, score: scoreItem(item, q) }))
       .filter((r) => r.score > 0)
       .sort((a, b) => b.score - a.score)
       .slice(0, 7)
       .map((r) => r.item);
-  }, [query]);
+  }, [query, index]);
 
   /* Focus + reset whenever the palette opens */
   useEffect(() => {

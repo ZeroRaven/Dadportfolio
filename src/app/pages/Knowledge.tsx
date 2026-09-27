@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { useNavigate, useParams } from "react-router";
 import { motion, AnimatePresence } from "motion/react";
 import {
   BookOpen, Search, ChevronLeft, ChevronRight, Clock, Info,
@@ -7,10 +8,13 @@ import {
 } from "lucide-react";
 import { useLanguage } from "../context/LanguageContext";
 import { SEO } from "../components/SEO";
+import { BreadcrumbSchema } from "../components/BreadcrumbSchema";
+import { ArticleSchema } from "../components/ArticleSchema";
 import { Input } from "../components/ui/input";
 import { kbArticles, kbCategories } from "../data/kb";
 import type { KBArticle } from "../data/kb/types";
 import { toNepaliDigits } from "../i18n/format";
+import { siteConfig } from "../config/site";
 
 /**
  * KNOWLEDGE BASE — a researched, bilingual agriculture & animal-husbandry
@@ -100,9 +104,20 @@ function npDatestamp(s: string, np: boolean): string {
 export function Knowledge() {
   const { language } = useLanguage();
   const np = language === "np";
+  const { slug } = useParams<{ slug?: string }>();
+  const navigate = useNavigate();
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState<string>("all");
-  const [selected, setSelected] = useState<KBArticle | null>(null);
+
+  // Article selection lives in the URL (/knowledge/:slug) so every one of
+  // the articles is deep-linkable, bookmarkable and individually indexed.
+  const selected = useMemo(
+    () => (slug ? kbArticles.find((a) => a.id === slug) ?? null : null),
+    [slug]
+  );
+  // A slug that matches no article (bad/old link) falls back to the grid —
+  // with a notice instead of a silently blank reader.
+  const slugMissed = !!slug && !selected;
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -123,7 +138,9 @@ export function Knowledge() {
     return m;
   }, []);
 
-  const closeArticle = () => setSelected(null);
+  const openArticle = (article: KBArticle) =>
+    navigate(`/knowledge/${article.id}`);
+  const closeArticle = () => navigate("/knowledge");
 
   return (
     <>
@@ -133,6 +150,35 @@ export function Knowledge() {
         keywords="Nepal agriculture knowledge base, livestock farming guide Nepal, vaccination schedule FMD HS PPR, dairy buffalo feeding, goat farming Nepal Khari Boer, Ranikhet Newcastle vaccine, paddy rice seasons Nepal, fodder trees silage hay, climate change agriculture Nepal, farm record keeping, कृषि ज्ञान भण्डार, पशुपालन जानकारी, बाख्रा पालन, धान मकै गहुँ, चारा सिलेज, जलवायु परिवर्तन कृषि"
         path="/knowledge"
       />
+      {/* Per-article SEO overrides the page-level tags above (helmet
+          last-wins) and mirrors the reader exactly. */}
+      {selected && (
+        <>
+          <SEO
+            title={np ? selected.title.np : selected.title.en}
+            description={(np ? selected.summary.np : selected.summary.en).slice(0, 155)}
+            path={`/knowledge/${selected.id}`}
+            type="article"
+          />
+          <BreadcrumbSchema
+            items={[
+              { name: np ? "गृहपृष्ठ" : "Home", url: "/" },
+              { name: np ? "ज्ञान भण्डार" : "Knowledge Base", url: "/knowledge" },
+              { name: np ? selected.title.np : selected.title.en, url: `/knowledge/${selected.id}` },
+            ]}
+          />
+          {/* datePublished == dateModified: the KB data model tracks a single
+              "updated" month (YYYY-MM) — padded to NPT midnight rather than
+              inventing day-level precision. */}
+          <ArticleSchema
+            headline={np ? selected.title.np : selected.title.en}
+            description={np ? selected.summary.np : selected.summary.en}
+            datePublished={`${selected.updated}-01T00:00:00+05:45`}
+            dateModified={`${selected.updated}-01T00:00:00+05:45`}
+            image={selected.image ?? siteConfig.ogImage}
+          />
+        </>
+      )}
 
       <div className="bg-gray-50 min-h-screen pb-20">
         {/* ── Header band ─────────────────────────────────────────────── */}
@@ -181,7 +227,19 @@ export function Knowledge() {
         </div>
 
         <div className="max-w-5xl mx-auto px-4 sm:px-6">
-          {/* ── Article reader (in-place) ─────────────────────────────── */}
+          {/* Bad/old slug notice — grid is shown below instead */}
+          {slugMissed && (
+            <div className="-mt-6 mb-6 rounded-xl bg-[#D4AF37]/10 border border-[#D4AF37]/30 px-5 py-3.5 flex items-center gap-3">
+              <Info size={16} className="text-[#B8941F] flex-shrink-0" />
+              <p className="text-sm text-[#0A2540]">
+                {np
+                  ? "त्यो लेख फेला परेन — तल सबै लेख देखाइएको छ।"
+                  : "That article could not be found — showing all articles below."}
+              </p>
+            </div>
+          )}
+
+          {/* ── Article reader (in-place, URL-driven) ─────────────────── */}
           <AnimatePresence mode="wait">
             {selected ? (
               <motion.article
@@ -194,6 +252,29 @@ export function Knowledge() {
               >
                 {/* Reader header */}
                 <div className="bg-gradient-to-br from-[#0A2540] to-[#12365C] text-white px-6 sm:px-10 py-8">
+                  {/* Visible trail — mirrors the BreadcrumbList schema above */}
+                  <nav
+                    aria-label={np ? "ब्रेडक्रम्ब" : "Breadcrumb"}
+                    className="mb-3"
+                  >
+                    <ol className="flex items-center gap-1.5 text-xs text-gray-300 flex-wrap">
+                      <li>
+                        <a href="/" className="hover:text-white transition-colors">
+                          {np ? "गृहपृष्ठ" : "Home"}
+                        </a>
+                      </li>
+                      <li aria-hidden="true"><ChevronRight size={12} /></li>
+                      <li>
+                        <a href="/knowledge" className="hover:text-white transition-colors">
+                          {np ? "ज्ञान भण्डार" : "Knowledge Base"}
+                        </a>
+                      </li>
+                      <li aria-hidden="true"><ChevronRight size={12} /></li>
+                      <li aria-current="page" className="font-medium text-[#D4AF37] truncate max-w-[16rem]">
+                        {np ? selected.title.np : selected.title.en}
+                      </li>
+                    </ol>
+                  </nav>
                   <button
                     type="button"
                     onClick={closeArticle}
@@ -365,7 +446,7 @@ export function Knowledge() {
                       <button
                         type="button"
                         onClick={() => {
-                          setSelected(next);
+                          openArticle(next);
                           window.scrollTo({ top: 0, behavior: "smooth" });
                         }}
                         className="mt-8 w-full text-left rounded-xl border-2 border-gray-100 hover:border-[#D4AF37]/50 bg-gray-50 hover:bg-[#D4AF37]/[0.05] px-5 py-4 transition-colors group"
@@ -480,7 +561,7 @@ export function Knowledge() {
                           animate={{ opacity: 1, y: 0 }}
                           transition={{ delay: Math.min(i * 0.04, 0.3), duration: 0.3 }}
                           onClick={() => {
-                            setSelected(a);
+                            openArticle(a);
                             window.scrollTo({ top: 0, behavior: "smooth" });
                           }}
                           className="text-left bg-white rounded-2xl shadow-md hover:shadow-xl border border-transparent hover:border-[#D4AF37]/40 transition-all overflow-hidden flex flex-col group"

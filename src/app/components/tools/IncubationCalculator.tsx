@@ -4,6 +4,7 @@ import { CalendarDays, Egg, Thermometer } from "lucide-react";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import { toNepaliDigits } from "../../i18n/format";
+import { ResultCardActions } from "./ResultActions";
 
 /**
  * INCUBATION CALENDAR — set date + species → the full hatch schedule.
@@ -203,6 +204,20 @@ export function IncubationCalculator({ np }: { np: boolean }) {
             </>
           ) : (
             <p className="text-sm text-gray-300">{np ? "मिति छान्नुहोस्।" : "Pick a date to see the schedule."}</p>
+          )}
+
+          {/* Save / copy / share / print + recent results */}
+          {result && (
+            <ResultCardActions
+              np={np}
+              toolId="hatch"
+              label={`${np ? spec.np : spec.en} · ${np ? "सेट" : "set"} ${npDate(new Date(setOn + "T00:00:00"), np)}`}
+              summary={`${np ? "चल्ली" : "Hatch"}: ${npDate(result.hatch, np)}`}
+              detail={
+                `${np ? "प्रकाश जाँच" : "Candling"}: ${npDate(result.candle1, np)} / ${npDate(result.candle2, np)} · ` +
+                `${np ? "लकडाउन" : "Lockdown"}: ${npDate(result.lockdown, np)}`
+              }
+            />
           )}
         </div>
       </div>

@@ -1,0 +1,28 @@
+
+/* ── Print stylesheet ─────────────────────────────────────────────────────
+ * Print buttons exist on tool result cards, knowledge articles and the
+ * district factsheet. Printing should show the CONTENT, not the app chrome:
+ * navigation, breadcrumb bar, footer, floating dock/player/WhatsApp, cookie
+ * banner and on-page tool controls are suppressed. */
+@media print {
+  /* App chrome */
+  nav[aria-label="Primary navigation"],
+  nav[aria-label="Breadcrumb"],
+  nav[aria-label="ब्रेडक्रम्ब"],
+  footer,
+  .fixed,
+  .skip-link {
+    display: none !important;
+  }
+
+  /* Page chrome: full-bleed gradient bands print as gray slabs — flatten */
+  body {
+    background: #fff !important;
+  }
+
+  /* Force ink-friendly text on light surfaces */
+  * {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}

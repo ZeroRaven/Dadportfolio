@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { useNavigate, useParams } from "react-router";
 import { motion, AnimatePresence } from "motion/react";
 import {
   Scale, Ruler, Syringe, BellRing, Download, Calculator, RotateCcw,
@@ -21,6 +22,7 @@ import { MilkIncomeCalculator } from "../components/tools/MilkIncomeCalculator";
 import { WaterRequirementCalculator } from "../components/tools/WaterRequirementCalculator";
 import { IncubationCalculator } from "../components/tools/IncubationCalculator";
 import { MarketValueCalculator } from "../components/tools/MarketValueCalculator";
+import { ResultCardActions } from "../components/tools/ResultActions";
 import { toNepaliDigits } from "../i18n/format";
 
 /* ─────────────────────────────────────────────────────────────────────────────
@@ -316,6 +318,22 @@ function WeightEstimator({ np }: { np: boolean }) {
               ? `गणना: (${fmt(girthCm, np)} × ${fmt(girthCm, np)} × ${fmt(lengthCm, np)}) ÷ ${fmt(spec.divisor, np)} — शाफरको नियम`
               : `Working: (${fmt(girthCm, np)} × ${fmt(girthCm, np)} × ${fmt(lengthCm, np)}) ÷ ${fmt(spec.divisor, np)} — Schaeffer's rule`}
           </p>
+
+          {/* Save / copy / share / print + recent results */}
+          <ResultCardActions
+            np={np}
+            toolId="weight"
+            label={
+              (np ? SPECIES.find((s) => s.value === species)?.np : SPECIES.find((s) => s.value === species)?.en) +
+              ` · ${fmt(girthDisp, np, 0)} ${unit} × ${fmt(lengthDisp, np, 0)} ${unit}`
+            }
+            summary={`${np ? "लगभग" : "≈"} ${fmt(weight, np)} kg`}
+            detail={
+              np
+                ? `खस्रो खाद्य: ${fmt(dmLow, np, 1)}–${fmt(dmHigh, np, 1)} केजी/दिन`
+                : `Dry matter: ${fmt(dmLow, np, 1)}–${fmt(dmHigh, np, 1)} kg/day`
+            }
+          />
         </div>
       </div>
     </div>
@@ -398,7 +416,7 @@ function VaccineReminder({ np }: { np: boolean }) {
   };
 
   return (
-    <div className="max-w-2xl space-y-6">
+    <div className="max-w-2xl space-y-6 print:space-y-0">
       {/* Program */}
       <div>
         <Label className="text-sm font-semibold text-[#0A2540] mb-3 block">
@@ -509,6 +527,17 @@ function VaccineReminder({ np }: { np: boolean }) {
                 ? "गुगल / एप्पल / आउटलुक क्यालेन्डरमा खुल्छ — ६ पटक दोहोरिने सम्झना, खुराकअघि १ दिन अलार्म।"
                 : "Works with Google / Apple / Outlook Calendar — 6 recurring reminders with a day-before alarm."}
             </p>
+
+            {/* Save / copy / share / print + recent results */}
+            {doses.length > 0 && (
+              <ResultCardActions
+                np={np}
+                toolId="vaccine"
+                label={`${np ? prog.np : prog.en} · ${np ? "पछिल्लो खुराक" : "last dose"} ${lastDate || (np ? "आज" : "today")}`}
+                summary={`${np ? "अर्को खुराक" : "Next dose"}: ${pretty(doses[0])}`}
+                detail={doses.map((d, i) => `${i + 1}. ${pretty(d)}`).join("\n")}
+              />
+            )}
           </motion.div>
         )}
       </AnimatePresence>
@@ -569,7 +598,13 @@ type TabValue = string;
 export function Tools() {
   const { language } = useLanguage();
   const np = language === "np";
-  const [tab, setTab] = useState<TabValue>("weight");
+  // Deep-linkable tabs (/tools/vaccine): the active calculator lives in the
+  // URL so any tool can be linked, bookmarked and shared directly. Invalid
+  // or absent ids fall back to the weight estimator.
+  const { toolId } = useParams<{ toolId?: string }>();
+  const navigate = useNavigate();
+  const tab: TabValue = TABS.some((t) => t.value === toolId) ? toolId! : "weight";
+  const pickTab = (value: string) => navigate(`/tools/${value}`);
 
   return (
     <>
@@ -581,7 +616,7 @@ export function Tools() {
       />
       <div className="bg-gray-50 min-h-screen pb-20">
         {/* Header band */}
-        <div className="bg-gradient-to-br from-[#0A2540] to-[#12365C] text-white pt-28 pb-12 px-4 sm:px-6">
+        <div className="bg-gradient-to-br from-[#0A2540] to-[#12365C] text-white pt-28 pb-12 px-4 sm:px-6 print:hidden">
           <div className="max-w-4xl mx-auto">
             <motion.div
               initial={{ opacity: 0, y: -10 }}
@@ -609,7 +644,7 @@ export function Tools() {
           <Card className="border-0 shadow-xl">
             <CardContent className="p-5 sm:p-10">
               {/* Tool rail — grouped, wraps on small screens */}
-              <div className="mb-8 -mx-1 px-1">
+              <div className="mb-8 -mx-1 px-1 print:hidden">
                 {TOOL_GROUPS.map((group) => (
                   <div key={group.id} className="mb-3 last:mb-0">
                     <p className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.22em] text-[#B8941F] mb-1.5 pl-1">
@@ -623,7 +658,7 @@ export function Tools() {
                           type="button"
                           role="tab"
                           aria-selected={tab === value}
-                          onClick={() => setTab(value)}
+                          onClick={() => pickTab(value)}
                           className={`flex items-center gap-1.5 px-3.5 py-2 rounded-full text-sm font-semibold transition-all border-2 ${
                             tab === value
                               ? "bg-[#0A2540] text-white border-[#0A2540] shadow-md"
@@ -666,7 +701,7 @@ export function Tools() {
               )}
 
               {/* Honest-use disclaimer */}
-              <div className="mt-10 rounded-xl bg-amber-50 border border-amber-100 px-4 py-3.5 flex items-start gap-3">
+              <div className="mt-10 rounded-xl bg-amber-50 border border-amber-100 px-4 py-3.5 flex items-start gap-3 print:hidden">
                 <AlertTriangle className="text-amber-600 flex-shrink-0 mt-0.5" size={17} />
                 <p className="text-xs sm:text-sm text-amber-800 leading-relaxed">
                   {np
@@ -677,7 +712,7 @@ export function Tools() {
             </CardContent>
           </Card>
 
-          <p className="mt-5 text-center text-xs text-gray-400 flex items-center justify-center gap-1.5">
+          <p className="mt-5 text-center text-xs text-gray-400 flex items-center justify-center gap-1.5 print:hidden">
             <Info size={12} />
             {np
               ? "औजारहरू तपाईंको ब्राउजरमै चल्छन् — कुनै डाटा कतै पठाइँदैन।"

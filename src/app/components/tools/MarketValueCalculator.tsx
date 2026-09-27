@@ -4,6 +4,7 @@ import { Scale, AlertTriangle } from "lucide-react";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import { toNepaliDigits } from "../../i18n/format";
+import { ResultCardActions } from "./ResultActions";
 
 /**
  * LIVE ANIMAL MARKET VALUE ESTIMATOR.
@@ -150,6 +151,14 @@ export function MarketValueCalculator({ np }: { np: boolean }) {
               <span className="font-semibold text-white">{np ? spec.np : spec.en}</span>
             </p>
           </div>
+
+          {/* Save / copy / share / print + recent results */}
+          <ResultCardActions
+            np={np}
+            toolId="market"
+            label={`${np ? spec.np : spec.en} · ${weight} kg · रु.${rate}/kg`}
+            summary={`रु. ${r.value.toLocaleString("en-IN")} (±10%: रु.${r.low.toLocaleString("en-IN")}–रु.${r.high.toLocaleString("en-IN")})`}
+          />
         </div>
       </div>
     </div>

@@ -1,11 +1,12 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { useSearchParams } from "react-router";
 import { motion, AnimatePresence } from "motion/react";
 import { NepalMap, NepalMapLegend } from "nepal-district-map";
 import type { Province } from "nepal-district-map";
 import {
   Map as MapIcon, Info, Landmark, Users, Layers,
   Wheat, HeartPulse, CloudSun, Sparkles, ChevronRight, X, Leaf,
-  Building2, ListFilter, ArrowLeftRight, Table2, Columns3, MousePointerClick,
+  Building2, ListFilter, ArrowLeftRight, Table2, Columns3, MousePointerClick, Search,
 } from "lucide-react";
 import { useLanguage } from "../context/LanguageContext";
 import { SEO } from "../components/SEO";
@@ -20,6 +21,7 @@ import {
 } from "../data/nepalDistrictMeta";
 import { CompareView } from "../components/agro/CompareView";
 import { DataExplorer } from "../components/agro/DataExplorer";
+import { ResultCardActions } from "../components/tools/ResultActions";
 import { toNepaliDigits } from "../i18n/format";
 
 /**
@@ -142,14 +144,49 @@ function MiniChips({ ids, kind, np }: { ids: string[]; kind: "crops" | "livestoc
 export function AgroMap() {
   const { language } = useLanguage();
   const np = language === "np";
-  const [view, setView] = useState<ViewId>("map");
+  // Deep-linkable state (?view=map&district=Ilam&compare=Ilam,Jumla): the
+  // workspace, open district and comparison are all bookmarkable/shareable.
+  const [searchParams, setSearchParams] = useSearchParams();
+  const initView = (searchParams.get("view") as ViewId) || "map";
+  const initDistrict = searchParams.get("district");
+  const [compareAInit, compareBInit] = (() => {
+    const c = searchParams.get("compare");
+    if (!c) return [null, null] as const;
+    const [a, b] = c.split(",");
+    return [a || null, b || null] as const;
+  })();
+  const [view, setView] = useState<ViewId>(initView);
   const [layer, setLayer] = useState<LayerId>("province");
   const [spotTag, setSpotTag] = useState<string | null>(null);
-  const [district, setDistrict] = useState<DistrictProfile | null>(null);
+  const [district, setDistrict] = useState<DistrictProfile | null>(
+    () => (initDistrict ? districtByName(initDistrict) ?? null : null)
+  );
   const [province, setProvince] = useState<Province | null>(null);
   const [tab, setTab] = useState<PanelTab>("overview");
-  const [compareA, setCompareA] = useState<string | null>(null);
-  const [compareB, setCompareB] = useState<string | null>(null);
+  const [compareA, setCompareA] = useState<string | null>(compareAInit);
+  const [compareB, setCompareB] = useState<string | null>(compareBInit);
+  // Live district search — highlights matches on the map as you type.
+  const [mapQuery, setMapQuery] = useState("");
+
+  // Keep the URL in sync (replace, not push — selection isn't history).
+  useEffect(() => {
+    const next = new URLSearchParams();
+    if (view !== "map") next.set("view", view);
+    if (district) next.set("district", district.name);
+    if (compareA || compareB) {
+      next.set("compare", [compareA ?? "", compareB ?? ""].filter(Boolean).join(","));
+    }
+    setSearchParams(next, { replace: true });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [view, district, compareA, compareB]);
+
+  const searchMatches = useMemo(() => {
+    const q = mapQuery.trim().toLowerCase();
+    if (q.length < 2) return [];
+    return DISTRICTS.filter(
+      (d) => d.name.toLowerCase().includes(q) || d.np.includes(mapQuery.trim())
+    ).map((d) => d.name);
+  }, [mapQuery]);
 
   const fmtN = (n: number) => (np ? toNepaliDigits(String(n)) : String(n));
 
@@ -571,14 +608,66 @@ export function AgroMap() {
                   </div>
                 )}
 
+                {/* Live district search — highlights matches on the map */}
+                <div className="mb-4">
+                  <div className="relative">
+                    <Search size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#B8941F]" aria-hidden="true" />
+                    <input
+                      type="search"
+                      value={mapQuery}
+                      onChange={(e) => setMapQuery(e.target.value)}
+                      placeholder={np ? "जिल्ला खोज्नुहोस् (इलाम / Ilam…)" : "Find a district (Ilam / इलाम…)"}
+                      aria-label={np ? "नक्सामा जिल्ला खोज्नुहोस्" : "Search districts on the map"}
+                      className="w-full rounded-xl border-2 border-gray-200 bg-gray-50 pl-9 pr-4 py-2.5 text-sm font-medium text-[#0A2540] focus:border-[#D4AF37] outline-none transition-colors"
+                    />
+                  </div>
+                  {mapQuery.trim().length >= 2 && (
+                    <div className="mt-2 flex flex-wrap items-center gap-1.5">
+                      {searchMatches.length === 0 ? (
+                        <p className="text-xs text-gray-400">
+                          {np ? "कुनै जिल्ला मेल खाँदैन।" : "No district matches."}
+                        </p>
+                      ) : (
+                        <>
+                          <span className="text-[11px] font-bold uppercase tracking-wider text-gray-400">
+                            {fmtN(searchMatches.length)} {np ? "मेल" : "match"}:
+                          </span>
+                          {searchMatches.slice(0, 10).map((name) => {
+                            const d = districtByName(name)!;
+                            return (
+                              <button
+                                key={name}
+                                type="button"
+                                onClick={() => {
+                                  pickDistrict(name);
+                                  setMapQuery("");
+                                }}
+                                className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold border-2 border-emerald-200 bg-emerald-50 text-emerald-800 hover:border-emerald-400 transition-colors"
+                              >
+                                {np ? d.np : name}
+                              </button>
+                            );
+                          })}
+                        </>
+                      )}
+                    </div>
+                  )}
+                </div>
+
                 <NepalMap
                   data={layerData}
                   colorMode={layer === "province" ? "province" : "flat"}
                   baseColor={NEUTRAL_FILL}
                   provinceColors={PROVINCE_COLORS}
                   selectedProvince={layer === "province" ? selectedForDim : null}
-                  highlightedDistricts={districtActive ? [district!.name] : []}
-                  highlightColor="#0A2540"
+                  highlightedDistricts={
+                    mapQuery.trim().length >= 2
+                      ? searchMatches
+                      : districtActive
+                        ? [district!.name]
+                        : []
+                  }
+                  highlightColor={mapQuery.trim().length >= 2 ? "#059669" : "#0A2540"}
                   dimOpacity={layer === "province" ? 0.25 : 0.6}
                   hoverColor="#0A2540"
                   strokeColor="#FFFFFF"
@@ -764,7 +853,7 @@ export function AgroMap() {
 
                         {/* Compare hook */}
                         {districtActive && (
-                          <div className="px-6 py-3 bg-gray-50 border-t border-gray-100">
+                          <div className="px-6 py-3 bg-gray-50 border-t border-gray-100 space-y-3">
                             <button
                               type="button"
                               onClick={() => {
@@ -783,6 +872,20 @@ export function AgroMap() {
                               <Columns3 size={15} aria-hidden="true" />
                               {np ? "यो जिल्ला तुलना गर्नुहोस्" : "Compare this district"}
                             </button>
+                            {/* Share / copy / print the factsheet (7.6) */}
+                            <ResultCardActions
+                              light
+                              np={np}
+                              toolId="district"
+                              label={`${district!.name} · ${np ? district!.np : district!.name}`}
+                              summary={`${np ? "हेडक्वार्टर" : "HQ"}: ${np ? district!.hq.np : district!.hq.en} · ${np ? district!.belt.np : district!.belt.en}`}
+                              detail={
+                                `${np ? "परिचय" : "Known for"}: ${np ? district!.knownFor.np : district!.knownFor.en}\n` +
+                                `${np ? "बाली" : "Crops"}: ${metaFor(district!.name).crops.join(", ")}\n` +
+                                `${np ? "पशुपालन" : "Livestock"}: ${metaFor(district!.name).livestock.join(", ")}\n` +
+                                `drmogalshah.com.np/agromap?district=${encodeURIComponent(district!.name)}`
+                              }
+                            />
                           </div>
                         )}
                       </motion.div>

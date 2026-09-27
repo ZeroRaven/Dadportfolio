@@ -244,8 +244,8 @@ html.a11y-contrast .reading-guide-band {
 .speech-active {
   position: relative;
   border-radius: 6px;
-  box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.45) !important;
-  background-color: rgba(212, 175, 55, 0.14) !important;
+  box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.55) !important;
+  background-color: rgba(212, 175, 55, 0.22) !important;
   transition: background-color 0.18s ease;
 }
 html.a11y-contrast .speech-active {

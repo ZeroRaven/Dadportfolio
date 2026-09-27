@@ -2,6 +2,7 @@ import { defineConfig } from 'vite'
 import path from 'path'
 import tailwindcss from '@tailwindcss/vite'
 import react from '@vitejs/plugin-react'
+import { VitePWA } from 'vite-plugin-pwa'
 
 
 function figmaAssetResolver() {
@@ -23,6 +24,30 @@ export default defineConfig({
     // Tailwind is not being actively used – do not remove them
     react(),
     tailwindcss(),
+    VitePWA({
+      registerType: 'prompt', // ask before activating a new SW mid-session
+      injectRegister: 'auto',
+      // Reuse the EXISTING hand-crafted manifest — don't generate a second.
+      manifest: false,
+      workbox: {
+        // Precache the app shell + every hashed chunk, fonts and images so
+        // the whole site (calculators, knowledge base) works offline.
+        globPatterns: ['**/*.{js,css,html,woff2,svg,png}'],
+        // Cap precache size sensibly (fonts + og-image dominate).
+        maximumFileSizeToCacheInBytes: 3 * 1024 * 1024,
+        navigateFallback: 'index.html',
+        // Data-heavy routes: serve cached instantly, refresh in background.
+        runtimeCaching: [
+          {
+            urlPattern: ({ url }) =>
+              url.pathname.startsWith('/tools') || url.pathname.startsWith('/knowledge'),
+            handler: 'StaleWhileRevalidate',
+            options: { cacheName: 'tools-and-knowledge' },
+          },
+        ],
+      },
+      devOptions: { enabled: false },
+    }),
   ],
   resolve: {
     alias: {

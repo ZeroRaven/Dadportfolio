@@ -2,7 +2,7 @@
 
 A modern, SEO-optimized portfolio website showcasing Dr. Mogal Prasad Shah's 29+ years of expertise in livestock development, food security, and rural agricultural innovation across Nepal.
 
-> **September 2026 release:** full audit implementation — SEO critical fixes (noindex removed, correct meta, www canonicals), working contact form with feedback states, 95% image weight reduction, route code-splitting, WhatsApp button infrastructure, and a central config at `src/app/config/site.ts`. **Release 5 added:** a site-wide accessibility system, 77-district interactive agro-map, a 32-article knowledge base with factsheets and charts, 12 farm calculators, and an Open Graph thumbnail with Dr. Shah's headshot. **Release 6 adds:** a real read-aloud speech player with highlighting and voice/speed controls, a deeper accessibility suite (readable font, dyslexia spacing, reading guide, 4 text sizes), an analytical agro-map (thematic layers, district comparison, CSV data export), a redesigned mobile hero and slide-in drawer menu, and a unified floating-button dock. **See [CHANGES.md](./CHANGES.md)** for the complete changelog and the two config values to set after deploying.
+> **September 2026 release:** full audit implementation — SEO critical fixes (noindex removed, correct meta, www canonicals), working contact form with feedback states, 95% image weight reduction, route code-splitting, WhatsApp button infrastructure, and a central config at `src/app/config/site.ts`. **Release 5 added:** a site-wide accessibility system, 77-district interactive agro-map, a 32-article knowledge base with factsheets and charts, 12 farm calculators, and an Open Graph thumbnail with Dr. Shah's headshot. **Release 6 added:** a real read-aloud speech player with highlighting and voice/speed controls, a deeper accessibility suite (readable font, dyslexia spacing, reading guide, 4 text sizes), an analytical agro-map (thematic layers, district comparison, CSV data export), a redesigned mobile hero and slide-in drawer menu, and a unified floating-button dock. **Release 7 adds:** real article URLs (`/knowledge/:slug`) with per-article SEO + sitemap, consent-gated analytics, PWA offline support with an update prompt, route error boundaries, deep-linkable tools (`/tools/:toolId`) and map state (`?district=` / `?compare=`), Save/Copy/Share/Print on every calculator result and district factsheet, and a GitHub Actions CI workflow. **See [CHANGES.md](./CHANGES.md)** for the complete changelog and the two config values to set after deploying.
 
 ![Website Preview](https://www.drmogalshah.com.np/og-image.jpg)
 
@@ -300,18 +300,16 @@ import { ImageWithFallback } from "./components/figma/ImageWithFallback";
 ## 🔒 Privacy & GDPR
 
 The website includes:
-- Optional cookie consent banner (`/src/app/components/CookieConsent.tsx`)
+- **Cookie consent banner (active by default)** — bilingual, and analytics
+  (Google Analytics + Microsoft Clarity) only load after the visitor accepts.
+  Declining persists: analytics never load for that browser.
 - IP anonymization support in analytics
 - Privacy-friendly tracking options
 
-To enable cookie consent, add to `/src/app/App.tsx`:
-
-```tsx
-import { CookieConsent } from './components/CookieConsent';
-
-// In your App component:
-<CookieConsent />
-```
+The banner lives in `/src/app/components/CookieConsent.tsx`; consent state
+is managed by `/src/app/hooks/useConsent.ts` (localStorage key
+`cookie-consent`, cross-tab synced). Analytics gating happens in
+`src/app/App.tsx` (`AnalyticsGate`).
 
 ## 🐛 Troubleshooting
 

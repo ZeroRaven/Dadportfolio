@@ -4,7 +4,7 @@ import { useLanguage } from "../../context/LanguageContext";
 import {
   DISTRICTS, PROVINCES_WITH_DISTRICTS, districtByName,
 } from "../../data/nepalDistricts";
-import { metaFor, ZONE_LABELS, type Zone } from "../../data/nepalDistrictMeta";
+import { metaFor, ZONE_LABELS, CROP_TAGS, LIVESTOCK_TAGS, type Zone } from "../../data/nepalDistrictMeta";
 import { toNepaliDigits } from "../../i18n/format";
 
 /**
@@ -14,6 +14,17 @@ import { toNepaliDigits } from "../../i18n/format";
  */
 
 type SortKey = "name" | "province" | "zone" | "hq";
+
+/* Tag id → bilingual label, so search matches "tea" AND "चिया". */
+const TAG_LOOKUP = new Map<string, { en: string; np: string }>();
+for (const t of [...CROP_TAGS, ...LIVESTOCK_TAGS]) TAG_LOOKUP.set(t.id, { en: t.en, np: t.np });
+
+const tagMatches = (ids: string[], q: string, raw: string) =>
+  ids.some((id) => {
+    if (id.toLowerCase().includes(q)) return true;
+    const tag = TAG_LOOKUP.get(id);
+    return !!tag && (tag.en.toLowerCase().includes(q) || tag.np.includes(raw));
+  });
 
 export function DataExplorer({ np, onPick }: { np: boolean; onPick: (name: string) => void }) {
   const [query, setQuery] = useState("");
@@ -37,14 +48,17 @@ export function DataExplorer({ np, onPick }: { np: boolean; onPick: (name: strin
       };
     });
     if (q) {
+      const raw = query.trim();
       list = list.filter((r) =>
         r.d.name.toLowerCase().includes(q) ||
-        r.d.np.includes(query.trim()) ||
+        r.d.np.includes(raw) ||
         r.d.hq.en.toLowerCase().includes(q) ||
-        r.d.hq.np.includes(query.trim()) ||
+        r.d.hq.np.includes(raw) ||
         r.province.toLowerCase().includes(q) ||
         r.d.knownFor.en.toLowerCase().includes(q) ||
-        r.zone.toLowerCase().includes(q)
+        r.zone.toLowerCase().includes(q) ||
+        tagMatches(r.crops, q, raw) ||
+        tagMatches(r.livestock, q, raw)
       );
     }
     if (zoneFilter !== "All") list = list.filter((r) => r.zone === zoneFilter);

@@ -4,6 +4,7 @@ import { Droplets, Info } from "lucide-react";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import { toNepaliDigits } from "../../i18n/format";
+import { ResultCardActions } from "./ResultActions";
 
 /**
  * WATER REQUIREMENT CALCULATOR — the forgotten feed.
@@ -172,6 +173,15 @@ export function WaterRequirementCalculator({ np }: { np: boolean }) {
               <span className="font-bold text-white"><Np v={(r.total * 30) / 1000} np={np} digits={1} /> m³</span>
             </p>
           </div>
+
+          {/* Save / copy / share / print + recent results */}
+          <ResultCardActions
+            np={np}
+            toolId="water"
+            label={`${buffLact + cowLact + dryCattle} ${np ? "गाईभैंसी" : "cattle/buffalo"} · ${goats} ${np ? "बाख्रा" : "goats"} · ${poultry} ${np ? "कुखुरा" : "birds"}`}
+            summary={`${np ? "कुल पानी" : "Total water"}: ${r.total} L/day (${np ? "गर्मी" : "summer"} ${r.summerTotal} L/day)`}
+            detail={`${np ? "१.५ दिनको भण्डारण" : "1.5-day reserve"}: ${r.reserve} L`}
+          />
         </div>
       </div>
     </div>

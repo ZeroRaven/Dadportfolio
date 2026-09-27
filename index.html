@@ -4,43 +4,17 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <!-- Primary SEO (crawler-visible without JavaScript) -->
+    <!-- Crawler-visible-without-JS SEO. The Home <SEO> component (react-
+         helmet-async) re-manages title/description/og/twitter/canonical per
+         route at runtime — anything duplicated here would ship TWO conflicting
+         canonical/description tags to JS-executing crawlers, so this file keeps
+         ONLY the title plus tags the component never emits. -->
     <title>Dr. Mogal Prasad Shah | Livestock Development Expert, Nepal</title>
-    <meta
-      name="description"
-      content="Official portfolio of Dr. Mogal Prasad Shah — M.Sc. Animal Nutrition, former Director of Livestock & Fisheries Development (DLFD), with 29+ years leading livestock development, food security and climate-resilient agriculture across Nepal. Consulting, advisory and partnership inquiries welcome."
-    />
     <meta
       name="keywords"
       content="Dr. Mogal Prasad Shah, Mogal Shah Nepal, livestock development expert Nepal, veterinary doctor Nepal, animal nutrition specialist, M.Sc. Animal Nutrition, livestock consultant Nepal, food security Nepal, climate-resilient agriculture, rural development expert, DLFD director, Bagmati Province livestock, World Bank agriculture project Nepal, cattle farming advisory, dairy development Nepal, poultry goat farming consultant, veterinary publications Nepal, डा. मोगल प्रसाद शाह, पशुपालन विशेषज्ञ, नेपालका पशु चिकित्सक"
     />
-    <meta name="author" content="Dr. Mogal Prasad Shah" />
-    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1" />
-    <meta name="geo.region" content="NP" />
-    <meta name="geo.placename" content="Nepal" />
-    <link rel="canonical" href="https://www.drmogalshah.com.np/" />
-
-    <!-- Open Graph / Twitter (branded, self-hosted image) -->
-    <meta property="og:type" content="website" />
-    <meta property="og:site_name" content="Dr. Mogal Prasad Shah — Livestock Development Expert" />
-    <meta property="og:title" content="Dr. Mogal Prasad Shah | Livestock Development Expert, Nepal" />
-    <meta
-      property="og:description"
-      content="29+ years of leadership in livestock development, food security and rural agricultural innovation in Nepal. Former Director, DLFD."
-    />
-    <meta property="og:url" content="https://www.drmogalshah.com.np/" />
-    <meta property="og:image" content="https://www.drmogalshah.com.np/og-image.jpg" />
-    <meta property="og:image:width" content="1200" />
-    <meta property="og:image:height" content="630" />
-    <meta property="og:locale" content="en_US" />
     <meta property="og:locale:alternate" content="ne_NP" />
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Dr. Mogal Prasad Shah | Livestock Development Expert, Nepal" />
-    <meta
-      name="twitter:description"
-      content="29+ years of leadership in livestock development, food security and rural agricultural innovation in Nepal."
-    />
-    <meta name="twitter:image" content="https://www.drmogalshah.com.np/og-image.jpg" />
 
     <!-- Icons -->
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
@@ -51,7 +25,6 @@
     <!-- PWA / mobile chrome -->
     <meta name="theme-color" content="#0A2540" />
     <meta name="apple-mobile-web-app-title" content="Dr. Mogal Shah" />
-
     <!-- Fonts: fully self-hosted (see public/fonts/fonts.css).
          Local woff2 binaries remove the Google Fonts CDN dependency entirely —
          on flaky connections the CDN stylesheet failing used to silently swap

@@ -5,6 +5,7 @@ import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import { toNepaliDigits } from "../../i18n/format";
+import { ResultCardActions } from "./ResultActions";
 
 /**
  * Poultry feed & FCR calculator.
@@ -215,6 +216,21 @@ export function PoultryCalculator({ np }: { np: boolean }) {
                   : "Basis: broiler FCR of 1.5–1.8 — kg of feed per kg of live-weight gain."}
             </p>
           </motion.div>
+
+          {/* Save / copy / share / print + recent results */}
+          <ResultCardActions
+            np={np}
+            toolId="poultry"
+            label={`${isLayer ? (np ? "लेयर" : "Layer") : (np ? "ब्रोइलर" : "Broiler")} · ${birds} ${np ? "चरा" : "birds"} · ${days} ${np ? "दिन" : "days"}`}
+            summary={`${np ? "दाना" : "Feed"}: ${F(r.feedLow)}–${F(r.feedHigh)} kg (≈ ${F(r.sacks, 1)} ${np ? "झोला" : "sacks"})`}
+            detail={
+              price > 0
+                ? `${np ? "दाना खर्च" : "Feed cost"}: रु. ${F(r.feedLow * price)}–${F(r.feedHigh * price)}`
+                : isLayer
+                  ? `${np ? "अन्डा" : "Eggs"}: ≈ ${F(r.eggs ?? 0)}`
+                  : `${np ? "मासु" : "Gain"}: ${F(r.totalGain ?? 0)} kg`
+            }
+          />
         </div>
 
         <p className="mt-4 text-[11px] text-gray-400 leading-relaxed flex items-start gap-1.5">

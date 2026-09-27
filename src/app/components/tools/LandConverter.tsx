@@ -5,6 +5,7 @@ import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import { toNepaliDigits } from "../../i18n/format";
+import { ResultCardActions } from "./ResultActions";
 
 /**
  * Nepal land-unit converter — the two traditional systems every kitta
@@ -201,6 +202,18 @@ export function LandConverter({ np }: { np: boolean }) {
               <span className="font-semibold tabular-nums">{F(sqm / 0.09290304, 0)}</span>
             </li>
           </ul>
+
+          {/* Save / copy / share / print + recent results */}
+          <ResultCardActions
+            np={np}
+            toolId="land"
+            label={`${F(v, 2)} ${nameOf(unit)}`}
+            summary={`${np ? "कुल" : "Total"}: ${F(sqm, 1)} m² (${F(sqm / 0.09290304, 0)} sq ft)`}
+            detail={[
+              `${np ? "हिमाली" : "Hill"}: ${breakdown.hill.map(({ unit: u, qty }) => `${F(qty, 0)} ${nameOf(u)}`).join(" ")}`,
+              `${np ? "तराई" : "Terai"}: ${breakdown.terai.map(({ unit: u, qty }) => `${F(qty, 0)} ${nameOf(u)}`).join(" ")}`,
+            ].join("\n")}
+          />
         </div>
 
         <p className="mt-4 text-[11px] text-gray-400 leading-relaxed flex items-start gap-1.5">

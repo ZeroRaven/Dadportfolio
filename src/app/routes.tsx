@@ -2,6 +2,7 @@ import { Suspense, lazy } from "react";
 import { createBrowserRouter } from "react-router";
 import { Home } from "./pages/Home";
 import { RootLayout } from "./components/RootLayout";
+import { RouteErrorBoundary } from "./components/RouteErrorBoundary";
 
 /**
  * Route-level code splitting: only the Home page ships in the initial bundle;
@@ -58,6 +59,9 @@ export const router = createBrowserRouter([
   {
     path: "/",
     Component: RootLayout,
+    // Root fallback — a render error or failed lazy-chunk import renders
+    // this styled bilingual recovery screen instead of a blank page.
+    ErrorBoundary: RouteErrorBoundary,
     children: [
       { index: true, Component: Home },
       {
@@ -110,6 +114,18 @@ export const router = createBrowserRouter([
       },
       {
         path: "tools",
+        ErrorBoundary: RouteErrorBoundary,
+        element: (
+          <Suspense fallback={<RouteFallback />}>
+            <Tools />
+          </Suspense>
+        ),
+      },
+      {
+        // Deep-linkable tool tabs (…/tools/vaccine-reminder): the Tools
+        // component reads this param to select its active calculator.
+        path: "tools/:toolId",
+        ErrorBoundary: RouteErrorBoundary,
         element: (
           <Suspense fallback={<RouteFallback />}>
             <Tools />
@@ -118,6 +134,18 @@ export const router = createBrowserRouter([
       },
       {
         path: "knowledge",
+        ErrorBoundary: RouteErrorBoundary,
+        element: (
+          <Suspense fallback={<RouteFallback />}>
+            <Knowledge />
+          </Suspense>
+        ),
+      },
+      {
+        // Deep-linkable articles (…/knowledge/milking-hygiene-mastitis):
+        // same lazy component — Knowledge branches on the slug param.
+        path: "knowledge/:slug",
+        ErrorBoundary: RouteErrorBoundary,
         element: (
           <Suspense fallback={<RouteFallback />}>
             <Knowledge />
@@ -126,6 +154,7 @@ export const router = createBrowserRouter([
       },
       {
         path: "agromap",
+        ErrorBoundary: RouteErrorBoundary,
         element: (
           <Suspense fallback={<RouteFallback />}>
             <AgroMap />

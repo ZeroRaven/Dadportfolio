@@ -41,7 +41,7 @@ export const siteConfig = {
   //                                        is set)
   phone: "+977 9768544758",
   whatsappUsername: "drmogalshah", // ⚠️ demo placeholder — reserve & paste the real one
-  whatsapp: "9851162780", // ⚠️ demo placeholder — paste the real number if no username is set
+  whatsapp: "9779801234567",
 
   email: "info@drmogalshah.com.np",
   location: {
@@ -56,9 +56,9 @@ export const siteConfig = {
   // Office hours in Nepal Time — powers the live "Open now / Closed" chip.
   // JS day numbers: 0 = Sunday … 6 = Saturday. Edit to match the real schedule.
   hours: {
-    days: [0, 1, 2, 3, 4, 5, 6], // Mon–Fri
+    days: [1, 2, 3, 4, 5], // Mon–Fri
     openMinute: 9 * 60,    // 09:00 NPT
-    closeMinute: 20 * 60,  // 20:00 NPT
+    closeMinute: 17 * 60,  // 17:00 NPT
     tzOffsetMinutes: 345,  // Nepal Standard Time = UTC+5:45
   },
 
@@ -119,7 +119,8 @@ export function telLink(): string | null {
 /** True while the placeholder demo contacts are still configured. */
 export const isDemoContact =
   siteConfig.whatsappUsername === "drmogalshah" ||
-  siteConfig.whatsapp === "9779801234567";
+  siteConfig.whatsapp === "9779801234567" ||
+  siteConfig.phone === "+977 980-123-4567";
 
 if (import.meta.env.DEV && isDemoContact) {
   console.warn(
