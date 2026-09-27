@@ -31,6 +31,77 @@ Open **`src/app/config/site.ts`** — the single source of truth for all site se
 
 ---
 
+## Release 9 — Tools hub redesign: searchable directory + focused tool pages (Sept 2026)
+
+*User feedback: "tools section is now too cluttered and has bad ui/ux."
+With 15 tools, the old single-card switcher rail of 16 chip buttons was
+eating 30–40% of the desktop viewport and ~2 mobile screens before the
+calculator even began (baseline VLM analysis in `qa/tools-redesign/`).
+The fix follows the pattern used by MDCalc (900+ calculators) and standard
+card-grid/catalogue UX guidance (validated via web research,
+`research/r9/`): a searchable hub directory with category filters, and one
+focused page per tool.*
+
+### HUB (`/tools`) — the directory (new)
+- **Search box** filtering all 15 tools by English or Nepali name,
+  description, keywords and category (bilingual matching, Devanagari input
+  works), with live result count (`aria-live`), clear button and a friendly
+  no-results state.
+- **Category filter chips** — All (15) / Livestock (7) / Farm & business (6) /
+  Weather / Health with counts in Nepali digits when the site language is NP.
+  Filters combine with the search query; the grid flattens while a category
+  is active.
+- **Compact card grid** (1/2/3 columns by breakpoint): icon tile, name,
+  one-line description. Whole card is a deep link (`<Link>` — crawlable,
+  middle-click works), keyboard-focusable with a visible gold focus ring.
+- **"Recently used" chips** — the 4 most recently visited tools resurface at
+  the top of the hub (visit-based, `localStorage` only, never transmitted;
+  degrades silently in private mode).
+- Slimmed hero: the old run-on paragraph listing all 15 tools is now two
+  sentences with a dynamic count.
+
+### SPOKE (`/tools/:toolId`) — focused tool pages (new)
+- Each tool now renders as its own page: dark header with a gold
+  **"← Farm Tools"** back link, the tool name as the page `h1` (better deep-
+  link SEO than the old chip-selected view), its one-line description, and
+  the calculator starting immediately — no chip wall above it.
+- **Related tools strip** below the calculator: the other tools in the same
+  category (or popular picks for single-tool categories) + "Browse all tools".
+- **Print header** (print-only) so printed output finally carries the tool
+  name and site URL.
+- **Unknown ids redirect** to `/tools` instead of silently rendering the
+  weight tool under a wrong URL.
+
+### Consistency fixes shipped with the redesign
+- **Sitemap**: all 15 tool pages added (58 URLs total, up from 43) with a
+  build-time guard that cross-checks the tool registry in `Tools.tsx`.
+- **Site search** (navbar palette + 404): the 12 generic `/tools` entries now
+  deep-link to the exact tool; the combined "Dosage & Poultry" entry is split
+  in two; herd ledger, weather smart and BCS guide added to the index.
+- **Home page**: resources card updated from the stale "8 tools" to 15 tools.
+- **`llms.txt`**: stale "12 calculators" line updated to the 15-tool directory.
+- **Latent bug fixed**: the lucide `Map` icon import shadowed JavaScript's
+  global `Map` constructor inside `Tools.tsx` (now imported as `MapIcon`).
+
+### Verification
+- `tsc` clean; production build clean; sitemap guard passes.
+- Browser-verified on Chromium (1280×900 and 390×844), EN + NP: hub renders
+  15 cards in 4 sections with search + 5 filter chips and zero trace of the
+  old chip rail; EN + NP search (dosage / मौसम) filters to the right single
+  tool; gibberish shows the empty state and "Clear search & filters" restores
+  all 15; category filter shows exactly the 7 livestock tools (flat grid);
+  card → tool view → related-tool navigation → back to hub all work, with
+  "Recently used" chips reflecting the visit order; unknown `/tools/nonsense`
+  redirects to `/tools`; weather spoke loads live Open-Meteo data (16.2°,
+  THI card) with the Popular-tools strip; weight calculator begins at y≈535
+  on mobile (was ~2 screens down); 20-route sweep (all 15 tool pages + hub +
+  invalid id) — zero page/console errors.
+- VLM review (glm-4.6v) of 5 screenshots (hub desktop EN/NP, tool view
+  desktop/mobile, hub mobile): clean, scannable, professional; no overlaps,
+  cut-offs or Devanagari rendering problems.
+
+---
+
 ## Release 8 — Emergency SOS, live weather intelligence, herd ledger, BCS guide, simplified cookie notice (Sept 2026)
 
 *Every feature below was researched and fact-checked online before

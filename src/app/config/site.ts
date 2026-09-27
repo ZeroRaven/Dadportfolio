@@ -39,7 +39,7 @@ export const siteConfig = {
   //   whatsapp:        "97798XXXXXXXX"     (fallback: country code + number,
   //                                        digits only — used ONLY if no username
   //                                        is set)
-  phone: "+977 9768544758",
+  phone: "+977 980-123-4567",
   whatsappUsername: "drmogalshah", // ⚠️ demo placeholder — reserve & paste the real one
   whatsapp: "9779801234567",
 

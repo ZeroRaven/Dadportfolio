@@ -1,10 +1,11 @@
-import { useMemo, useState } from "react";
-import { useNavigate, useParams } from "react-router";
+import { useEffect, useMemo, useState } from "react";
+import { Link, useNavigate, useParams } from "react-router";
 import { motion, AnimatePresence } from "motion/react";
 import {
   Scale, Ruler, Syringe, BellRing, Download, Calculator, RotateCcw,
-  Info, CalendarDays, AlertTriangle, Weight, Stethoscope, Map, Wheat, Pill, Bird,
+  Info, CalendarDays, AlertTriangle, Weight, Stethoscope, Map as MapIcon, Wheat, Pill, Bird,
   Droplets, Wallet, Egg, Landmark, CloudSun, Beef,
+  Search, X, ArrowLeft, ChevronRight, History,
 } from "lucide-react";
 import { useLanguage } from "../context/LanguageContext";
 import { Button } from "../components/ui/button";
@@ -548,196 +549,571 @@ function VaccineReminder({ np }: { np: boolean }) {
   );
 }
 
-/* ════════════════════════════════════════════════ Page shell ═══════════════ */
+/* ════════════════════════════════════════════════ Page shell ═══════════════
+ *
+ *  HUB-AND-SPOKE LAYOUT (Release 9 — Tools redesign)
+ *
+ *  Fifteen tools no longer fit on one screen of switcher chips (they were
+ *  eating 30–40% of the desktop viewport and ~2 mobile screens before the
+ *  calculator began), so the page now works like a directory:
+ *
+ *    /tools          → the hub: search box + category filter + card grid
+ *    /tools/:toolId  → a focused single-tool page (own h1 + description,
+ *                      related tools, an "All tools" way back, print header)
+ *
+ *  Deep links keep working; unknown ids redirect to the hub. Recently used
+ *  tools (visit-based, localStorage only, never sent anywhere) resurface as
+ *  quick chips at the top of the hub.
+ * ──────────────────────────────────────────────────────────────────────────── */
 
-interface ToolTab {
+interface ToolMeta {
   value: string;
   icon: typeof Weight;
   en: string;
   np: string;
+  descEn: string;
+  descNp: string;
+  /** extra bilingual search terms (lower-cased before matching) */
+  kw: string;
 }
 
-/** Fifteen tools grouped into four labelled sections. */
-const TOOL_GROUPS: { id: string; en: string; np: string; tools: ToolTab[] }[] = [
+interface ToolGroup {
+  id: string;
+  en: string;
+  np: string;
+  icon: typeof Weight;
+  tools: ToolMeta[];
+}
+
+/** Fifteen tools in four categories — the single registry for hub, deep
+ *  links, related-tools strips, search and the sitemap. */
+const TOOL_GROUPS: ToolGroup[] = [
   {
     id: "livestock",
     en: "Livestock",
     np: "पशुधन",
+    icon: Beef,
     tools: [
-      { value: "weight",    icon: Weight,       en: "Weight",      np: "तौल" },
-      { value: "gestation", icon: CalendarDays, en: "Gestation",   np: "गर्भावधि" },
-      { value: "feed",      icon: Wheat,        en: "Feed",        np: "चारा" },
-      { value: "dosage",    icon: Pill,         en: "Dosage",      np: "खुराक" },
-      { value: "water",     icon: Droplets,     en: "Water",       np: "पानी" },
-      { value: "market",    icon: Scale,        en: "Live value",  np: "जीवित मूल्य" },
-      { value: "bcs",       icon: Ruler,        en: "BCS score",   np: "शरीर अवस्था" },
+      { value: "weight", icon: Weight, en: "Weight", np: "तौल",
+        descEn: "Live weight from a heart-girth tape measurement",
+        descNp: "नापपट्टीको नापबाट जीवित तौल अनुमान",
+        kw: "tape heart girth schaeffer lbs kg नापपट्टी छाती" },
+      { value: "gestation", icon: CalendarDays, en: "Gestation", np: "गर्भावधि",
+        descEn: "Breeding date to calving, kidding or farrowing dates",
+        descNp: "मिलनको मितिबाट प्रसूति मिति हिसाब",
+        kw: "pregnancy due date calving kidding dry off प्रसूति" },
+      { value: "feed", icon: Wheat, en: "Feed", np: "चारा",
+        descEn: "Daily ration and dry matter for cattle and buffalo",
+        descNp: "गाईभैंसीको दैनिक चारा तथा सुख्खा पदार्थ",
+        kw: "ration dry matter dm fodder concentrate tdn आहार" },
+      { value: "dosage", icon: Pill, en: "Dosage", np: "खुराक",
+        descEn: "mg/kg medicine doses into mL of injection",
+        descNp: "mg/kg खुराकलाई mL इन्जेक्सनमा बदल्नुहोस्",
+        kw: "injection tablet medicine antibiotic औषधि इन्जेक्सन" },
+      { value: "water", icon: Droplets, en: "Water", np: "पानी",
+        descEn: "Daily drinking water for the whole herd, tank size",
+        descNp: "बथानको दैनिक पिउने पानी र ट्यांकी नाप",
+        kw: "tank storage litres drink ट्यांकी पिउने" },
+      { value: "market", icon: Scale, en: "Live value", np: "जीवित मूल्य",
+        descEn: "Live weight × your local rate, with a planning band",
+        descNp: "जीवित तौल × स्थानीय दर — योजना दायरासहित",
+        kw: "khasi goat buffalo price sell खसी भाउ बेच्ने" },
+      { value: "bcs", icon: Ruler, en: "BCS score", np: "शरीर अवस्था",
+        descEn: "Body condition 1–5 scored on a live cow diagram",
+        descNp: "शरीर अवस्था अंक १–५, गाईको चित्रसहित",
+        kw: "fat thin conditioning edmondson बोसो" },
     ],
   },
   {
     id: "farm",
     en: "Farm & business",
     np: "खेत तथा व्यवसाय",
+    icon: Landmark,
     tools: [
-      { value: "dairy",   icon: Wallet,        en: "Dairy income",  np: "दुग्ध आम्दानी" },
-      { value: "land",    icon: Map,           en: "Land units",    np: "जग्गा" },
-      { value: "poultry", icon: Bird,          en: "Poultry",       np: "कुखुरा" },
-      { value: "hatch",   icon: Egg,           en: "Hatchery",      np: "कलाउने" },
-      { value: "vaccine", icon: BellRing,      en: "Vaccination",   np: "खोप" },
-      { value: "herd",    icon: Beef,          en: "Herd ledger",   np: "खोर अभिलेख" },
+      { value: "dairy", icon: Wallet, en: "Dairy income", np: "दुग्ध आम्दानी",
+        descEn: "Milk margin after feed and labour costs",
+        descNp: "चारा-श्रम खर्च काटेर दुधको नाफा",
+        kw: "profit litre price cost नाफा लिटर" },
+      { value: "land", icon: MapIcon, en: "Land units", np: "जग्गा",
+        descEn: "Ropani-Aana ↔ Bigha-Kattha to square metres",
+        descNp: "रोपनी-आना ↔ बिघा-कट्ठा वर्ग मिटरमा",
+        kw: "ropani aana paisa dam bigha kattha dhur area kitta रोपनी बिघा कट्ठा" },
+      { value: "poultry", icon: Bird, en: "Poultry", np: "कुखुरा",
+        descEn: "Feed, FCR and batch economics for layers and broilers",
+        descNp: "लेयर-ब्रोयलरको दाना, FCR र बैच हिसाब",
+        kw: "broiler layer eggs fcr दाना अन्डा" },
+      { value: "hatch", icon: Egg, en: "Hatchery", np: "कलाउने",
+        descEn: "Set date to hatch, candling and lockdown days",
+        descNp: "अन्डा राखेको मितिबाट कलाउने पात्रो",
+        kw: "incubator chicken duck quail candling इन्कुबेटर" },
+      { value: "vaccine", icon: BellRing, en: "Vaccination", np: "खोप",
+        descEn: "FMD, HS, PPR… calendar reminders (.ics download)",
+        descNp: "एफएमडी, एचएस, पिपिआर… क्यालेन्डर सम्झना (.ics)",
+        kw: "fmd hs anthrax ppr deworm ics सम्झना" },
+      { value: "herd", icon: Beef, en: "Herd ledger", np: "खोर अभिलेख",
+        descEn: "Animals and daily milk records, charts, CSV export",
+        descNp: "पशु र दैनिक दुध अभिलेख, चार्ट, CSV निर्यात",
+        kw: "record keeping tracking livestock register अभिलेख" },
     ],
   },
   {
     id: "weather",
     en: "Weather",
     np: "मौसम",
+    icon: CloudSun,
     tools: [
-      { value: "weather", icon: CloudSun, en: "Weather smart", np: "मौसम सहायक" },
+      { value: "weather", icon: CloudSun, en: "Weather smart", np: "मौसम सहायक",
+        descEn: "Live district weather with heat-stress (THI) alerts",
+        descNp: "जिल्लाको लाइभ मौसम, ताप-तनाव (THI) सहित",
+        kw: "open meteo forecast rain temperature 7-day पूर्वानुमान वर्षा" },
     ],
   },
   {
     id: "health",
     en: "Health",
     np: "स्वास्थ्य",
+    icon: Stethoscope,
     tools: [
-      { value: "health", icon: Stethoscope, en: "Health guide", np: "रोग लक्षण" },
+      { value: "health", icon: Stethoscope, en: "Health guide", np: "रोग लक्षण",
+        descEn: "Match symptoms to likely diseases and first steps",
+        descNp: "लक्षण मिलाई सम्भावित रोग र पहिलो कदम",
+        kw: "symptom checker disease fmd mastitis bloat रोग" },
     ],
   },
 ];
 
-const TABS: ToolTab[] = TOOL_GROUPS.flatMap((g) => g.tools);
+type ToolEntry = ToolMeta & { group: ToolGroup };
 
-type TabValue = string;
+const ALL_TOOLS: ToolEntry[] = TOOL_GROUPS.flatMap((g) =>
+  g.tools.map((t) => ({ ...t, group: g }))
+);
+const TOOL_MAP = new Map<string, ToolEntry>(
+  ALL_TOOLS.map((t): [string, ToolEntry] => [t.value, t])
+);
+
+/** Fallback strip for single-tool categories (Weather, Health). */
+const POPULAR_IDS = ["weight", "dosage", "weather", "herd", "dairy"];
+
+/* ── Recently used (visits, localStorage only — never sent anywhere) ─────── */
+
+const RECENT_KEY = "farm-tools-recent";
+const RECENT_MAX = 6;
+
+function readRecent(): string[] {
+  try {
+    const raw = JSON.parse(localStorage.getItem(RECENT_KEY) || "[]");
+    return Array.isArray(raw) ? raw.filter((x): x is string => typeof x === "string") : [];
+  } catch {
+    return [];
+  }
+}
+
+function pushRecent(id: string): void {
+  try {
+    localStorage.setItem(
+      RECENT_KEY,
+      JSON.stringify([id, ...readRecent().filter((x) => x !== id)].slice(0, RECENT_MAX))
+    );
+  } catch {
+    /* private mode — degrade silently, like every other local feature */
+  }
+}
+
+/* ── The calculator switch (unchanged components, new home) ──────────────── */
+
+function renderTool(value: string, np: boolean) {
+  switch (value) {
+    case "weight": return <WeightEstimator np={np} />;
+    case "gestation": return <GestationCalculator np={np} />;
+    case "feed": return <FeedCalculator np={np} />;
+    case "dosage": return <DosageCalculator np={np} />;
+    case "water": return <WaterRequirementCalculator np={np} />;
+    case "market": return <MarketValueCalculator np={np} />;
+    case "dairy": return <MilkIncomeCalculator np={np} />;
+    case "land": return <LandConverter np={np} />;
+    case "poultry": return <PoultryCalculator np={np} />;
+    case "hatch": return <IncubationCalculator np={np} />;
+    case "vaccine": return <VaccineReminder np={np} />;
+    case "weather": return <WeatherDashboard np={np} />;
+    case "herd": return <HerdTracker np={np} />;
+    case "bcs": return <BCSGuide np={np} />;
+    case "health": return <HealthGuide np={np} />;
+    default: return null;
+  }
+}
+
+/* ── Hub: one compact card per tool, browsable and searchable ────────────── */
+
+function ToolCard({ tool, np }: { tool: ToolEntry; np: boolean }) {
+  const Icon = tool.icon;
+  return (
+    <Link
+      to={`/tools/${tool.value}`}
+      className="group flex items-start gap-3.5 rounded-xl border-2 border-gray-100 bg-white p-4 transition-all duration-200 hover:border-[#D4AF37]/70 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D4AF37] focus-visible:ring-offset-1"
+    >
+      <span className="w-10 h-10 rounded-lg bg-[#0A2540] flex items-center justify-center flex-shrink-0 transition-colors group-hover:bg-[#B8941F]">
+        <Icon size={18} className="text-[#D4AF37] transition-colors group-hover:text-[#0A2540]" />
+      </span>
+      <span className="min-w-0 flex-1">
+        <span className="block font-semibold text-[#0A2540] text-sm transition-colors group-hover:text-[#B8941F]">
+          {np ? tool.np : tool.en}
+        </span>
+        <span className="block text-xs text-gray-500 leading-relaxed mt-1">
+          {np ? tool.descNp : tool.descEn}
+        </span>
+      </span>
+      <ChevronRight
+        size={16}
+        aria-hidden="true"
+        className="text-gray-300 transition-colors group-hover:text-[#D4AF37] mt-1 flex-shrink-0"
+      />
+    </Link>
+  );
+}
+
+function ToolsHub({ np }: { np: boolean }) {
+  const [query, setQuery] = useState("");
+  const [group, setGroup] = useState<string>("all");
+  const [recent, setRecent] = useState<string[]>([]);
+
+  useEffect(() => {
+    setRecent(readRecent().filter((id) => TOOL_MAP.has(id)));
+  }, []);
+
+  const q = query.trim().toLowerCase();
+
+  const matches = (t: ToolEntry) =>
+    [t.en, t.np, t.descEn, t.descNp, t.kw, t.group.en, t.group.np]
+      .some((s) => s.toLowerCase().includes(q));
+
+  const results = useMemo(
+    () => ALL_TOOLS.filter((t) => (group === "all" || t.group.id === group) && (!q || matches(t))),
+    [q, group] // eslint-disable-line react-hooks/exhaustive-deps
+  );
+
+  const sections =
+    !q && group === "all"
+      ? TOOL_GROUPS.map((g) => ({ group: g, tools: g.tools as ToolEntry[] }))
+      : [{ group: null, tools: results }];
+
+  const clearAll = () => {
+    setQuery("");
+    setGroup("all");
+  };
+
+  return (
+    <>
+      {/* Header band — slim: badge, title, two sentences */}
+      <div className="bg-gradient-to-br from-[#0A2540] to-[#12365C] text-white pt-28 pb-16 px-4 sm:px-6 print:hidden">
+        <div className="max-w-4xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="inline-flex items-center gap-2 bg-[#D4AF37]/20 backdrop-blur-sm px-4 py-2 rounded-full mb-5 border border-[#D4AF37]/30"
+          >
+            <Calculator className="text-[#D4AF37]" size={16} />
+            <span className="text-sm font-medium">
+              {np ? "निःशुल्क खेत औजार" : "Free field tools · no sign-up"}
+            </span>
+          </motion.div>
+          <h1 className="font-display text-3xl sm:text-4xl md:text-5xl font-bold mb-4">
+            {np ? "कृषि औजार तथा क्यालकुलेटरहरू" : "Farm Tools & Calculators"}
+          </h1>
+          <p className="text-gray-300 text-base sm:text-lg max-w-2xl leading-relaxed">
+            {np
+              ? `नेपाली किसान तथा पशुपालकका लागि ${fmt(ALL_TOOLS.length, np)} वटा निःशुल्क, द्विभाषी औजार — नापपट्टीको तौल अनुमानदेखि ताप-तनाव सहितको लाइभ मौसमसम्म। तल खोज्नुहोस् वा वर्गअनुसार हेर्नुहोस्; हरेक औजार जुनसुकै फोनमा चल्छ।`
+              : `${ALL_TOOLS.length} free, bilingual tools for Nepali farmers and livestock keepers — from a tape-measure weight estimator to live weather with heat-stress alerts. Search or browse below; every tool runs offline-fast on any phone.`}
+          </p>
+        </div>
+      </div>
+
+      {/* Search + filters, overlapping the band */}
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 -mt-8">
+        <Card className="border-0 shadow-xl">
+          <CardContent className="p-4 sm:p-5 space-y-3.5 print:hidden">
+            <div role="search" className="relative">
+              <Search
+                size={16}
+                aria-hidden="true"
+                className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
+              />
+              <input
+                type="text"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder={np ? "औजार खोज्नुहोस् — जस्तै 'खुराक' वा 'weather'" : "Search tools — try 'dosage' or 'मौसम'"}
+                aria-label={np ? "औजार खोज्नुहोस्" : "Search tools"}
+                className="w-full pl-10 pr-10 py-2.5 rounded-xl border-2 border-gray-200 focus:border-[#D4AF37] focus:outline-none text-sm font-medium text-[#0A2540] placeholder:text-gray-400"
+              />
+              {query && (
+                <button
+                  type="button"
+                  onClick={() => setQuery("")}
+                  aria-label={np ? "खोज मेटाउनुहोस्" : "Clear search"}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                >
+                  <X size={15} />
+                </button>
+              )}
+            </div>
+
+            <div role="group" aria-label={np ? "वर्गअनुसार छान्नुहोस्" : "Filter by category"} className="flex flex-wrap gap-2">
+              {[{ id: "all", en: "All", np: "सबै", icon: Calculator, count: ALL_TOOLS.length }]
+                .concat(
+                  TOOL_GROUPS.map((g) => ({
+                    id: g.id, en: g.en, np: g.np, icon: g.icon, count: g.tools.length,
+                  }))
+                )
+                .map(({ id, en, np: npLabel, icon: Icon, count }) => (
+                  <button
+                    key={id}
+                    type="button"
+                    aria-pressed={group === id}
+                    onClick={() => setGroup(id)}
+                    className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-sm font-semibold border-2 transition-all ${
+                      group === id
+                        ? "bg-[#0A2540] text-white border-[#0A2540] shadow-sm"
+                        : "bg-white text-gray-600 border-gray-200 hover:border-[#D4AF37]/60 hover:text-[#0A2540]"
+                    }`}
+                  >
+                    <Icon size={13} className={group === id ? "text-[#D4AF37]" : "text-gray-400"} />
+                    {np ? npLabel : en}
+                    <span className={`text-[11px] font-bold ${group === id ? "text-[#D4AF37]" : "text-gray-400"}`}>
+                      {fmt(count, np)}
+                    </span>
+                  </button>
+                ))}
+            </div>
+
+            {recent.length > 0 && !q && group === "all" && (
+              <div className="flex items-center gap-2 flex-wrap pt-1">
+                <span className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-[0.18em] text-gray-400">
+                  <History size={11} aria-hidden="true" />
+                  {np ? "हालै प्रयोग गरेका" : "Recently used"}
+                </span>
+                {recent.slice(0, 4).map((id) => {
+                  const t = TOOL_MAP.get(id)!;
+                  const RIcon = t.icon;
+                  return (
+                    <Link
+                      key={id}
+                      to={`/tools/${id}`}
+                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border-2 border-gray-100 text-xs font-semibold text-gray-600 hover:border-[#D4AF37]/60 hover:text-[#0A2540] transition-all"
+                    >
+                      <RIcon size={13} className="text-[#B8941F]" />
+                      {np ? t.np : t.en}
+                    </Link>
+                  );
+                })}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* The directory itself */}
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 mt-8">
+        <p aria-live="polite" className="text-xs text-gray-500 mb-4 min-h-[1rem]">
+          {q && results.length > 0
+            ? np
+              ? `'${query.trim()}' खोजीमा ${fmt(results.length, np)} औजार भेटिए`
+              : `${results.length} tools match “${query.trim()}”`
+            : ""}
+        </p>
+
+        {results.length === 0 ? (
+          <div className="text-center py-16">
+            <Search size={30} className="mx-auto text-gray-300 mb-4" aria-hidden="true" />
+            <p className="font-semibold text-[#0A2540]">
+              {np ? "कुनै औजार भेटिएन" : "No tools match"}
+            </p>
+            <p className="text-sm text-gray-500 mt-1.5">
+              {np ? "अर्को शब्दले खोज्नुहोस् वा वर्ग हेर्नुहोस्।" : "Try another word, or browse a category."}
+            </p>
+            <Button variant="outline" onClick={clearAll} className="mt-5 font-semibold border-2 hover:border-[#D4AF37]">
+              <X className="mr-1.5" size={14} />
+              {np ? "खोज र छानो मेटाउनुहोस्" : "Clear search & filters"}
+            </Button>
+          </div>
+        ) : (
+          sections.map(({ group: g, tools }, i) => (
+            <section key={g ? g.id : "results"} className={i > 0 ? "mt-10" : undefined} aria-label={g ? (np ? g.np : g.en) : undefined}>
+              {g && (
+                <div className="flex items-center gap-2.5 mb-3.5">
+                  <span className="w-7 h-7 rounded-md bg-[#D4AF37]/15 flex items-center justify-center flex-shrink-0">
+                    <g.icon size={14} className="text-[#B8941F]" aria-hidden="true" />
+                  </span>
+                  <h2 className="text-sm font-bold uppercase tracking-[0.18em] text-[#0A2540]">
+                    {np ? g.np : g.en}
+                  </h2>
+                  <span className="text-xs text-gray-400 font-medium">{fmt(g.tools.length, np)}</span>
+                  <span className="flex-1 h-px bg-gray-200" aria-hidden="true" />
+                </div>
+              )}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                {tools.map((t) => (
+                  <ToolCard key={t.value} tool={t} np={np} />
+                ))}
+              </div>
+            </section>
+          ))
+        )}
+
+        <p className="mt-10 text-center text-xs text-gray-400 flex items-center justify-center gap-1.5 print:hidden">
+          <Info size={12} />
+          {np
+            ? "औजारहरू तपाईंको ब्राउजरमै चल्छन् — कुनै डाटा कतै पठाइँदैन।"
+            : "Everything runs in your browser — no data ever leaves this page."}
+        </p>
+      </div>
+    </>
+  );
+}
+
+/* ── Spoke: one focused tool, with a way back and related tools ──────────── */
+
+function ToolView({ tool, np }: { tool: ToolEntry; np: boolean }) {
+  const Icon = tool.icon;
+  const GroupIcon = tool.group.icon;
+
+  const sameGroup = tool.group.tools.filter((t) => t.value !== tool.value) as ToolEntry[];
+  const stripTools =
+    sameGroup.length > 0
+      ? { tools: sameGroup, label: np ? `${tool.group.np}का अन्य औजार` : `More in ${tool.group.en}` }
+      : {
+          tools: POPULAR_IDS
+            .map((id) => TOOL_MAP.get(id)!)
+            .filter((t) => t && t.value !== tool.value),
+          label: np ? "लोकप्रिय औजारहरू" : "Popular tools",
+        };
+
+  return (
+    <>
+      {/* Compact header band: way back + this tool's name as the page h1 */}
+      <div className="bg-gradient-to-br from-[#0A2540] to-[#12365C] text-white pt-28 pb-10 px-4 sm:px-6 print:hidden">
+        <div className="max-w-4xl mx-auto">
+          <Link
+            to="/tools"
+            className="inline-flex items-center gap-1.5 text-[#D4AF37] hover:text-white text-xs font-semibold uppercase tracking-[0.18em] mb-4 transition-colors"
+          >
+            <ArrowLeft size={13} aria-hidden="true" />
+            {np ? "कृषि औजारहरू" : "Farm Tools"}
+          </Link>
+          <h1 className="font-display text-3xl sm:text-4xl font-bold mb-3 flex items-center gap-4">
+            <span className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-[#D4AF37]/15 border border-[#D4AF37]/30 flex items-center justify-center flex-shrink-0">
+              <Icon size={22} className="text-[#D4AF37]" aria-hidden="true" />
+            </span>
+            {np ? tool.np : tool.en}
+          </h1>
+          <p className="text-gray-300 text-base max-w-2xl leading-relaxed">
+            {np ? tool.descNp : tool.descEn}
+          </p>
+        </div>
+      </div>
+
+      {/* The tool itself */}
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 -mt-6">
+        <Card className="border-0 shadow-xl">
+          <CardContent className="p-5 sm:p-10">
+            {/* Print-only title — the on-screen title lives in the dark band */}
+            <div className="hidden print:block mb-6 pb-4 border-b border-gray-300">
+              <p className="font-display text-xl font-bold text-black">
+                {np ? tool.np : tool.en} · drmogalshah.com.np
+              </p>
+              <p className="text-xs text-gray-700 mt-1">{np ? tool.descNp : tool.descEn}</p>
+            </div>
+
+            {renderTool(tool.value, np)}
+
+            {/* Related tools — same category (or popular picks) */}
+            {stripTools.tools.length > 0 && (
+              <div className="mt-10 pt-6 border-t border-gray-100 print:hidden">
+                <p className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.18em] text-[#B8941F] mb-3">
+                  <GroupIcon size={12} aria-hidden="true" />
+                  {stripTools.label}
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  {stripTools.tools.map((t) => {
+                    const RIcon = t.icon;
+                    return (
+                      <Link
+                        key={t.value}
+                        to={`/tools/${t.value}`}
+                        className="flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-white border-2 border-gray-100 text-sm font-semibold text-gray-600 hover:border-[#D4AF37]/60 hover:text-[#0A2540] transition-all"
+                      >
+                        <RIcon size={14} className="text-[#B8941F]" />
+                        {np ? t.np : t.en}
+                      </Link>
+                    );
+                  })}
+                  <Link
+                    to="/tools"
+                    className="flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-[#0A2540] text-white text-sm font-semibold hover:bg-[#12365C] transition-colors"
+                  >
+                    {np ? "सबै औजार हेर्नुहोस्" : "Browse all tools"}
+                    <ChevronRight size={14} aria-hidden="true" />
+                  </Link>
+                </div>
+              </div>
+            )}
+
+            {/* Honest-use disclaimer */}
+            <div className="mt-8 rounded-xl bg-amber-50 border border-amber-100 px-4 py-3.5 flex items-start gap-3 print:hidden">
+              <AlertTriangle className="text-amber-600 flex-shrink-0 mt-0.5" size={17} aria-hidden="true" />
+              <p className="text-xs sm:text-sm text-amber-800 leading-relaxed">
+                {np
+                  ? "यी अनुमानहरू दाना योजना र तयारीका लागि मात्र हुन् — खोपको खुराक वा उपचार अघि डाक्टरको प्रत्यक्ष जाँच अनिवार्य छ।"
+                  : "These estimates are for planning and preparation only — actual dosing and treatment always require a hands-on examination by a veterinarian."}
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+
+        <p className="mt-5 text-center text-xs text-gray-400 flex items-center justify-center gap-1.5 print:hidden">
+          <Info size={12} />
+          {np
+            ? "औजारहरू तपाईंको ब्राउजरमै चल्छन् — कुनै डाटा कतै पठाइँदैन।"
+            : "Everything runs in your browser — no data ever leaves this page."}
+        </p>
+      </div>
+    </>
+  );
+}
+
+/* ── Route entry: /tools → hub · /tools/:toolId → focused view ───────────── */
 
 export function Tools() {
   const { language } = useLanguage();
   const np = language === "np";
-  // Deep-linkable tabs (/tools/vaccine): the active calculator lives in the
-  // URL so any tool can be linked, bookmarked and shared directly. Invalid
-  // or absent ids fall back to the weight estimator.
   const { toolId } = useParams<{ toolId?: string }>();
   const navigate = useNavigate();
-  const tab: TabValue = TABS.some((t) => t.value === toolId) ? toolId! : "weight";
-  const pickTab = (value: string) => navigate(`/tools/${value}`);
+
+  const active = toolId ? TOOL_MAP.get(toolId) : undefined;
+
+  // Unknown ids (/tools/nonsense) redirect to the directory instead of
+  // silently rendering an unrelated calculator under a wrong URL.
+  useEffect(() => {
+    if (toolId && !TOOL_MAP.has(toolId)) navigate("/tools", { replace: true });
+  }, [toolId, navigate]);
+
+  // Track recent visits (local only) and start each tool from the top.
+  useEffect(() => {
+    if (toolId && TOOL_MAP.has(toolId)) {
+      pushRecent(toolId);
+      window.scrollTo(0, 0);
+    }
+  }, [toolId]);
 
   return (
     <>
       <SEO
         title="Farm Tools & Calculators — 15 Free Tools for Nepali Farmers"
-        description="Free farm tools and calculators for Nepali farmers and livestock keepers — estimate cattle and goat live weight from heart-girth measurements, plan gestation and dry-off dates, compute feed and dry-matter needs, verify medicine dosages, size daily water requirements, estimate live-animal market value, score body condition (BCS 1–5), run dairy income economics, keep a herd and milk ledger, convert Ropani-Aana and Bigha-Kattha land units, plan poultry feed with FCR, run an incubation/hatchery calendar, generate vaccination reminders, check live weather with heat-stress (THI) advisories, and triage disease symptoms."
+        description="15 free farm tools and calculators for Nepali farmers and livestock keepers: tape-based weight estimation, gestation dates, feed rations, medicine dosage, water needs, market value, body condition score, dairy income, herd & milk ledger, Ropani-Bigha land units, poultry & hatchery planning, vaccination reminders, live weather with THI heat-stress alerts, and a symptom checker — bilingual, no sign-up."
         keywords="farm calculator Nepal, livestock weight estimator, gestation calculator cattle buffalo goat, dairy income calculator Nepal, water requirement livestock, goat market price Nepal, live animal value estimator, incubation hatch calendar chicken duck quail, ropani aana converter, bigha kattha dhur conversion, dry matter intake calculator, feed requirement buffalo, veterinary dosage calculator mg kg, poultry feed FCR calculator, vaccination reminder FMD HS PPR, livestock symptom checker, body condition score cattle buffalo BCS, herd record keeping app, milk production tracker, Nepal weather livestock heat stress THI, किसान क्यालकुलेटर, दुग्ध आम्दानी गणना, पशु पानी आवश्यकता, खसी मूल्य, अन्डा कलाउने पात्रो, रोपनी रूपान्तरण, गर्भावधि हिसाब, चारा गणना, खुराक क्यालकुलेटर, शरीर अवस्था अंक, खोर अभिलेख, मौसम सहायक"
         path="/tools"
       />
-      <div className="bg-gray-50 min-h-screen pb-20">
-        {/* Header band */}
-        <div className="bg-gradient-to-br from-[#0A2540] to-[#12365C] text-white pt-28 pb-12 px-4 sm:px-6 print:hidden">
-          <div className="max-w-4xl mx-auto">
-            <motion.div
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="inline-flex items-center gap-2 bg-[#D4AF37]/20 backdrop-blur-sm px-4 py-2 rounded-full mb-5 border border-[#D4AF37]/30"
-            >
-              <Calculator className="text-[#D4AF37]" size={16} />
-              <span className="text-sm font-medium">
-                {np ? "निःशुल्क खेत औजार" : "Free field tools · no sign-up"}
-              </span>
-            </motion.div>
-            <h1 className="font-display text-3xl sm:text-4xl md:text-5xl font-bold mb-4">
-              {np ? "कृषि औजार तथा क्यालकुलेटरहरू" : "Farm Tools & Calculators"}
-            </h1>
-            <p className="text-gray-300 text-base sm:text-lg max-w-2xl leading-relaxed">
-              {np
-                ? "नापले तौल अनुमान, गर्भावधि हिसाब, चारा-खुराक-पानी गणना, जीवित मूल्य र दुग्ध आम्दानीको लेखा, खोर अभिलेख, शरीर अवस्था अंक, रोपनी–बिघा रूपान्तरण, कुखुराको दाना र कलाउने पात्रो, खोपका सम्झना, मौसम तथा ताप-तनाव सहायक र रोगका लक्षण जाँच — किसान र पशुपालकका लागि वैज्ञानिक स्रोतमा आधारित निःशुल्क औजारहरू।"
-                : "Weigh animals with a measuring tape, plan gestation and dry-off dates, size feed, dosage and daily water, estimate live-animal value, score body condition, keep a herd and milk ledger, run dairy income economics, convert Ropani↔Bigha land units, plan poultry feed and hatching, keep vaccinations on autopilot, read live weather with heat-stress advisories, and triage disease symptoms — free tools built on published livestock science."}
-            </p>
-          </div>
-        </div>
-
-        {/* Tool switcher + card */}
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 -mt-6">
-          <Card className="border-0 shadow-xl">
-            <CardContent className="p-5 sm:p-10">
-              {/* Tool rail — grouped, wraps on small screens */}
-              <div className="mb-8 -mx-1 px-1 print:hidden">
-                {TOOL_GROUPS.map((group) => (
-                  <div key={group.id} className="mb-3 last:mb-0">
-                    <p className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.22em] text-[#B8941F] mb-1.5 pl-1">
-                      <Landmark size={10} aria-hidden="true" />
-                      {np ? group.np : group.en}
-                    </p>
-                    <div className="flex flex-wrap gap-2" role="tablist" aria-label={np ? group.np : group.en}>
-                      {group.tools.map(({ value, icon: Icon, en, np: npLabel }) => (
-                        <button
-                          key={value}
-                          type="button"
-                          role="tab"
-                          aria-selected={tab === value}
-                          onClick={() => pickTab(value)}
-                          className={`flex items-center gap-1.5 px-3.5 py-2 rounded-full text-sm font-semibold transition-all border-2 ${
-                            tab === value
-                              ? "bg-[#0A2540] text-white border-[#0A2540] shadow-md"
-                              : "bg-white text-gray-600 border-gray-200 hover:border-[#D4AF37]/60 hover:text-[#0A2540]"
-                          }`}
-                        >
-                          <Icon size={15} className={tab === value ? "text-[#D4AF37]" : "text-gray-400"} />
-                          {np ? npLabel : en}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              {tab === "weight" ? (
-                <WeightEstimator np={np} />
-              ) : tab === "gestation" ? (
-                <GestationCalculator np={np} />
-              ) : tab === "feed" ? (
-                <FeedCalculator np={np} />
-              ) : tab === "dosage" ? (
-                <DosageCalculator np={np} />
-              ) : tab === "water" ? (
-                <WaterRequirementCalculator np={np} />
-              ) : tab === "market" ? (
-                <MarketValueCalculator np={np} />
-              ) : tab === "dairy" ? (
-                <MilkIncomeCalculator np={np} />
-              ) : tab === "land" ? (
-                <LandConverter np={np} />
-              ) : tab === "poultry" ? (
-                <PoultryCalculator np={np} />
-              ) : tab === "hatch" ? (
-                <IncubationCalculator np={np} />
-              ) : tab === "vaccine" ? (
-                <VaccineReminder np={np} />
-              ) : tab === "weather" ? (
-                <WeatherDashboard np={np} />
-              ) : tab === "herd" ? (
-                <HerdTracker np={np} />
-              ) : tab === "bcs" ? (
-                <BCSGuide np={np} />
-              ) : (
-                <HealthGuide np={np} />
-              )}
-
-              {/* Honest-use disclaimer */}
-              <div className="mt-10 rounded-xl bg-amber-50 border border-amber-100 px-4 py-3.5 flex items-start gap-3 print:hidden">
-                <AlertTriangle className="text-amber-600 flex-shrink-0 mt-0.5" size={17} />
-                <p className="text-xs sm:text-sm text-amber-800 leading-relaxed">
-                  {np
-                    ? "यी अनुमानहरू दाना योजना र तयारीका लागि मात्र हुन् — खोपको खुराक वा उपचार अघि डाक्टरको प्रत्यक्ष जाँच अनिवार्य छ।"
-                    : "These estimates are for planning and preparation only — actual dosing and treatment always require a hands-on examination by a veterinarian."}
-                </p>
-              </div>
-            </CardContent>
-          </Card>
-
-          <p className="mt-5 text-center text-xs text-gray-400 flex items-center justify-center gap-1.5 print:hidden">
-            <Info size={12} />
-            {np
-              ? "औजारहरू तपाईंको ब्राउजरमै चल्छन् — कुनै डाटा कतै पठाइँदैन।"
-              : "Everything runs in your browser — no data ever leaves this page."}
-          </p>
-        </div>
+      <div className="bg-gray-50 min-h-screen pb-20 print:pb-0">
+        {active ? <ToolView tool={active} np={np} /> : <ToolsHub np={np} />}
       </div>
     </>
   );

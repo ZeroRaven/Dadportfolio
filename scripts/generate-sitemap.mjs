@@ -8,7 +8,8 @@
 //
 // Static routes mirror src/app/routes.tsx. Article routes = every
 // `id: "..."` found in the KB content files (categories live only in
-// index.ts and are intentionally not scanned).
+// index.ts and are intentionally not scanned). Tool routes = the deep
+// pages of the Tools directory (validated against Tools.tsx below).
 
 import { readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
@@ -22,6 +23,13 @@ const KB_FILES = [
   "animalHealth", "cattle", "goats", "poultry", "crops",
   "fodder", "climate", "management", "more",
 ].map((f) => join(ROOT, "src/app/data/kb", `${f}.ts`));
+
+// Deep tool pages (hub-and-spoke Tools redesign) — must stay in sync with
+// the TOOL_GROUPS registry in src/app/pages/Tools.tsx; validated below.
+const TOOL_IDS = [
+  "weight", "gestation", "feed", "dosage", "water", "market", "bcs",
+  "dairy", "land", "poultry", "hatch", "vaccine", "herd", "weather", "health",
+];
 
 const staticRoutes = [
   { path: "/", priority: "1.0" },
@@ -61,10 +69,20 @@ if (articleIds.length < 30) {
   process.exit(1);
 }
 
+const toolsSrc = readFileSync(join(ROOT, "src/app/pages/Tools.tsx"), "utf8");
+const missingTools = TOOL_IDS.filter((id) => !toolsSrc.includes(`value: "${id}"`));
+if (missingTools.length) {
+  console.error(
+    `[sitemap] Tool ids not found in Tools.tsx registry: ${missingTools.join(", ")}`
+  );
+  process.exit(1);
+}
+
 const today = new Date().toISOString().slice(0, 10);
 const all = [
   ...staticRoutes,
   ...articleIds.map((id) => ({ path: `/knowledge/${id}`, priority: "0.6" })),
+  ...TOOL_IDS.map((id) => ({ path: `/tools/${id}`, priority: "0.6" })),
 ];
 
 const xml = `<?xml version="1.0" encoding="UTF-8"?>
@@ -85,5 +103,5 @@ ${all
 writeFileSync(join(ROOT, "public/sitemap.xml"), xml);
 console.log(
   `[sitemap] written with ${all.length} URLs ` +
-  `(${articleIds.length} knowledge articles).`
+  `(${articleIds.length} knowledge articles, ${TOOL_IDS.length} tool pages).`
 );

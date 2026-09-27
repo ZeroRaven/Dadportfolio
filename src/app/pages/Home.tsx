@@ -702,9 +702,9 @@ export function Home() {
                   icon: Calculator,
                   title: np ? "कृषि औजारहरू" : "Farm Tools & Calculators",
                   desc: np
-                    ? "तौल अनुमान, गर्भावधि, रोपनी-बिघा रूपान्तरण, चारा हिसाब, खुराक र खोप सम्झना — ८ औजार।"
-                    : "Weight estimator, gestation planner, Ropani↔Bigha converter, feed rations, dosage checks, vaccination reminders — 8 tools.",
-                  points: np ? ["औजार: ८ वटा", "निःशुल्क, साइन-अप नचाहिने"] : ["8 calculators", "No sign-up, runs offline-fast"],
+                    ? "तौल अनुमान, गर्भावधि, चारा-खुराक हिसाब, खोर अभिलेख, लाइभ मौसम र रोग लक्षण जाँच — १५ औजार।"
+                    : "Weight estimator, gestation planner, feed rations, herd ledger, live weather with heat-stress alerts, symptom checker — 15 tools.",
+                  points: np ? ["औजार: १५ वटा", "निःशुल्क, साइन-अप नचाहिने"] : ["15 tools", "No sign-up, runs offline-fast"],
                 },
                 {
                   path: "/knowledge",
