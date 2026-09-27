@@ -21,11 +21,12 @@ function MotionGate({ children }: { children: React.ReactNode }) {
   return <MotionConfig reducedMotion={reduceMotion ? 'always' : 'user'}>{children}</MotionConfig>;
 }
 
-/** Analytics fire only after explicit consent — never before a choice.
- *  Consent is passed from App's single useConsent() instance (a second
- *  hook instance would never see the banner's in-page update). */
-function AnalyticsGate({ consent }: { consent: "granted" | "denied" | null }) {
-  if (!analyticsConfig.enabled || consent !== 'granted') return null;
+/** Analytics load whenever they are configured in config/analytics.ts.
+ *  The cookie banner in this build is informational only (see
+ *  components/CookieConsent.tsx) — it remembers its dismissal via
+ *  hooks/useConsent.ts but does not gate anything. */
+function AnalyticsGate() {
+  if (!analyticsConfig.enabled) return null;
   return (
     <>
       <GoogleAnalytics measurementId={analyticsConfig.googleAnalyticsId} />
@@ -42,11 +43,11 @@ export default function App() {
         <AccessibilityProvider>
           <SpeechProvider>
             <MotionGate>
-              <AnalyticsGate consent={consent} />
+              <AnalyticsGate />
               <RouterProvider router={router} />
               {/* New-build prompt (service worker waiting) */}
               <PWAUpdatePrompt />
-              {/* Banner only while no choice has been recorded */}
+              {/* Informational cookie notice — shown until dismissed */}
               {consent === null && <CookieConsent onConsent={setConsent} />}
             </MotionGate>
           </SpeechProvider>

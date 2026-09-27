@@ -31,6 +31,93 @@ Open **`src/app/config/site.ts`** — the single source of truth for all site se
 
 ---
 
+## Release 8 — Emergency SOS, live weather intelligence, herd ledger, BCS guide, simplified cookie notice (Sept 2026)
+
+*Every feature below was researched and fact-checked online before
+implementation (sources in the repo under `notes/release8-plan.md`): the
+Open-Meteo API terms (free, no key, CORS), the NRC (1971) THI formula and
+its dairy/beef thresholds, the Edmondson et al. (1989) 5-point BCS scale,
+and standard livestock first-aid guidance. Feature selection itself was
+validated against farm-app research: record keeping + localized advisory
+are the two highest-value additions for smallholders.*
+
+### EMERGENCY SOS (new)
+- **`EmergencySOS.tsx` + `data/emergencies.ts`** — red SOS button as the
+  fixed bottom slot of the floating dock (thumb-reachable; pulse animation
+  disabled under the a11y reduce-motion switch), opening a portal-rendered
+  bilingual modal with **six farm emergencies**: bloat, poisoning, difficult
+  birth, heat stroke, severe bleeding, milk fever.
+- Each emergency: recognition signs (amber box) + numbered first-aid steps,
+  closing with a one-tap **Call** (`tel:`) and **WhatsApp**
+  (`wa.me` deep link with a prefilled emergency message from `siteConfig`).
+- Accessibility: `role=dialog` + `aria-modal`, Escape-to-close, scroll lock,
+  focus moves into the dialog on open and returns to the launcher on close.
+- First-aid content adapted from extension-service guidance (Cornell SWNY
+  dairy/livestock program, CattleDaily, Goat India care guides) — imperative
+  and short by design, with an explicit "first aid is not treatment" footer.
+
+### WEATHER SMART dashboard (new tool, `/tools/weather`)
+- **`WeatherDashboard.tsx` + `data/districtCoords.ts`** (all 77 district HQ
+  coordinates) — live conditions + 7-day forecast from **Open-Meteo**
+  (verified: free for non-commercial use, no API key, CORS-enabled;
+  30-minute localStorage cache, stale-while-revalidate, offline fallback).
+- Location by **geolocation** (nearest-district label via haversine) or any
+  of the 77 districts; WMO weather codes mapped to bilingual labels + icons.
+- **THI heat-stress card** using the NRC (1971) formula
+  `0.8·T + RH·(0.8·T−14.4) + 46.4` (T = daily max, RH = mean humidity):
+  colour-coded bands at 68 / 72 / 80 / 90 (dairy onset at THI 68, beef at
+  78 — verified against extension sources) + a poultry temperature line
+  (watch 25°C, stress 30°C, danger 35°C).
+- **Farm advisories**: spraying window (wind ≤ 12 km/h, rain ≤ 0.5 mm,
+  10–32°C) and newborn cold risk (overnight min < 8°C).
+- 7-day strip with per-day THI colour bar; ResultCardActions "Save".
+- Bonus: district data split into its own lazy chunk shared by AgroMap and
+  Weather (AgroMap chunk 233KB → 79KB + shared 162KB).
+
+### HERD & MILK LEDGER (new tool, `/tools/herd`)
+- **`HerdTracker.tsx`** — device-local record keeping (smallholder dairy
+  extension literature identifies record keeping as the top decision lever):
+  animals (tag/species/note) + milk log (date × animal × AM/PM litres) in
+  localStorage, per-day replacement semantics, stats (today / 7-day average /
+  per-milker), a 14-day SVG bar chart, recent entries, and **CSV export**
+  (BOM + bilingual header).
+
+### BODY CONDITION SCORE GUIDE (new tool, `/tools/bcs`)
+- **`BCSGuide.tsx`** — interactive Edmondson et al. (1989) 5-point scale
+  (0.5 steps) with a schematic SVG cow whose rib/backbone/hip prominence
+  changes with the score (clearly labelled as a schematic), per-score
+  "what to see and feel" (backbone, ribs, hooks, tailhead) and management
+  advice, with the dairy target band (3–3.5 at calving) called out.
+
+### COOKIE NOTICE SIMPLIFICATION (owner request)
+- Banner rewritten: a single informational notice ("we use cookies to keep
+  the site working smoothly…") with one **"Got it"** button (bilingual);
+  no Decline button, no analytics wording. Dismissal is remembered via the
+  existing `useConsent` hook.
+- `AnalyticsGate` no longer gates on consent: GA + Clarity mount whenever
+  configured in `config/analytics.ts`. README privacy section updated to
+  describe this accurately.
+
+### REGISTRATION + SEO
+- Tools page: 12 → **15 tools** in four groups (Livestock, Farm & business,
+  Weather, Health); SEO title/description/keywords updated; new tabs are
+  deep-linkable automatically via the existing `/tools/:toolId` routing.
+
+### Validation performed
+- `tsc --noEmit` clean; production build clean (4.0s; 49-entry precache).
+- Browser-verified with agent-browser against a production preview bound to
+  127.0.0.1: cookie notice (informational only, GA/Clarity present in `<head>`
+  **before** any choice, accept stores + hides), SOS modal (6 cards EN+NP,
+  bloat detail: 5 steps + 3 signs + `tel:` + `wa.me` + disclaimer, Esc
+  close), weather (live fetch, Kathmandu 16.9°C → Ilam switch THI 76,
+  NP mode मौसम सहायक / ताप-आर्द्रता / ७ दिन), herd (add animal → log
+  4.5+5.25 → 9.8 L today + chart + recent), BCS (3.0 ideal default → slider
+  to 5.0 Obese), dock geometry (desktop a11y y437 / SOS y505; mobile 390px
+  WhatsApp x16 / a11y+SOS x318 — zero overlaps), 15-route sweep with **zero
+  console/page errors**; VLM (glm-4.6v) confirmed 6 key screenshots clean.
+
+---
+
 ## Release 7 — Implementation plan execution: reliability, SEO infrastructure, PWA offline, deep links, shareable results (Sept 2026)
 
 *Every item below was implemented from a detailed external implementation plan

@@ -2,7 +2,7 @@
 
 A modern, SEO-optimized portfolio website showcasing Dr. Mogal Prasad Shah's 29+ years of expertise in livestock development, food security, and rural agricultural innovation across Nepal.
 
-> **September 2026 release:** full audit implementation — SEO critical fixes (noindex removed, correct meta, www canonicals), working contact form with feedback states, 95% image weight reduction, route code-splitting, WhatsApp button infrastructure, and a central config at `src/app/config/site.ts`. **Release 5 added:** a site-wide accessibility system, 77-district interactive agro-map, a 32-article knowledge base with factsheets and charts, 12 farm calculators, and an Open Graph thumbnail with Dr. Shah's headshot. **Release 6 added:** a real read-aloud speech player with highlighting and voice/speed controls, a deeper accessibility suite (readable font, dyslexia spacing, reading guide, 4 text sizes), an analytical agro-map (thematic layers, district comparison, CSV data export), a redesigned mobile hero and slide-in drawer menu, and a unified floating-button dock. **Release 7 adds:** real article URLs (`/knowledge/:slug`) with per-article SEO + sitemap, consent-gated analytics, PWA offline support with an update prompt, route error boundaries, deep-linkable tools (`/tools/:toolId`) and map state (`?district=` / `?compare=`), Save/Copy/Share/Print on every calculator result and district factsheet, and a GitHub Actions CI workflow. **See [CHANGES.md](./CHANGES.md)** for the complete changelog and the two config values to set after deploying.
+> **September 2026 release:** full audit implementation — SEO critical fixes (noindex removed, correct meta, www canonicals), working contact form with feedback states, 95% image weight reduction, route code-splitting, WhatsApp button infrastructure, and a central config at `src/app/config/site.ts`. **Release 5 added:** a site-wide accessibility system, 77-district interactive agro-map, a 32-article knowledge base with factsheets and charts, 12 farm calculators, and an Open Graph thumbnail with Dr. Shah's headshot. **Release 6 added:** a real read-aloud speech player with highlighting and voice/speed controls, a deeper accessibility suite (readable font, dyslexia spacing, reading guide, 4 text sizes), an analytical agro-map (thematic layers, district comparison, CSV data export), a redesigned mobile hero and slide-in drawer menu, and a unified floating-button dock. **Release 7 added:** real article URLs (`/knowledge/:slug`) with per-article SEO + sitemap, PWA offline support with an update prompt, route error boundaries, deep-linkable tools (`/tools/:toolId`) and map state (`?district=` / `?compare=`), Save/Copy/Share/Print on every calculator result and district factsheet, and a GitHub Actions CI workflow. **Release 8 adds:** an Emergency SOS button with bilingual first-aid guides for six farm emergencies (one-tap Call/WhatsApp), a live Weather Smart dashboard for all 77 districts (Open-Meteo, THI heat-stress index, spraying windows, newborn cold risk), a herd & milk ledger with CSV export, an interactive Body Condition Score guide (Edmondson 5-point), and a simplified informational cookie notice. **See [CHANGES.md](./CHANGES.md)** for the complete changelog and the two config values to set after deploying.
 
 ![Website Preview](https://www.drmogalshah.com.np/og-image.jpg)
 
@@ -214,7 +214,8 @@ dr-mogal-shah-portfolio/
 │   │   │   ├── StructuredData.tsx  # JSON-LD structured data
 │   │   │   ├── GoogleAnalytics.tsx # GA4 integration
 │   │   │   ├── MicrosoftClarity.tsx # Clarity integration
-│   │   │   └── CookieConsent.tsx   # Optional cookie banner
+│   │   │   └── CookieConsent.tsx   # Informational cookie notice
+│   │   │   ├── EmergencySOS.tsx   # Floating SOS + first-aid modal
 │   │   ├── pages/             # Page components
 │   │   │   ├── Home.tsx       # Homepage
 │   │   │   ├── About.tsx      # About page
@@ -297,19 +298,18 @@ import { ImageWithFallback } from "./components/figma/ImageWithFallback";
 - **URL**: [clarity.microsoft.com](https://clarity.microsoft.com)
 - **View**: Session recordings, heatmaps, rage clicks, user behavior
 
-## 🔒 Privacy & GDPR
+## 🔒 Privacy & Cookies
 
 The website includes:
-- **Cookie consent banner (active by default)** — bilingual, and analytics
-  (Google Analytics + Microsoft Clarity) only load after the visitor accepts.
-  Declining persists: analytics never load for that browser.
+- **Informational cookie notice** — bilingual, shown once per browser; a
+  single "Got it" button dismisses it for good (state kept in
+  `/src/app/hooks/useConsent.ts`, localStorage key `cookie-consent`,
+  cross-tab synced).
+- Analytics (Google Analytics + Microsoft Clarity) load whenever they are
+  configured in `src/app/config/analytics.ts` (see `AnalyticsGate` in
+  `src/app/App.tsx`).
 - IP anonymization support in analytics
 - Privacy-friendly tracking options
-
-The banner lives in `/src/app/components/CookieConsent.tsx`; consent state
-is managed by `/src/app/hooks/useConsent.ts` (localStorage key
-`cookie-consent`, cross-tab synced). Analytics gating happens in
-`src/app/App.tsx` (`AnalyticsGate`).
 
 ## 🐛 Troubleshooting
 

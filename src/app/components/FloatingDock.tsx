@@ -4,6 +4,7 @@ import { Accessibility } from "lucide-react";
 import { useLanguage } from "../context/LanguageContext";
 import { ScrollToTopButton } from "./ScrollToTopButton";
 import { AccessibilityPanel } from "./AccessibilityPanel";
+import { EmergencySOS } from "./EmergencySOS";
 
 /**
  * FLOATING DOCK — one right-hand column for ALL floating controls so they
@@ -12,12 +13,16 @@ import { AccessibilityPanel } from "./AccessibilityPanel";
  *      ┌──────────────────────┐
  *      │   ↑ scroll-to-top    │  (appears after 300 px of scrolling)
  *      │   ♿ accessibility    │  (launcher — Alt+A also opens it)
+ *      │   🆘 emergency SOS    │  (always visible — bottom slot)
  *      └──────────────────────┘
  *        panel opens ABOVE this column
  *
- * WhatsApp keeps bottom-left; the speech player is bottom-centre and lifts
- * above the dock on phones. The dock container itself ignores pointer
- * events — only the buttons are interactive, so page clicks pass through.
+ * The SOS button occupies the fixed bottom slot of the column (always
+ * visible, thumb-reachable) and the column grows upward when the
+ * scroll-to-top button appears — the WhatsApp button stays bottom-LEFT
+ * so the two never share space. The speech player is bottom-centre and
+ * lifts above the dock on phones. The dock container itself ignores
+ * pointer events — only the buttons are interactive.
  */
 export function FloatingDock() {
   const { language } = useLanguage();
@@ -75,6 +80,9 @@ export function FloatingDock() {
 
         <AccessibilityPanel open={open} onClose={() => setOpen(false)} launcherRef={launcherRef} />
       </div>
+
+      {/* Emergency SOS — fixed bottom slot, always visible */}
+      <EmergencySOS />
     </div>
   );
 }

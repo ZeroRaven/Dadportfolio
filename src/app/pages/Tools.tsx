@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from "motion/react";
 import {
   Scale, Ruler, Syringe, BellRing, Download, Calculator, RotateCcw,
   Info, CalendarDays, AlertTriangle, Weight, Stethoscope, Map, Wheat, Pill, Bird,
-  Droplets, Wallet, Egg, Landmark,
+  Droplets, Wallet, Egg, Landmark, CloudSun, Beef,
 } from "lucide-react";
 import { useLanguage } from "../context/LanguageContext";
 import { Button } from "../components/ui/button";
@@ -13,6 +13,9 @@ import { Label } from "../components/ui/label";
 import { Card, CardContent } from "../components/ui/card";
 import { SEO } from "../components/SEO";
 import { HealthGuide } from "../components/HealthGuide";
+import { WeatherDashboard } from "../components/tools/WeatherDashboard";
+import { HerdTracker } from "../components/tools/HerdTracker";
+import { BCSGuide } from "../components/tools/BCSGuide";
 import { GestationCalculator } from "../components/tools/GestationCalculator";
 import { LandConverter } from "../components/tools/LandConverter";
 import { FeedCalculator } from "../components/tools/FeedCalculator";
@@ -554,7 +557,7 @@ interface ToolTab {
   np: string;
 }
 
-/** Twelve tools grouped into three labelled sections. */
+/** Fifteen tools grouped into four labelled sections. */
 const TOOL_GROUPS: { id: string; en: string; np: string; tools: ToolTab[] }[] = [
   {
     id: "livestock",
@@ -567,6 +570,7 @@ const TOOL_GROUPS: { id: string; en: string; np: string; tools: ToolTab[] }[] = 
       { value: "dosage",    icon: Pill,         en: "Dosage",      np: "खुराक" },
       { value: "water",     icon: Droplets,     en: "Water",       np: "पानी" },
       { value: "market",    icon: Scale,        en: "Live value",  np: "जीवित मूल्य" },
+      { value: "bcs",       icon: Ruler,        en: "BCS score",   np: "शरीर अवस्था" },
     ],
   },
   {
@@ -579,6 +583,15 @@ const TOOL_GROUPS: { id: string; en: string; np: string; tools: ToolTab[] }[] = 
       { value: "poultry", icon: Bird,          en: "Poultry",       np: "कुखुरा" },
       { value: "hatch",   icon: Egg,           en: "Hatchery",      np: "कलाउने" },
       { value: "vaccine", icon: BellRing,      en: "Vaccination",   np: "खोप" },
+      { value: "herd",    icon: Beef,          en: "Herd ledger",   np: "खोर अभिलेख" },
+    ],
+  },
+  {
+    id: "weather",
+    en: "Weather",
+    np: "मौसम",
+    tools: [
+      { value: "weather", icon: CloudSun, en: "Weather smart", np: "मौसम सहायक" },
     ],
   },
   {
@@ -609,9 +622,9 @@ export function Tools() {
   return (
     <>
       <SEO
-        title="Farm Tools & Calculators — 12 Free Tools for Nepali Farmers"
-        description="Free farm tools and calculators for Nepali farmers and livestock keepers — estimate cattle and goat live weight from heart-girth measurements, plan gestation and dry-off dates, compute feed and dry-matter needs, verify medicine dosages, size daily water requirements, estimate live-animal market value, run dairy income economics, convert Ropani-Aana and Bigha-Kattha land units, plan poultry feed with FCR, run an incubation/hatchery calendar, generate vaccination reminders, and check disease symptoms."
-        keywords="farm calculator Nepal, livestock weight estimator, gestation calculator cattle buffalo goat, dairy income calculator Nepal, water requirement livestock, goat market price Nepal, live animal value estimator, incubation hatch calendar chicken duck quail, ropani aana converter, bigha kattha dhur conversion, dry matter intake calculator, feed requirement buffalo, veterinary dosage calculator mg kg, poultry feed FCR calculator, vaccination reminder FMD HS PPR, livestock symptom checker, किसान क्यालकुलेटर, दुग्ध आम्दानी गणना, पशु पानी आवश्यकता, खसी मूल्य, अन्डा कलाउने पात्रो, रोपनी रूपान्तरण, गर्भावधि हिसाब, चारा गणना, खुराक क्यालकुलेटर"
+        title="Farm Tools & Calculators — 15 Free Tools for Nepali Farmers"
+        description="Free farm tools and calculators for Nepali farmers and livestock keepers — estimate cattle and goat live weight from heart-girth measurements, plan gestation and dry-off dates, compute feed and dry-matter needs, verify medicine dosages, size daily water requirements, estimate live-animal market value, score body condition (BCS 1–5), run dairy income economics, keep a herd and milk ledger, convert Ropani-Aana and Bigha-Kattha land units, plan poultry feed with FCR, run an incubation/hatchery calendar, generate vaccination reminders, check live weather with heat-stress (THI) advisories, and triage disease symptoms."
+        keywords="farm calculator Nepal, livestock weight estimator, gestation calculator cattle buffalo goat, dairy income calculator Nepal, water requirement livestock, goat market price Nepal, live animal value estimator, incubation hatch calendar chicken duck quail, ropani aana converter, bigha kattha dhur conversion, dry matter intake calculator, feed requirement buffalo, veterinary dosage calculator mg kg, poultry feed FCR calculator, vaccination reminder FMD HS PPR, livestock symptom checker, body condition score cattle buffalo BCS, herd record keeping app, milk production tracker, Nepal weather livestock heat stress THI, किसान क्यालकुलेटर, दुग्ध आम्दानी गणना, पशु पानी आवश्यकता, खसी मूल्य, अन्डा कलाउने पात्रो, रोपनी रूपान्तरण, गर्भावधि हिसाब, चारा गणना, खुराक क्यालकुलेटर, शरीर अवस्था अंक, खोर अभिलेख, मौसम सहायक"
         path="/tools"
       />
       <div className="bg-gray-50 min-h-screen pb-20">
@@ -633,8 +646,8 @@ export function Tools() {
             </h1>
             <p className="text-gray-300 text-base sm:text-lg max-w-2xl leading-relaxed">
               {np
-                ? "नापले तौल अनुमान, गर्भावधि हिसाब, चारा-खुराक-पानी गणना, जीवित मूल्य र दुग्ध आम्दानीको लेखा, रोपनी–बिघा रूपान्तरण, कुखुराको दाना र कलाउने पात्रो, खोपका सम्झना र रोगका लक्षण जाँच — किसान र पशुपालकका लागि वैज्ञानिक स्रोतमा आधारित निःशुल्क औजारहरू।"
-                : "Weigh animals with a measuring tape, plan gestation and dry-off dates, size feed, dosage and daily water, estimate live-animal value, run dairy income economics, convert Ropani↔Bigha land units, plan poultry feed and hatching, keep vaccinations on autopilot, and triage disease symptoms — free tools built on published livestock science."}
+                ? "नापले तौल अनुमान, गर्भावधि हिसाब, चारा-खुराक-पानी गणना, जीवित मूल्य र दुग्ध आम्दानीको लेखा, खोर अभिलेख, शरीर अवस्था अंक, रोपनी–बिघा रूपान्तरण, कुखुराको दाना र कलाउने पात्रो, खोपका सम्झना, मौसम तथा ताप-तनाव सहायक र रोगका लक्षण जाँच — किसान र पशुपालकका लागि वैज्ञानिक स्रोतमा आधारित निःशुल्क औजारहरू।"
+                : "Weigh animals with a measuring tape, plan gestation and dry-off dates, size feed, dosage and daily water, estimate live-animal value, score body condition, keep a herd and milk ledger, run dairy income economics, convert Ropani↔Bigha land units, plan poultry feed and hatching, keep vaccinations on autopilot, read live weather with heat-stress advisories, and triage disease symptoms — free tools built on published livestock science."}
             </p>
           </div>
         </div>
@@ -696,6 +709,12 @@ export function Tools() {
                 <IncubationCalculator np={np} />
               ) : tab === "vaccine" ? (
                 <VaccineReminder np={np} />
+              ) : tab === "weather" ? (
+                <WeatherDashboard np={np} />
+              ) : tab === "herd" ? (
+                <HerdTracker np={np} />
+              ) : tab === "bcs" ? (
+                <BCSGuide np={np} />
               ) : (
                 <HealthGuide np={np} />
               )}
