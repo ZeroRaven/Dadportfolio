@@ -419,30 +419,36 @@ export function AgroMap() {
       />
 
       <div className="bg-gray-50 min-h-screen pb-20">
-        {/* ── Header band ─────────────────────────────────────────────── */}
-        <div className="bg-gradient-to-br from-[#0A2540] to-[#12365C] text-white pt-28 pb-12 px-4 sm:px-6">
+        {/* ── Header band (compact — the map, not the hero, is the star) ── */}
+        <div className="bg-gradient-to-br from-[#0A2540] to-[#12365C] text-white pt-24 sm:pt-28 pb-8 sm:pb-10 px-4 sm:px-6">
           <div className="max-w-6xl mx-auto">
             <motion.div
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="inline-flex items-center gap-2 bg-[#D4AF37]/20 backdrop-blur-sm px-4 py-2 rounded-full mb-5 border border-[#D4AF37]/30"
+              className="inline-flex items-center gap-2 bg-[#D4AF37]/20 backdrop-blur-sm px-3.5 py-1.5 rounded-full mb-3 sm:mb-4 border border-[#D4AF37]/30"
             >
-              <MapIcon className="text-[#D4AF37]" size={16} />
-              <span className="text-sm font-medium">
+              <MapIcon className="text-[#D4AF37]" size={14} />
+              <span className="text-xs sm:text-sm font-medium">
                 {np ? "७७ जिल्ला · ७ प्रदेश · प्रमाणित तथ्याङ्क" : "77 districts · 7 provinces · verified data"}
               </span>
             </motion.div>
-            <h1 className="font-display text-3xl sm:text-4xl md:text-5xl font-bold mb-4">
+            <h1 className="font-display text-2xl sm:text-4xl md:text-5xl font-bold mb-2 sm:mb-4">
               {np ? "नेपाल कृषि नक्सा" : "Nepal Agriculture Map"}
             </h1>
-            <p className="text-gray-300 text-base sm:text-lg max-w-3xl leading-relaxed">
+            {/* Full description on desktop; a single tight line on mobile so
+                the map itself is reachable without scrolling. */}
+            <p className="hidden sm:block text-gray-300 text-base sm:text-lg max-w-3xl leading-relaxed">
               {np
-                ? "अब नक्सा विश्लेषणात्मक बन्यो — भेग, बाली, पशुपालन र जलवायु दबाबका थर (लेयर) बदल्नुहोस्; दुई जिल्ला तुलना गर्नुहोस्; वा पूरै ७७ जिल्लाको तथ्याङ्क तालिकाबाट CSV नै डाउनलोड गर्नुहोस्। तथ्याङ्क MoALD, DNPWC, USDA, DHM र प्रकाशित अनुसन्धानबाट।"
-                : "The map is now analytical — switch thematic layers (belts, crops, livestock, climate pressure), compare any two districts side by side, or export the full 77-district dataset as CSV. Figures sourced from MoALD, DNPWC, USDA, DHM and published research."}
+                ? "थर (भेग, बाली, पशुपालन, जलवायु दबाब) बदल्नुहोस्; दुई जिल्ला तुलना गर्नुहोस्; वा ७७ जिल्लाको तथ्याङ्क CSV मा निकाल्नुहोस्। तथ्याङ्क MoALD, DNPWC, USDA, DHM र प्रकाशित अनुसन्धानबाट।"
+                : "Switch thematic layers (belts, crops, livestock, climate pressure), compare any two districts side by side, or export the full 77-district dataset as CSV. Figures sourced from MoALD, DNPWC, USDA, DHM and published research."}
+            </p>
+            <p className="sm:hidden text-gray-300 text-sm leading-snug">
+              {np ? "थर बदल्नुहोस् · जिल्ला छुनुहोस् · तुलना गर्नुहोस्" : "Switch layers · tap a district · compare · export CSV"}
             </p>
 
-            {/* Workspace switcher */}
-            <div className="mt-6 inline-flex rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 p-1" role="tablist" aria-label={np ? "कार्यक्षेत्र" : "Workspace"}>
+            {/* Workspace switcher — one row, scrolls sideways on small screens */}
+            <div className="mt-4 sm:mt-6 max-w-full overflow-x-auto">
+              <div className="inline-flex rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 p-1" role="tablist" aria-label={np ? "कार्यक्षेत्र" : "Workspace"}>
               {([
                 { id: "map", en: "Map & layers", np: "नक्सा", icon: MapIcon },
                 { id: "compare", en: "Compare districts", np: "तुलना", icon: ArrowLeftRight },
@@ -457,7 +463,7 @@ export function AgroMap() {
                     role="tab"
                     aria-selected={active}
                     onClick={() => setView(v.id)}
-                    className={`flex items-center gap-2 px-4 sm:px-5 py-2.5 rounded-lg text-sm font-semibold transition-all ${
+                    className={`flex items-center gap-1.5 sm:gap-2 px-3 sm:px-5 py-2 sm:py-2.5 rounded-lg text-xs sm:text-sm font-semibold transition-all whitespace-nowrap flex-shrink-0 ${
                       active ? "bg-[#D4AF37] text-[#0A2540] shadow" : "text-gray-200 hover:text-white"
                     }`}
                   >
@@ -466,6 +472,7 @@ export function AgroMap() {
                   </button>
                 );
               })}
+              </div>
             </div>
           </div>
         </div>
@@ -524,8 +531,9 @@ export function AgroMap() {
                 animate={{ opacity: 1, y: 0 }}
                 className="lg:col-span-3 bg-white rounded-2xl shadow-xl p-3 sm:p-6"
               >
-                {/* Thematic layer rail */}
-                <div className="flex flex-wrap items-center gap-1.5 mb-4">
+                {/* Thematic layer rail — single scrollable row on mobile,
+                    wraps only on wide screens */}
+                <div className="flex sm:flex-wrap items-center gap-1.5 mb-3 sm:mb-4 overflow-x-auto pb-0.5">
                   {layers.map((l) => {
                     const Icon = l.icon;
                     const active = layer === l.id;
@@ -535,7 +543,7 @@ export function AgroMap() {
                         type="button"
                         onClick={() => { setLayer(l.id); setSpotTag(null); }}
                         aria-pressed={active}
-                        className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs sm:text-sm font-semibold border-2 transition-all ${
+                        className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs sm:text-sm font-semibold border-2 transition-all whitespace-nowrap flex-shrink-0 ${
                           active
                             ? "border-[#0A2540] bg-[#0A2540] text-white shadow"
                             : "border-gray-200 bg-white text-gray-600 hover:border-[#D4AF37]/60 hover:text-[#0A2540]"
@@ -550,7 +558,7 @@ export function AgroMap() {
                     <button
                       type="button"
                       onClick={reset}
-                      className="ml-auto inline-flex items-center gap-1 text-xs font-semibold text-gray-500 hover:text-[#0A2540] transition-colors"
+                      className="ml-auto inline-flex items-center gap-1 text-xs font-semibold text-gray-500 hover:text-[#0A2540] transition-colors flex-shrink-0 pl-2"
                     >
                       <X size={13} />
                       {np ? "रिसेट" : "Reset"}
@@ -558,10 +566,11 @@ export function AgroMap() {
                   )}
                 </div>
 
-                {/* Spotlight tag chips (crops / livestock) */}
+                {/* Spotlight tag chips (crops / livestock) — wrapped, not a
+                    sideways scroll strip (scroll strips hide choices) */}
                 {(layer === "crops" || layer === "livestock") && (
-                  <div className="mb-4 -mx-1 px-1 overflow-x-auto pb-1">
-                    <div className="flex items-center gap-1.5 min-w-max">
+                  <div className="mb-3 sm:mb-4">
+                    <div className="flex flex-wrap items-center gap-1.5">
                       <span className="text-[11px] font-bold uppercase tracking-wider text-gray-400 flex-shrink-0 pr-1">
                         {np ? "कुन बाली/पशु कहाँ?" : "Where?"}
                       </span>
@@ -575,7 +584,7 @@ export function AgroMap() {
                             onClick={() => setSpotTag(active ? null : t.id)}
                             aria-pressed={active}
                             title={`${count} ${np ? "जिल्ला" : "districts"}`}
-                            className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold border-2 whitespace-nowrap transition-all ${
+                            className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold border-2 transition-all ${
                               active
                                 ? "border-[#B8941F] bg-[#D4AF37] text-[#0A2540] shadow"
                                 : "border-gray-200 bg-white text-gray-600 hover:border-[#D4AF37]/60 hover:text-[#0A2540]"
@@ -896,11 +905,15 @@ export function AgroMap() {
                           </h2>
                           <p className="text-sm text-gray-300 mt-2 leading-relaxed">
                             {np
-                              ? "माथिका थर (प्रदेश / भेग / बाली / पशुपालन / जलवायु) बदल्नुहोस् — नक्साको रङै बदलिन्छ; जिल्ला छुनुहोस्, तथ्यपत्र यहीँ खुल्छ। वा तलका छिटो-छनोटमा एउटा थिच्नुहोस्।"
-                              : "Switch the layer above — the whole map recolours; touch any district for its full factsheet. Or tap a quick-pick below for instant data."}
+                              ? "थर बद्लिँदा नक्सा पनि बद्लिन्छ — जिल्ला छुनुहोस्, तथ्यपत्र यहीँ खुल्छ।"
+                              : "Switch the layer — the map recolours; touch any district for its factsheet."}
                           </p>
-                          {/* Quick-picks — top crop/livestock spotlights by district count */}
-                          <div className="mt-3.5 flex flex-wrap gap-1.5">
+                          {/* Quick-picks — top crop spotlights by district count */}
+                          <div className="mt-3.5">
+                            <p className="text-[10px] uppercase tracking-[0.18em] text-gray-400 font-semibold mb-1.5">
+                              {np ? "लोकप्रिय बाली थर" : "Top crop spotlights"}
+                            </p>
+                            <div className="flex flex-wrap gap-1.5">
                             {CROP_TAGS.slice()
                               .sort((a, b) => districtsWithTag(b.id, "crops").length - districtsWithTag(a.id, "crops").length)
                               .slice(0, 4)
@@ -918,6 +931,7 @@ export function AgroMap() {
                                   </button>
                                 );
                               })}
+                          </div>
                           </div>
                         </div>
                         <div className="px-6 py-5 grid grid-cols-2 gap-4">
@@ -946,14 +960,23 @@ export function AgroMap() {
               </motion.div>
             </div>
 
-            {/* ── Sources footer ─────────────────────────────────────────── */}
-            <div className="mt-8 rounded-xl bg-[#0A2540]/[0.04] border border-[#0A2540]/10 px-5 py-4 flex items-start gap-3">
-              <Info size={16} className="mt-0.5 text-[#B8941F] flex-shrink-0" />
-              <p className="text-xs text-gray-600 leading-relaxed">
+            {/* ── Sources footer — collapsed by default: the full citation
+                list is one tap away instead of a wall of fine print ────── */}
+            <div className="mt-8 rounded-xl bg-[#0A2540]/[0.04] border border-[#0A2540]/10 px-5 py-3">
+              <details className="group">
+                <summary className="flex items-center gap-3 cursor-pointer list-none [&::-webkit-details-marker]:hidden">
+                  <Info size={16} className="text-[#B8941F] flex-shrink-0" />
+                  <span className="text-xs font-bold text-[#0A2540]">
+                    {np ? "स्रोत र तथ्याङ्क टिप्पणी" : "Sources & data notes"}
+                  </span>
+                  <ChevronRight size={14} className="text-gray-400 transition-transform group-open:rotate-90 ml-auto" aria-hidden="true" />
+                </summary>
+                <p className="text-xs text-gray-600 leading-relaxed mt-3 pl-7">
                 {np
                   ? "स्रोत: जिल्ला प्रोफाइल MoALD को Statistical Information on Nepalese Agriculture (जिल्लागत तालिका), NARC/DOA खाल्डो-क्षेत्र कार्यक्रम र स्थापित कृषि भूगोलमा आधारित; भेग तथा बाली/पशु/जलवायु ट्यागहरू यही प्रमाणित प्रोफाइलबाट वर्गीकृत; संरक्षित क्षेत्र/वन्यजन्तु DNPWC राष्ट्रिय निकुञ्ज तथा संरक्षण क्षेत्र नेटवर्क (RAMSAR स्थलसहित); राष्ट्रिय तथ्याङ्क MoALD SINA (धान ५६ लाख टन, मकै ३० लाख टन — कीर्तिमान वर्ष), USDA FAS तथा Kafle et al. 2024 (गहुँ), Poudel et al. 2020, Vaccines (भैंसीको दुध ६४%), FEWS NET 2026 (कृषि GDP ≈२२%), DHM/ICIMOD ताप विश्लेषण (+०.०५६ डिग्री/वर्ष)। नक्सा: nepal-district-map (MIT इजाजतपत्र) — दार्चुलामा लिम्पियाधुरा–कालापानी–लिपुलेकसहित। गुल्मी कफीका गणना जिल्ला-अध्ययनबाट। CSV निर्यात यही तथ्याङ्कको प्रतिलिपि हो।"
                   : "Sources: district profiles follow MoALD Statistical Information on Nepalese Agriculture (district tables), NARC/DOA pocket-area programmes and established agricultural geography — the belt zones and crop/livestock/climate tags are classified from those same verified profiles; protected areas & wildlife from the DNPWC national park and conservation area network (incl. RAMSAR sites); national figures from MoALD SINA (paddy 5.6 M t & maize 3.0 M t — record year), USDA FAS & Kafle et al. 2024 (wheat), Poudel et al. 2020, Vaccines 8:322 (buffalo ≈64% of milk), FEWS NET 2026 (agriculture ≈22% of GDP), DHM/ICIMOD warming analyses (+0.056 °C/yr). Gulmi coffee counts from a published district study. Map: nepal-district-map (MIT license) with the correct Limpiyadhura–Kalapani–Lipulekh boundary in Darchula. The CSV export is a copy of this same dataset."}
-              </p>
+                </p>
+              </details>
             </div>
 
             {/* Cross-link to knowledge base */}

@@ -67,6 +67,7 @@ export function Footer() {
                 { label: "कृषि औजारहरू", path: "/tools" },
                 { label: "ज्ञान भण्डार", path: "/knowledge" },
                 { label: "नेपाल कृषि नक्सा", path: "/agromap" },
+                { label: "कृषि पात्रो", path: "/calendar" },
                 { label: "सम्पर्क", path: "/contact" },
               ] : [
                 { label: "Home", path: "/" },
@@ -77,6 +78,7 @@ export function Footer() {
                 { label: "Farm Tools", path: "/tools" },
                 { label: "Knowledge Base", path: "/knowledge" },
                 { label: "Nepal Agri-Map", path: "/agromap" },
+                { label: "Farming Calendar", path: "/calendar" },
                 { label: "Contact", path: "/contact" },
               ]).map((link) => (
                 <li key={link.path}>

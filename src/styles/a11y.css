@@ -23,10 +23,13 @@
  */
 
 /* ── Always-on: keyboard focus ring ─────────────────────────────────────── */
+/* NOTE: no border-radius here — the outline follows the element's own
+   radius in every modern browser, and forcing a radius used to visibly
+   SQUARE the round floating buttons (SOS / accessibility) whenever they
+   received focus, e.g. right after page load. */
 :focus-visible {
   outline: 3px solid #d4af37;
   outline-offset: 2px;
-  border-radius: 4px;
 }
 
 html.a11y-contrast :focus-visible {

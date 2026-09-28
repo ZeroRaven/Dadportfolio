@@ -8,6 +8,7 @@ import { fodderArticles } from "./fodder";
 import { climateArticles } from "./climate";
 import { managementArticles } from "./management";
 import { moreArticles } from "./more";
+import { extraArticles } from "./extra";
 import { ENRICH } from "./enrich";
 import { CATEGORY_IMAGES, ARTICLE_IMAGES } from "./images";
 
@@ -77,6 +78,14 @@ export const kbCategories: KBCategory[] = [
       np: "अभिलेख, मूल्य, सहकारी, मौरीपालन, राम्रो बिक्री",
     },
   },
+  {
+    id: "other-livestock",
+    title: { en: "Pigs, Fish & More", np: "सुँगुर, माछा लगायत" },
+    blurb: {
+      en: "Pig systems, carp polyculture ponds, diversifying the farm",
+      np: "सुँगुर पालन, कार्प पोखरी, फार्मको विविधीकरण",
+    },
+  },
 ];
 
 /**
@@ -109,6 +118,7 @@ const raw: KBArticle[] = [
   ...climateArticles,
   ...managementArticles,
   ...moreArticles,
+  ...extraArticles,
 ];
 
 export const kbArticles: KBArticle[] = applyImagesAndEnrich(raw);

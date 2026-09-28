@@ -96,3 +96,50 @@
   font-family: 'Mukta', 'Noto Sans Devanagari', sans-serif;
   letter-spacing: normal;
 }
+
+/* ── Devanagari letter-spacing BLANKET RESET (r11) ──────────────────────────
+   The heading-only resets above were not enough: Tailwind tracking-* and
+   inline tracking utilities still applied Latin-flavoured character
+   spacing to Devanagari <span>/<button>/<td>/… text wherever those
+   utilities were used. Inter-glyph spacing in an abugida breaks the
+   shirorekha (the headline bar) — the matras and conjuncts detach visually
+   from their base consonants and the text reads "loose"/broken. So in
+   Nepali mode EVERY element gets letter-spacing: normal, overriding all
+   tracking utilities (unlayered CSS beats Tailwind's layered utilities). */
+html.lang-np,
+html.lang-np *,
+html.lang-np *::before,
+html.lang-np *::after {
+  letter-spacing: normal;
+}
+
+/* ── Devanagari size bump (r11) ────────────────────────────────────────────
+   Devanagari glyphs read ~6% smaller than Latin at equal font-size: the
+   script's x-height equivalent sits lower and matras stack ABOVE and
+   BELOW the shirorekha rather than rising above the baseline, so equal
+   px renders visually smaller for reading. A ~6% root bump restores
+   comfortable parity with the English view. Combined values for the
+   accessibility text-size modes are listed explicitly so the NP bump
+   multiplies rather than being overwritten by the a11y class. */
+html.lang-np {
+  font-size: 106.25%;
+}
+html.lang-np.a11y-font-lg {
+  font-size: 119.5%;
+}
+html.lang-np.a11y-font-xl {
+  font-size: 132.8%;
+}
+html.lang-np.a11y-font-xxl {
+  font-size: 148.8%;
+}
+
+/* Dyslexia mode keeps its word-spacing and line-height help in Nepali too,
+   but its letter-spacing is neutralised — widening inter-glyph gaps breaks
+   the shirorekha linkage in Devanagari (WCAG 1.4.12 spacing is a Latin-
+   centric prescription; word-spacing alone carries the benefit here). */
+html.lang-np.a11y-dyslexia :is(main p, main li, main dd, main dt, main td,
+  main th, main figcaption, main blockquote, main .prose) {
+  letter-spacing: normal;
+}
+

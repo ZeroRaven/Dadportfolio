@@ -9,10 +9,10 @@ jobs:
   build-and-lint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
         with:
-          node-version: 20
+          node-version: 24
           cache: 'npm'
       - run: npm ci
       # Note: `npm run lint` needs ESLint, which is not currently installed
@@ -20,10 +20,13 @@ jobs:
       - run: npm run typecheck
       - run: npm run build
       # generate-sitemap runs as part of `npm run build`; the sitemap is
-      # committed, so a stale one shows up as a diff here.
+      # committed, so a stale URL set shows up as a diff here. `<lastmod>`
+      # lines are ignored on purpose: the generator stamps them with the
+      # build date, so date-only churn must never fail the gate — only a
+      # genuinely different URL set (added/removed routes) should.
       - name: Fail on stale generated sitemap
         run: |
-          git diff --exit-code public/sitemap.xml || {
+          git diff --exit-code -I'^[[:space:]]*<lastmod>' -- public/sitemap.xml || {
             echo "::error::public/sitemap.xml is out of date — run 'npm run generate-sitemap' and commit the result."
             exit 1
           }

@@ -26,7 +26,8 @@
     "build": "npm run generate-sitemap && vite build",
     "preview": "vite preview",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "prune-ui": "node scripts/prune-unused-ui.mjs"
   },
   "engines": {
     "node": ">=18"

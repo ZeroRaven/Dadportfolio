@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router";
+import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "motion/react";
 import { Search, X, CornerDownLeft } from "lucide-react";
 import { useLanguage } from "../context/LanguageContext";
@@ -10,6 +11,14 @@ import { useSearchIndex, scoreItem, type SearchItem } from "./SiteSearch";
  * every page, not just the 404. Shares the bilingual index and scoring with
  * the inline SiteSearch component. Opens from the navbar search button or
  * the keyboard shortcut; closes on Escape, backdrop click or selection.
+ *
+ * Rendered through a portal to <body> (same pattern as the mobile drawer
+ * and the accessibility panel): it must NOT live inside the navbar's
+ * stacking context, or elements with higher root-level z-index (floating
+ * dock z-60, cookie banner z-65, PWA prompt z-66) paint ABOVE the overlay —
+ * they then appear crisp and un-dimmed over the blurred backdrop. From
+ * <body> the z-[100] overlay wins against everything, and backdrop-filter
+ * samples the true page backdrop, so the dim + blur stay uniform.
  */
 
 export function SearchPalette({
@@ -81,7 +90,7 @@ export function SearchPalette({
     }
   };
 
-  return (
+  return createPortal(
     <AnimatePresence>
       <motion.div
         key="backdrop"
@@ -192,7 +201,8 @@ export function SearchPalette({
           </div>
         </motion.div>
       </motion.div>
-    </AnimatePresence>
+    </AnimatePresence>,
+    document.body
   );
 }
 

@@ -8,6 +8,79 @@ all P1 performance issues, and the feasible P2 feature roadmap.
 
 ---
 
+## Release 12 — Farming Calendar, 5 new tools, 11 new articles; reader & map polish (September 2026)
+
+### User-reported fixes
+- **Knowledge Base hero no longer shadows the article**: opening (or
+  deep-linking to) an article now lands straight on the reader — the big
+  hub hero, its stats line and its search box only appear on the library
+  grid. The reader's own dark header carries the breadcrumb and back-link.
+- **Search palette blur is now uniform**: the Ctrl+K overlay was rendered
+  inside the navbar's stacking context, so the floating dock (z-60), cookie
+  banner (z-65) and PWA prompt (z-66) painted ABOVE the overlay — crisp and
+  un-dimmed while the rest of the page blurred. The palette is now portaled
+  to `<body>` (same pattern as the mobile drawer), so the z-[100] overlay
+  wins against everything and backdrop-filter samples the true page.
+- **AgroMap de-cluttered** (before/after verified with screenshots + VLM):
+  compact header (one-line description on mobile, map reachable within the
+  first screen and a half), workspace tabs scroll on small screens, the
+  layer rail is a single scrollable row, spotlight chips wrap instead of
+  hiding in a sideways scroll strip, the empty-state panel's instruction is
+  one line with clearly labelled "Top crop spotlights", and the sources
+  wall-of-text is now a collapsed "Sources & data notes" disclosure.
+
+### New unique feature — Nepal Farming Calendar (/calendar)
+A belt-aware interactive calendar (the map answers *where*, the calendar
+answers *when*): 12 months × Terai/mid-hills/high-hills, current month
+auto-highlighted, entries grouped by kind (sow, harvest, livestock, fish,
+market, storage) — rice transplanting centred on Asar 15, hill maize
+Baisakh–Jestha, wheat Mangsir–Poush, DLS biannual FMD/HS vaccination
+rounds, Dashain khasi finishing from Shrawan, monsoon fodder planting,
+fish-pond cycles — each entry deep-linked to its KB article. Wired into
+the nav Resources dropdown, drawer, footer, sitemap (83 URLs), search
+palette and llms.txt.
+
+### 5 new science-backed tools (20 → 25; facts verified online)
+- `/tools/silage` — silage pit planner: bunker m³ × density (600–700 kg/m³,
+  editable) → as-fed/DM tonnes, wastage allowance and days of feed for the
+  herd, plus reverse sizing for the next fill.
+- `/tools/calf` — calf colostrum & milk planner: 10% of body weight in
+  6–12 h (≥4 L for a 45-kg calf), Brix ≥22 quality bar, whole-milk at
+  10%/day with an 8–10-week step-down weaning ladder, total milk and cost.
+- `/tools/cmt` — CMT udder check: four-quarter scores (0/T/1/2/3) →
+  indicative SCC, cow-level milk-loss bands from published SCC-yield
+  relationships, and next-step advice per worst score.
+- `/tools/fodderbudget` — herd fodder budget: per-class DMI (FAO
+  2.5 kg/100 kg method; milking 3.0%, dry 2.5%, goats 3.5% — editable) →
+  green/dry/concentrate split and the ropani of fodder land needed.
+- `/tools/aflatoxin` — grain-storage aflatoxin risk: moisture slider,
+  bag/container and room conditions → risk score with the Nepal 20-ppb
+  limit, hermetic-bag −34% evidence and poultry-sensitivity guidance.
+
+### 11 new sourced KB articles (35 → 46; new category: Pigs, Fish & More)
+- animal-health: subclinical-mastitis-cmt (CMT 0–3 scale, ~400k cells/mL
+  threshold; Nepal SCM 30–46%), antibiotics-amr (residues in up to ~23% of
+  Kathmandu raw-milk samples; withdrawal discipline), minerals-vitamins
+  (salt 0.005–0.01% BW; P/Co/Cu/Se deficiency signs per Merck).
+- cattle-buffalo: colostrum-calf-care (10% BW in 6–12 h, IgG ≥50 g/L ≈
+  Brix ≥22, gut closure ~24 h; step-down weaning).
+- fodder: urea-treated-straw (4% urea, 40% moisture, ~21 days sealed),
+  azolla-fodder (20–25% CP, 2–2.5 kg/day, +10–15% milk reports).
+- goat-farming: goat-pneumonia (Mannheimia haemolytica, 40–41 °C fever,
+  shed engineering).
+- poultry: poultry-coccidiosis (Eimeria, >$1.5–3 bn global losses, wet
+  litter control).
+- crops: grain-storage-aflatoxin (Nepal 20-ppb limit, ≤13% moisture,
+  hermetic bags −34%).
+- other-livestock (NEW): pig-farming-basics (~1.1–1.3 m head, +43%/decade)
+  and carp-polyculture (~58,400 t ≈ 80% of fish output, mrigal 29.2%).
+
+### Consistency sweep
+Tools SEO/llms.txt/README/Home updated to 25 tools · 46 articles · 9
+categories; sitemap regenerated (83 URLs: 46 articles + 25 tools, registry
+validated); search palette index +5 tools + calendar; footer/nav wired.
+
+
 ## ⚠️ Two things to configure after deploy (2 minutes)
 
 Open **`src/app/config/site.ts`** — the single source of truth for all site settings:
@@ -28,6 +101,163 @@ Open **`src/app/config/site.ts`** — the single source of truth for all site se
    For true background delivery, create a free key at **web3forms.com** and
    paste it into `formWeb3FormsKey` (or use `formspreeEndpoint`). The form
    then delivers silently with success/error states — no code changes needed.
+
+---
+
+## Release 11 — 3 new scientific tools (climate tracker, IPCC methane, milk quality), Emergency-SOS "square button" root fix, Devanagari typography, new BCS illustration (Sept 2026)
+
+*User requests: climate tracker relevant to farmers and animal husbandry
+(look and validate online); more scientific tools and features; fix the
+Emergency Aid button appearing square initially; the mobile search icon is
+duplicated in the navbar AND the drawer menu; the hand-drawn BCS
+illustration is ugly and confusing — use something better; the letter
+spacing that suits English is bad practice for Nepali/Devanagari and
+Devanagari text should render slightly larger; Knowledge Base UI/UX
+improvements.*
+
+### The "square Emergency Aid button" — a two-layer root cause, both fixed
+
+Reproduced in a browser: on every page load the SOS button rendered SQUARE.
+Two bugs stacked: (1) `EmergencySOS`'s focus-return effect fired **on mount**
+(`open=false, active=null`) and programmatically focused the launcher at
+load time; (2) `a11y.css`'s `:focus-visible { border-radius: 4px }` then
+flattened the round button while focused (unlayered CSS beats Tailwind's
+layered utilities). Fix 1: a `wasOpenRef` guard so focus returns to the
+launcher only after the modal has actually closed (this was also a WCAG
+focus-stealing bug). Fix 2: removed the `border-radius` from the
+`:focus-visible` rule — outlines follow the element's own radius natively
+now, so round buttons stay round while still showing the gold focus ring
+(verified: computed radius stays `infinity px` while focused).
+
+### Mobile search de-duplication
+
+The navbar's always-visible search button (opens the ⌘K palette) and a
+second search row inside the mobile drawer were pure duplication. The
+drawer row is gone — one tap from the navbar on mobile, ⌘K/Ctrl+K
+everywhere.
+
+### Devanagari typography (letter-spacing + size)
+
+- **Blanket letter-spacing reset** in Nepali mode (`html.lang-np *`):
+  tracking utilities applying Latin-style inter-glyph spacing break the
+  shirorekha linkage in Devanagari — matras and conjuncts detach visually.
+  Headings were already covered; now every element is (verified live: 0
+  letter-spaced elements in NP mode).
+- **Size bump**: Devanagari glyphs read ~6% smaller than Latin at equal
+  font-size, so `html.lang-np` now renders at 106.25% root (17px vs 16px),
+  with explicit combined values for each accessibility text-size mode
+  (119.5% / 132.8% / 148.8%) so the two systems multiply instead of
+  overwrite.
+- **Dyslexia-mode carve-out**: word-spacing and line-height help stays in
+  Nepali; only the letter-spacing part is neutralised (WCAG 1.4.12 spacing
+  is Latin-centric — word spacing carries the benefit for Devanagari).
+
+### New BCS illustration
+
+The ellipse-and-stick-figure cow is replaced by a hand-drafted anatomical
+side-profile line illustration whose geometry is driven by per-score pose
+parameters: the belly line tucks (BCS 1) or sags (BCS 5), spinous-process
+bumps, six forward-angled short ribs, sharp→buried hook bones, tailhead
+cavity→fat folds, thigh hollow — with the four scoring checkpoints
+labelled via solid leader lines with terminal dots (Backbone / Short ribs
+/ Hook bones / Tailhead; bilingual). Iterated with a vision-model critique
+loop until the figure read as a well-proportioned cow with distinct hock
+articulation.
+
+### Three new tools (all facts verified online before coding)
+
+1. **Climate Tracker** (`/tools/climate`) — 30 years of district climate
+   from the Open-Meteo **Archive API** (ERA5 reanalysis; free, no key; API
+   validated with a live 1995–2024 Kathmandu fetch). Monthly rainfall
+   normals with the monsoon window highlighted (the district's own Jun–Sep
+   share is computed, not asserted — Kathmandu's works out to 80.7%,
+   matching the documented ~75–80% for Nepal), monthly temperature range
+   normals, the last 6 years as % of normal, a 15-vs-15-year warming
+   comparison, and a derived livestock season calendar (heat-stress months
+   at mean daily max ≥ 30 °C, cold months for newborns < 8 °C, monsoon
+   window) tied to management advice. Only the ~2 KB computed summary is
+   cached (24 h) — never the 40,000-day raw series.
+2. **Methane & Carbon Hoofprint** (`/tools/methane`) — IPCC 2006 GL Tier 1
+   enteric + manure factors for the Indian subcontinent (dairy 57, buffalo
+   55, other cattle 27, goats/sheep 5 kg CH₄/head/yr — re-verified against
+   South-Asian livestock CH₄ assessments), AR6 GWPs (CH₄ 27.2, N₂O 273),
+   manure-system N₂O selection (pasture / compost / biogas), per-litre
+   CO₂e intensity vs the FAO GLEAM 2.5 kg CO₂e/kg benchmark, editable
+   factors for national inventory values, and sourced mitigation guidance
+   (productivity, dietary fat 3–10%, 3NOP ~30%, biogas).
+3. **Milk Quality & Payment** (`/tools/milktest`) — the two-axis dairy
+   pricing used across the subcontinent (price/L = Fat% × A + SNF% × B,
+   editable rates defaulting to Rs 60 at 4.0%/8.5%), the field SNF
+   conversion `SNF = CLR/4 + 0.21×Fat + 0.36` (verified), DDB-style
+   quality grading (fat ≥ 3.5%, SNF ≥ 8.5%) with cause-specific advice,
+   and daily/monthly earnings.
+
+Registered in the Tools hub (Weather & climate group renamed accordingly),
+site search, SEO copy (now 20 tools) and the sitemap (regenerated +
+committed — the freshness gate correctly caught the three new URLs).
+
+### Knowledge Base UX
+
+- **Sticky filter toolbar** — category chips + sort stay reachable while
+  browsing the eight long category sections (backdrop-blur card under the
+  nav).
+- **Reader text-size stepper** — A− / A+ in the reader action row scales
+  the article typography only (CSS zoom, 92–125%, persisted in
+  localStorage) — the page chrome stays fixed.
+- Result counts, clear-filters and the quick-topic empty state were
+  already in place from r10; verified intact.
+
+*Verification: `npm ci` state unchanged → `tsc --noEmit` 0 errors →
+`vite build` clean (PWA precache OK) → sitemap gate green after commit →
+live browser QA at 390px and desktop: SOS round on load AND while focused,
+exactly one search button (drawer search row removed), all three new tools
+computing correct values against hand-checked math (CLR formula, two-axis
+price, IPCC arithmetic, ERA5 aggregation), Devanagari 17px root with zero
+letter-spaced elements.*
+
+---
+
+## Release 10.1 — CI hotfix: unblock the typecheck gate, modernize CI actions (Sept 2026)
+
+*The CI workflow added in `64e83f5` failed on every push since — including
+`cb37717` — because `tsc --noEmit` type-checks every file under `src/`, and
+the Figma Make export had committed the entire shadcn/ui library (48 files)
+while `package.json` only carries dependencies for the 5 components the site
+actually uses. 35 unused component files failed with "Cannot find module"
+(recharts, react-day-picker, embla-carousel-react, ~24 Radix packages, …).
+GitHub's annotation list caps at 10, which is why only the alphabetically
+first errors were visible.*
+
+### What changed
+
+* **Removed 42 unused shadcn/ui components** from `src/app/components/ui/`
+  (kept: `button`, `card`, `input`, `label`, `textarea`, `utils` — the only
+  ones imported by site code). Zero dependencies added, zero bundle change
+  (Vite never bundled them — they were dead weight in the repo only).
+* **Fixed a real `strict`-mode type error** the gate also surfaced:
+  `src/app/config/site.ts` compared the literal-typed real phone number
+  against the old demo placeholder — widened with `String()` so the
+  demo-contacts dev warning keeps working without a type error.
+* **Fixed a second latent CI failure** the gate would have hit next: the
+  sitemap freshness check compared the committed `public/sitemap.xml`
+  byte-for-byte against a fresh generation — but the generator stamps every
+  `<lastmod>` with the *build date*, so the gate would fail on any day the
+  sitemap wasn't regenerated. It now ignores `<lastmod>`-only churn
+  (`git diff -I`) and fails only when the URL set itself changes
+  (added/removed routes). The freshly regenerated sitemap is committed too.
+* **CI workflow modernized** (`.github/workflows/ci.yml`):
+  `actions/checkout@v4 → v5`, `actions/setup-node@v4 → v5`, Node 20 → 24 —
+  clears the "Node.js 20 is deprecated" annotation (Node 20 reached end of
+  life in April 2026).
+* **Added `npm run prune-ui`** (`scripts/prune-unused-ui.mjs`): re-exports
+  from Figma Make re-commit the whole component library; run this after every
+  export to drop unused `ui/` components again. It walks site-code imports
+  (including transitive imports between ui files) and only deletes files that
+  are provably unreferenced — `button`/`card`/`input`/`label`/`textarea`/
+  `utils` are floor-listed and never removed.
+
+*Verification: `npm ci` → `npm run typecheck` (0 errors) → `npm run build`
+(clean; sitemap freshness gate passes).*
 
 ---
 

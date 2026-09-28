@@ -120,7 +120,7 @@ export function telLink(): string | null {
 export const isDemoContact =
   siteConfig.whatsappUsername === "drmogalshah" ||
   siteConfig.whatsapp === "9779801234567" ||
-  siteConfig.phone === "+977 980-123-4567";
+  String(siteConfig.phone) === "+977 980-123-4567";
 
 if (import.meta.env.DEV && isDemoContact) {
   console.warn(

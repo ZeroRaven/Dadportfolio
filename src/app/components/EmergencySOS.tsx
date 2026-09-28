@@ -53,13 +53,23 @@ export function EmergencySOS() {
     };
   }, [open]);
 
-  /* Focus management: into the dialog on open, back to launcher on close */
+  /* Focus management: into the dialog on open, back to launcher on close.
+     The wasOpen guard is essential — without it this effect also fires on
+     MOUNT (open=false, active=null) and steals page focus at load time,
+     which (a) confuses keyboard/screen-reader users and (b) paints the
+     launcher with :focus-visible styling — visibly squaring the round
+     button right after every page load on mobile. */
+  const wasOpenRef = useRef(false);
   useEffect(() => {
     if (open) {
+      wasOpenRef.current = true;
       const t = setTimeout(() => dialogRef.current?.focus(), 60);
       return () => clearTimeout(t);
     }
-    if (active === null) launcherRef.current?.focus();
+    if (wasOpenRef.current && active === null) {
+      wasOpenRef.current = false;
+      launcherRef.current?.focus();
+    }
   }, [open, active]);
 
   const close = () => {

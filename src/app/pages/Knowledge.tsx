@@ -5,7 +5,7 @@ import {
   BookOpen, Search, ChevronLeft, ChevronRight, Clock, Info,
   Stethoscope, Milk, Mountain, Bird, Wheat, Leaf, ThermometerSun, ClipboardList,
   Lightbulb, AlertTriangle, BookMarked, CalendarDays, BarChart3, Printer,
-  ListTree, Share2, Copy, Check, ArrowRight, MessageCircle,
+  ListTree, Share2, Copy, Check, ArrowRight, MessageCircle, Fish,
 } from "lucide-react";
 import { useLanguage } from "../context/LanguageContext";
 import { SEO } from "../components/SEO";
@@ -46,6 +46,7 @@ const CATEGORY_ICONS: Record<string, typeof Stethoscope> = {
   fodder: Leaf,
   climate: ThermometerSun,
   "farm-management": ClipboardList,
+  "other-livestock": Fish,
 };
 
 type SortId = "newest" | "az" | "short";
@@ -204,6 +205,27 @@ export function Knowledge() {
   const [copied, setCopied] = useState(false);
   const articleRef = useRef<HTMLDivElement>(null);
 
+  /* Reader text size — persisted so the next visit remembers. Applied via
+     CSS zoom on the reader body so typography, spacing and lists all scale
+     together without touching the page chrome (nav, chips, related cards). */
+  const ZOOM_STEPS = [0.92, 1, 1.12, 1.25] as const;
+  const [readerZoom, setReaderZoom] = useState<number>(() => {
+    try {
+      const v = parseFloat(localStorage.getItem("kb-reader-zoom") || "1");
+      return ZOOM_STEPS.find((z) => z === v) ?? 1;
+    } catch {
+      return 1;
+    }
+  });
+  const bumpZoom = (dir: 1 | -1) => {
+    setReaderZoom((z) => {
+      const i = ZOOM_STEPS.findIndex((s) => s === z);
+      const next = ZOOM_STEPS[Math.min(Math.max(i + dir, 0), ZOOM_STEPS.length - 1)] ?? 1;
+      try { localStorage.setItem("kb-reader-zoom", String(next)); } catch { /* ignore */ }
+      return next;
+    });
+  };
+
   // Article selection lives in the URL (/knowledge/:slug) so every one of
   // the articles is deep-linkable, bookmarkable and individually indexed.
   const selected = useMemo(
@@ -321,8 +343,8 @@ export function Knowledge() {
     <>
       <SEO
         title="Agriculture & Animal Husbandry Knowledge Base"
-        description="A researched, bilingual knowledge base for Nepali farmers and livestock keepers — vaccination schedules, dairy buffalo feeding, goat breeds of Nepal, Ranikhet control, paddy-maize-wheat crop seasons, fodder and silage making, climate change adaptation, manure compost and biogas, heat detection and AI, and farm records. Every figure sourced from MoALD, DLS, NARC, FAO and the Merck Veterinary Manual."
-        keywords="Nepal agriculture knowledge base, livestock farming guide Nepal, vaccination schedule FMD HS PPR, dairy buffalo feeding, goat farming Nepal Khari Boer, Ranikhet Newcastle vaccine, paddy rice seasons Nepal, fodder trees silage hay, climate change agriculture Nepal, manure compost biogas Nepal, heat detection cattle buffalo AI, farm record keeping, कृषि ज्ञान भण्डार, पशुपालन जानकारी, बाख्रा पालन, धान मकै गहुँ, चारा सिलेज, गोबर कम्पोस्ट बायोग्यास, यात्रा मिलन, जलवायु परिवर्तन कृषि"
+        description="A researched, bilingual knowledge base for Nepali farmers and livestock keepers — vaccination schedules, dairy buffalo feeding, goat breeds of Nepal, Ranikhet control, paddy-maize-wheat crop seasons, fodder and silage making, climate change adaptation, manure compost and biogas, heat detection and AI, farm records, hidden mastitis and the CMT test, colostrum and calf care, urea-treated straw, Azolla fodder, goat pneumonia, poultry coccidiosis, grain storage and aflatoxin, pig farming and carp polyculture. Every figure sourced from MoALD, DLS, NARC, FAO and the Merck Veterinary Manual."
+        keywords="Nepal agriculture knowledge base, livestock farming guide Nepal, vaccination schedule FMD HS PPR, dairy buffalo feeding, goat farming Nepal Khari Boer, Ranikhet Newcastle vaccine, paddy rice seasons Nepal, fodder trees silage hay, climate change agriculture Nepal, manure compost biogas Nepal, heat detection cattle buffalo AI, farm record keeping, subclinical mastitis CMT test, colostrum calf care, urea treated rice straw, azolla fodder, goat pneumonia Mannheimia, poultry coccidiosis, maize storage aflatoxin, pig farming Nepal, carp polyculture fish pond, कृषि ज्ञान भण्डार, पशुपालन जानकारी, बाख्रा पालन, धान मकै गहुँ, चारा सिलेज, गोबर कम्पोस्ट बायोग्यास, यात्रा मिलन, जलवायु परिवर्तन कृषि, थनरोग CMT, खीर बछडा, एजोला, सुँगुर पालन, माछा पालन"
         path="/knowledge"
       />
       {/* Per-article SEO overrides the page-level tags above (helmet
@@ -373,7 +395,11 @@ export function Knowledge() {
       )}
 
       <div className="bg-gray-50 min-h-screen pb-20">
-        {/* ── Header band ─────────────────────────────────────────────── */}
+        {/* ── Header band — HUB ONLY. An open article replaces it entirely:
+            deep-linked readers land straight on the article (its own dark
+            header carries the breadcrumb, back-link and title), instead of
+            scrolling past a large hub hero on every article. ─────────── */}
+        {!selected && (
         <div className="bg-gradient-to-br from-[#0A2540] to-[#12365C] text-white pt-28 pb-12 px-4 sm:px-6">
           <div className="max-w-5xl mx-auto">
             <motion.div
@@ -430,8 +456,9 @@ export function Knowledge() {
             </motion.div>
           </div>
         </div>
+        )}
 
-        <div className="max-w-5xl mx-auto px-4 sm:px-6">
+        <div className={`max-w-5xl mx-auto px-4 sm:px-6 ${selected ? "pt-24 sm:pt-28" : ""}`}>
           {/* Bad/old slug notice — grid is shown below instead */}
           {slugMissed && (
             <div className="-mt-6 mb-6 rounded-xl bg-[#D4AF37]/10 border border-[#D4AF37]/30 px-5 py-3.5 flex items-center gap-3">
@@ -454,7 +481,7 @@ export function Knowledge() {
                 exit={{ opacity: 0, y: -12 }}
                 transition={{ duration: 0.25 }}
                 ref={articleRef}
-                className="-mt-6 bg-white rounded-2xl shadow-xl border-0 overflow-hidden scroll-mt-24"
+                className="bg-white rounded-2xl shadow-xl border-0 overflow-hidden scroll-mt-24"
               >
                 {/* Reader header */}
                 <div className="bg-gradient-to-br from-[#0A2540] to-[#12365C] text-white px-6 sm:px-10 py-8">
@@ -542,6 +569,35 @@ export function Knowledge() {
                       <Printer size={12} />
                       {np ? "प्रिन्ट गर्नुहोस्" : "Print article"}
                     </button>
+
+                    {/* Reader text size — scales the article body only */}
+                    <div
+                      className="inline-flex items-center rounded-full border border-white/20 bg-white/10 overflow-hidden print:hidden"
+                      role="group"
+                      aria-label={np ? "पढाइको अक्षर आकार" : "Article text size"}
+                    >
+                      <button
+                        type="button"
+                        onClick={() => bumpZoom(-1)}
+                        disabled={readerZoom === ZOOM_STEPS[0]}
+                        aria-label={np ? "अक्षर सानो" : "Smaller text"}
+                        className="px-2.5 py-1.5 text-xs font-bold text-gray-200 hover:text-white disabled:opacity-40 disabled:cursor-not-allowed"
+                      >
+                        A−
+                      </button>
+                      <span className="px-1 text-[10px] font-semibold text-gray-300 select-none" aria-hidden="true">
+                        {readerZoom === 1 ? (np ? "सामान्य" : "normal") : `${Math.round(readerZoom * 100)}%`}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => bumpZoom(1)}
+                        disabled={readerZoom === ZOOM_STEPS[ZOOM_STEPS.length - 1]}
+                        aria-label={np ? "अक्षर ठूलो" : "Larger text"}
+                        className="px-2.5 py-1.5 text-xs font-bold text-gray-200 hover:text-white disabled:opacity-40 disabled:cursor-not-allowed"
+                      >
+                        A+
+                      </button>
+                    </div>
                   </div>
 
                   {/* Section TOC — long articles only (≥ 4 sections) */}
@@ -583,8 +639,8 @@ export function Knowledge() {
                   </div>
                 )}
 
-                {/* Reader body */}
-                <div className="px-6 sm:px-10 py-8 sm:py-10">
+                {/* Reader body — zoom scales article typography only */}
+                <div className="px-6 sm:px-10 py-8 sm:py-10" style={{ zoom: readerZoom }}>
                   {/* Factsheet — key technical figures */}
                   {selected.facts && selected.facts.length > 0 && (
                     <div className="mb-8 rounded-xl border border-[#0A2540]/10 bg-[#0A2540]/[0.02] overflow-hidden">
@@ -758,7 +814,7 @@ export function Knowledge() {
                 transition={{ duration: 0.2 }}
               >
                 {/* ── Category rail + sort ─────────────────────────── */}
-                <div className="-mt-6 bg-white rounded-2xl shadow-xl p-4 sm:p-5 mb-6 space-y-3.5">
+                <div className="-mt-6 sticky top-[76px] z-40 bg-white/95 backdrop-blur rounded-2xl shadow-xl p-4 sm:p-5 mb-6 space-y-3.5">
                   <div className="flex flex-wrap gap-2">
                     <button
                       type="button"

@@ -24,6 +24,7 @@ export const CATEGORY_IMAGES: Record<string, string> = {
   fodder: imgTerraces,
   climate: imgKathmandu,
   "farm-management": imgRural,
+  "other-livestock": imgRural,
 };
 
 /** Per-article overrides (specific imagery beats the category default). */

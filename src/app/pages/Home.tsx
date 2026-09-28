@@ -703,8 +703,8 @@ export function Home() {
                   title: np ? "कृषि औजारहरू" : "Farm Tools & Calculators",
                   desc: np
                     ? "तौल अनुमान, यात्रा-मिलन योजना, गोबर-कम्पोस्ट मूल्य, खोर अभिलेख, लाइभ मौसम र रोग लक्षण जाँच — १७ औजार।"
-                    : "Weight estimator, heat & AI planner, manure value, herd ledger, live weather with heat-stress alerts, symptom checker — 17 tools.",
-                  points: np ? ["औजार: १७ वटा", "निःशुल्क, साइन-अप नचाहिने"] : ["17 tools", "No sign-up, runs offline-fast"],
+                    : "Weight estimator, heat & AI planner, manure value, herd ledger, live weather, climate tracker, silage, fodder budget, calf planner — 25 tools.",
+                  points: np ? ["औजार: २५ वटा", "निःशुल्क, साइन-अप नचाहिने"] : ["25 tools", "No sign-up, runs offline-fast"],
                 },
                 {
                   path: "/knowledge",

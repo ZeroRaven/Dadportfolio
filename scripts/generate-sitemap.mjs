@@ -21,7 +21,7 @@ const BASE = "https://www.drmogalshah.com.np";
 // The files that define articles (NOT index.ts — that holds category ids).
 const KB_FILES = [
   "animalHealth", "cattle", "goats", "poultry", "crops",
-  "fodder", "climate", "management", "more",
+  "fodder", "climate", "management", "more", "extra",
 ].map((f) => join(ROOT, "src/app/data/kb", `${f}.ts`));
 
 // Deep tool pages (hub-and-spoke Tools redesign) — must stay in sync with
@@ -29,6 +29,7 @@ const KB_FILES = [
 const TOOL_IDS = [
   "weight", "gestation", "feed", "dosage", "water", "market", "bcs", "estrus",
   "dairy", "land", "poultry", "hatch", "vaccine", "herd", "manure", "weather", "health",
+  "methane", "milktest", "climate", "silage", "calf", "cmt", "fodderbudget", "aflatoxin",
 ];
 
 const staticRoutes = [
@@ -41,6 +42,7 @@ const staticRoutes = [
   { path: "/tools", priority: "0.7" },
   { path: "/knowledge", priority: "0.8" },
   { path: "/agromap", priority: "0.8" },
+  { path: "/calendar", priority: "0.8" },
   { path: "/contact", priority: "0.8" },
   { path: "/gallery", priority: "0.6" },
 ];

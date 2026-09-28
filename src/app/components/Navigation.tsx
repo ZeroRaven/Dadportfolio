@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router";
-import { Menu, X, CalendarCheck, Search, ChevronDown, Calculator, BookOpen, Map, User, Briefcase, FileText, Home, Stethoscope, Mail, Phone } from "lucide-react";
+import { Menu, X, CalendarCheck, CalendarDays, Search, ChevronDown, Calculator, BookOpen, Map, User, Briefcase, FileText, Home, Stethoscope, Mail, Phone } from "lucide-react";
 import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "motion/react";
@@ -277,6 +277,13 @@ export function Navigation() {
       labelEn: "Nepal Map",
       icon: Map,
       blurb: language === "np" ? "७७ जिल्लाको अन्तरक्रियात्मक कृषि नक्सा" : "Interactive agri-map of all 77 districts",
+    },
+    {
+      path: "/calendar",
+      label: t("nav_calendar"),
+      labelEn: "Calendar",
+      icon: CalendarDays,
+      blurb: language === "np" ? "१२ महिनाको बाली-पशु पात्रो, भेगअनुसार" : "Crop & livestock calendar by month and belt",
     },
   ];
 
@@ -640,14 +647,10 @@ export function Navigation() {
                     className="flex-1 overflow-y-auto overscroll-contain py-3 px-2"
                     style={{ WebkitOverflowScrolling: "touch" }}
                   >
-                    {/* Search trigger — opens the ⌘K palette */}
-                    <button
-                      onClick={openSearch}
-                      className="w-full flex items-center gap-3 px-4 py-3 mb-1 rounded-xl border border-gray-200 bg-gray-50 text-gray-500 hover:border-[#D4AF37]/60 hover:text-[#0A2540] transition-all"
-                    >
-                      <Search size={17} className="text-[#B8941F]" />
-                      <span className="text-sm">{t("not_found_search_ph")}</span>
-                    </button>
+                    {/* NOTE: no search row here — the navbar keeps its own
+                        always-visible search button (one tap on mobile), so
+                        a second search entry inside the drawer was pure
+                        duplication. ⌘K / Ctrl+K still opens the palette. */}
 
                     {/* Primary pages */}
                     <p className="px-4 pt-3 pb-1 text-[10px] uppercase tracking-[0.22em] font-bold text-[#B8941F]">

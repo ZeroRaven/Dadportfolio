@@ -4,8 +4,9 @@ import { motion, AnimatePresence } from "motion/react";
 import {
   Scale, Ruler, Syringe, BellRing, Download, Calculator, RotateCcw,
   Info, CalendarDays, AlertTriangle, Weight, Stethoscope, Map as MapIcon, Wheat, Pill, Bird,
-  Droplets, Wallet, Egg, Landmark, CloudSun, Beef,
+  Droplets, Wallet, Egg, Landmark, CloudSun, Beef, Leaf,
   Search, X, ArrowLeft, ChevronRight, History,
+  ThermometerSun, Flame, FlaskConical,
 } from "lucide-react";
 import { useLanguage } from "../context/LanguageContext";
 import { Button } from "../components/ui/button";
@@ -28,6 +29,14 @@ import { IncubationCalculator } from "../components/tools/IncubationCalculator";
 import { MarketValueCalculator } from "../components/tools/MarketValueCalculator";
 import { ManureValueCalculator } from "../components/tools/ManureValueCalculator";
 import { EstrusPlanner } from "../components/tools/EstrusPlanner";
+import { ClimateTracker } from "../components/tools/ClimateTracker";
+import { MethaneCalculator } from "../components/tools/MethaneCalculator";
+import { MilkQualityCalculator } from "../components/tools/MilkQualityCalculator";
+import { SilageCalculator } from "../components/tools/SilageCalculator";
+import { CalfPlanner } from "../components/tools/CalfPlanner";
+import { CMTMastitis } from "../components/tools/CMTMastitis";
+import { FodderBudget } from "../components/tools/FodderBudget";
+import { AflatoxinRisk } from "../components/tools/AflatoxinRisk";
 import { ResultCardActions } from "../components/tools/ResultActions";
 import { toNepaliDigits } from "../i18n/format";
 
@@ -587,7 +596,7 @@ interface ToolGroup {
   tools: ToolMeta[];
 }
 
-/** Fifteen tools in four categories — the single registry for hub, deep
+/** Twenty tools in four categories — the single registry for hub, deep
  *  links, related-tools strips, search and the sitemap. */
 const TOOL_GROUPS: ToolGroup[] = [
   {
@@ -628,6 +637,22 @@ const TOOL_GROUPS: ToolGroup[] = [
         descEn: "Heat date → serve window, next heats, preg-check dates",
         descNp: "यात्राको मितिबाट मिलन-झ्याल, अर्का यात्रा, गर्भ-जाँच",
         kw: "estrus heat insemination breeding cycle 21 days ai यात्रा मिलन गर्भ" },
+      { value: "silage", icon: Wheat, en: "Silage pit", np: "सिलेज गारो",
+        descEn: "Pit size → tonnes, dry matter and days of feed for the herd",
+        descNp: "गारोको नापबाट टन, सुक्खा पदार्थ र पुग्ने दिन",
+        kw: "silage bunker pit tonnage dry matter density maize fodder सिलेज गारो खाल्डो" },
+      { value: "calf", icon: Bird, en: "Calf planner", np: "बछडा योजना",
+        descEn: "Colostrum litres, daily milk and step-down weaning ladder",
+        descNp: "खीरको लिटर, दैनिक दुध र बिस्तारै छुटाउने पात्रो",
+        kw: "colostrum calf milk replacer weaning bottle खीर बछडा दुध छुटाउने" },
+      { value: "cmt", icon: Droplets, en: "CMT udder check", np: "थन जाँच",
+        descEn: "Four-quarter CMT scores → cell counts, milk-loss estimate",
+        descNp: "चार थनको CMT अङ्क → कोशिका सङ्ख्या, दुध-हानि अनुमान",
+        kw: "mastitis cmt scc udder subclinical थनरोग थन सङ्क्रमण" },
+      { value: "fodderbudget", icon: Leaf, en: "Fodder budget", np: "चारा बजेट",
+        descEn: "Whole-herd DMI → green, dry and concentrate needs, land",
+        descNp: "पूरै बथानको DMI → हरियो, सुक्खा, दाना र जग्गा",
+        kw: "dry matter intake herd feed planning green fodder land ropani चारा योजना दाना" },
     ],
   },
   {
@@ -664,18 +689,34 @@ const TOOL_GROUPS: ToolGroup[] = [
         descEn: "Dung → compost, NPK, fertiliser-bag value, biogas",
         descNp: "गोबर → कम्पोस्ट, NPK, मल-बोरा मूल्य, बायोग्यास",
         kw: "dung compost npk fertiliser biogas slurry organic गोबर कम्पोस्ट मल बायोग्यास" },
+      { value: "methane", icon: Flame, en: "Carbon hoofprint", np: "कार्बन पदचाप",
+        descEn: "Herd methane & CO₂e — IPCC Tier 1, with fixes",
+        descNp: "बथानको मिथेन र CO₂e — IPCC तह-१, सुधार सुझाव",
+        kw: "methane greenhouse gas carbon footprint ipcc ch4 biogas जलवायु मिथेन कार्बन" },
+      { value: "milktest", icon: FlaskConical, en: "Milk quality & pay", np: "दुध गुणस्तर",
+        descEn: "Fat/SNF two-axis pricing, CLR→SNF, quality grade",
+        descNp: "बोसो-SNF दुई-धुरी भुक्तानी, CLR→SNF, गुणस्तर",
+        kw: "fat snf clr lactometer milk price payment दुध बोसो एसएनएफ भुक्तानी" },
+      { value: "aflatoxin", icon: AlertTriangle, en: "Grain storage", np: "अन्न भण्डारण",
+        descEn: "Maize storage moisture & method → aflatoxin risk score",
+        descNp: "मकैको चिस्यान र भण्डारणबाट एफ्लाटक्सिन जोखिम",
+        kw: "aflatoxin maize storage mycotoxin hermetic ppb मकै भण्डारण ढुसी विष" },
     ],
   },
   {
     id: "weather",
-    en: "Weather",
-    np: "मौसम",
+    en: "Weather & climate",
+    np: "मौसम तथा हावापानी",
     icon: CloudSun,
     tools: [
       { value: "weather", icon: CloudSun, en: "Weather smart", np: "मौसम सहायक",
         descEn: "Live district weather with heat-stress (THI) alerts",
         descNp: "जिल्लाको लाइभ मौसम, ताप-तनाव (THI) सहित",
         kw: "open meteo forecast rain temperature 7-day पूर्वानुमान वर्षा" },
+      { value: "climate", icon: ThermometerSun, en: "Climate tracker", np: "हावापानी पछिल्लगता",
+        descEn: "30-year district rainfall & temperature normals, warming trend",
+        descNp: "३० वर्षे जिल्ला वर्षा-तापक्रम औसत, ताप वृद्धि",
+        kw: "climate change normals era5 monsoon share warming anomaly जलवायु मनसुन वर्षा औसत" },
     ],
   },
   {
@@ -750,6 +791,14 @@ function renderTool(value: string, np: boolean) {
     case "health": return <HealthGuide np={np} />;
     case "manure": return <ManureValueCalculator np={np} />;
     case "estrus": return <EstrusPlanner np={np} />;
+    case "climate": return <ClimateTracker np={np} />;
+    case "methane": return <MethaneCalculator np={np} />;
+    case "milktest": return <MilkQualityCalculator np={np} />;
+    case "silage": return <SilageCalculator np={np} />;
+    case "calf": return <CalfPlanner np={np} />;
+    case "cmt": return <CMTMastitis np={np} />;
+    case "fodderbudget": return <FodderBudget np={np} />;
+    case "aflatoxin": return <AflatoxinRisk np={np} />;
     default: return null;
   }
 }
@@ -1119,9 +1168,9 @@ export function Tools() {
   return (
     <>
       <SEO
-        title="Farm Tools & Calculators — 15 Free Tools for Nepali Farmers"
-        description="17 free farm tools and calculators for Nepali farmers and livestock keepers: tape-based weight estimation, gestation dates, heat & AI breeding planner, feed rations, medicine dosage, water needs, market value, body condition score, dairy income, herd & milk ledger, Ropani-Bigha land units, poultry & hatchery planning, vaccination reminders, manure & compost value with biogas potential, live weather with THI heat-stress alerts, and a symptom checker — bilingual, no sign-up."
-        keywords="farm calculator Nepal, livestock weight estimator, gestation calculator cattle buffalo goat, dairy income calculator Nepal, water requirement livestock, goat market price Nepal, live animal value estimator, incubation hatch calendar chicken duck quail, ropani aana converter, bigha kattha dhur conversion, dry matter intake calculator, feed requirement buffalo, veterinary dosage calculator mg kg, poultry feed FCR calculator, vaccination reminder FMD HS PPR, livestock symptom checker, body condition score cattle buffalo BCS, herd record keeping app, milk production tracker, Nepal weather livestock heat stress THI, किसान क्यालकुलेटर, दुग्ध आम्दानी गणना, पशु पानी आवश्यकता, खसी मूल्य, अन्डा कलाउने पात्रो, रोपनी रूपान्तरण, गर्भावधि हिसाब, चारा गणना, खुराक क्यालकुलेटर, शरीर अवस्था अंक, खोर अभिलेख, मौसम सहायक"
+        title="Farm Tools & Calculators — 25 Free Tools for Nepali Farmers"
+        description="25 free farm tools and calculators for Nepali farmers and livestock keepers: tape-based weight estimation, gestation dates, heat & AI breeding planner, feed rations, medicine dosage, water needs, market value, body condition score, dairy income, herd & milk ledger, Ropani-Bigha land units, poultry & hatchery planning, vaccination reminders, manure & compost value with biogas potential, IPCC Tier 1 methane & carbon hoofprint, fat/SNF milk quality & payment, live weather with THI heat-stress alerts, a 30-year district climate tracker with rainfall normals and warming trend, a CMT udder checker, silage pit planner, calf colostrum & milk schedule, herd fodder budget and grain-storage aflatoxin risk — plus a symptom checker — bilingual, no sign-up."
+        keywords="farm calculator Nepal, livestock weight estimator, gestation calculator cattle buffalo goat, dairy income calculator Nepal, water requirement livestock, goat market price Nepal, live animal value estimator, incubation hatch calendar chicken duck quail, ropani aana converter, bigha kattha dhur conversion, dry matter intake calculator, feed requirement buffalo, veterinary dosage calculator mg kg, poultry feed FCR calculator, vaccination reminder FMD HS PPR, livestock symptom checker, body condition score cattle buffalo BCS, herd record keeping app, milk production tracker, milk fat SNF payment calculator, methane carbon footprint livestock IPCC, climate tracker Nepal rainfall normals monsoon, Nepal weather livestock heat stress THI, किसान क्यालकुलेटर, दुग्ध आम्दानी गणना, पशु पानी आवश्यकता, खसी मूल्य, अन्डा कलाउने पात्रो, रोपनी रूपान्तरण, गर्भावधि हिसाब, चारा गणना, खुराक क्यालकुलेटर, शरीर अवस्था अंक, खोर अभिलेख, मौसम सहायक, दुध बोसो एसएनएफ, जलवायु पछिल्लगता, कार्बन पदचाप"
         path="/tools"
       />
       <div className="bg-gray-50 min-h-screen pb-20 print:pb-0">

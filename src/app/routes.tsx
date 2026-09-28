@@ -33,6 +33,9 @@ const Knowledge = lazy(() =>
 const AgroMap = lazy(() =>
   import("./pages/AgroMap").then((m) => ({ default: m.AgroMap }))
 );
+const FarmCalendar = lazy(() =>
+  import("./pages/FarmCalendar").then((m) => ({ default: m.FarmCalendar }))
+);
 const Contact = lazy(() =>
   import("./pages/Contact").then((m) => ({ default: m.Contact }))
 );
@@ -158,6 +161,15 @@ export const router = createBrowserRouter([
         element: (
           <Suspense fallback={<RouteFallback />}>
             <AgroMap />
+          </Suspense>
+        ),
+      },
+      {
+        path: "calendar",
+        ErrorBoundary: RouteErrorBoundary,
+        element: (
+          <Suspense fallback={<RouteFallback />}>
+            <FarmCalendar />
           </Suspense>
         ),
       },
