@@ -1,4 +1,5 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "motion/react";
 import {
   Accessibility, X, Type, Contrast, Zap, Underline, Volume2, Square,
@@ -89,6 +90,33 @@ export function AccessibilityPanel({
   const a11y = useA11y();
   const speech = useSpeech();
   const panelRef = useRef<HTMLDivElement>(null);
+  /* Desktop anchor: the panel is portaled to <body> (so it escapes the
+     dock's stacking context and clears the cookie banner too) — its
+     position is therefore computed from the launcher's live rect:
+     anchored just above it, flush right. Mobile keeps the bottom sheet. */
+  const [anchor, setAnchor] = useState<{ right: number; bottom: number } | null>(null);
+  /* Content scroll cap: never let the popover run past the top nav on
+     short windows — the desktop cap leaves room for nav + panel chrome. */
+  const [contentMax, setContentMax] = useState<number | null>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    const compute = () => {
+      const el = launcherRef.current;
+      if (el && window.matchMedia("(min-width: 640px)").matches) {
+        const r = el.getBoundingClientRect();
+        const bottom = window.innerHeight - r.top + 8;
+        setAnchor({ right: window.innerWidth - r.right, bottom });
+        setContentMax(Math.max(200, Math.min(window.innerHeight * 0.6, 512, bottom - 176)));
+      } else {
+        setAnchor(null);
+        setContentMax(Math.min(window.innerHeight * 0.6, 512));
+      }
+    };
+    compute();
+    window.addEventListener("resize", compute);
+    return () => window.removeEventListener("resize", compute);
+  }, [open, launcherRef]);
 
   // Esc closes + focus return; Tab stays inside while open
   useEffect(() => {
@@ -126,11 +154,12 @@ export function AccessibilityPanel({
     { v: 1.4, label: "A+++", title: np ? "सबैभन्दा ठूलो" : "Largest" },
   ];
 
-  return (
+  return createPortal(
     <AnimatePresence>
       {open && (
         <motion.div
           ref={panelRef}
+          id="a11y-panel"
           tabIndex={-1}
           role="dialog"
           aria-label={np ? "पहुँचयोग्यता सेटिङ" : "Accessibility settings"}
@@ -138,7 +167,16 @@ export function AccessibilityPanel({
           animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={{ opacity: 0, y: 10, scale: 0.97 }}
           transition={{ duration: 0.18 }}
-          className="a11y-panel absolute bottom-full right-0 mb-2 z-50 w-[19.5rem] max-w-[calc(100vw-2rem)] rounded-2xl bg-white shadow-2xl border border-gray-100 overflow-hidden outline-none"
+          /* Portaled to <body>: mobile = fixed bottom sheet (never under
+             the nav); ≥sm = anchored popover above the launcher (inline
+             position from the launcher's rect). z-[75] is now a ROOT
+             z-index — above the cookie notice, below the SOS modal. */
+          className="a11y-panel fixed z-[75] rounded-2xl bg-white shadow-2xl border border-gray-100 overflow-hidden outline-none"
+          style={
+            anchor
+              ? { right: `${anchor.right}px`, bottom: `${anchor.bottom}px`, width: "19.5rem", maxWidth: "calc(100vw - 2rem)" }
+              : { left: "0.75rem", right: "0.75rem", bottom: "calc(0.75rem + env(safe-area-inset-bottom))", maxWidth: "calc(100vw - 1.5rem)" }
+          }
         >
           {/* Header */}
           <div className="bg-gradient-to-br from-[#0A2540] to-[#12365C] text-white px-4 py-3.5 flex items-center justify-between">
@@ -163,7 +201,10 @@ export function AccessibilityPanel({
             </button>
           </div>
 
-          <div className="p-2.5 max-h-[min(70vh,34rem)] overflow-y-auto overscroll-contain">
+          <div
+            className="p-2.5 overflow-y-auto overscroll-contain"
+            style={contentMax ? { maxHeight: `${contentMax}px` } : undefined}
+          >
             {/* ── SEE ─────────────────────────────────────────────── */}
             <SectionLabel icon={Contrast}>{np ? "देख्न" : "See"}</SectionLabel>
 
@@ -313,7 +354,8 @@ export function AccessibilityPanel({
           </div>
         </motion.div>
       )}
-    </AnimatePresence>
+    </AnimatePresence>,
+    document.body
   );
 }
 

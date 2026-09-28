@@ -31,12 +31,20 @@ export function FloatingDock() {
   const launcherRef = useRef<HTMLButtonElement>(null);
   const dockRef = useRef<HTMLDivElement>(null);
 
-  /* Click-outside closes the panel (the launcher + panel are one subtree) */
+  /* Click-outside closes the panel — the dock subtree AND the portaled
+     panel (rendered in <body>) both count as "inside". */
   useEffect(() => {
     if (!open) return;
     const onClick = (e: MouseEvent) => {
       const target = e.target as Node;
-      if (dockRef.current && !dockRef.current.contains(target)) setOpen(false);
+      const panel = document.getElementById("a11y-panel");
+      if (
+        dockRef.current &&
+        !dockRef.current.contains(target) &&
+        !(panel && panel.contains(target))
+      ) {
+        setOpen(false);
+      }
     };
     document.addEventListener("mousedown", onClick);
     return () => document.removeEventListener("mousedown", onClick);
@@ -58,7 +66,7 @@ export function FloatingDock() {
   return (
     <div
       ref={dockRef}
-      className="fixed right-4 sm:right-6 bottom-4 sm:bottom-5 z-40 flex flex-col items-center gap-3 pointer-events-none"
+      className="fixed right-4 sm:right-6 bottom-4 sm:bottom-5 z-[60] flex flex-col items-center gap-2.5 sm:gap-3 pointer-events-none"
       style={{ bottom: "calc(1rem + env(safe-area-inset-bottom))" }}
     >
       <ScrollToTopButton onTop={() => setOpen(false)} />
@@ -73,9 +81,9 @@ export function FloatingDock() {
           aria-expanded={open}
           aria-label={np ? "पहुँचयोग्यता सेटिङ (Alt+A)" : "Accessibility settings (Alt+A)"}
           title={np ? "पहुँचयोग्यता सेटिङ (Alt+A)" : "Accessibility settings (Alt+A)"}
-          className="w-14 h-14 rounded-full bg-gradient-to-br from-[#0A2540] to-[#12365C] text-white shadow-xl ring-2 ring-[#D4AF37]/60 flex items-center justify-center hover:ring-[#D4AF37] transition-all"
+          className="pointer-events-auto w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-gradient-to-br from-[#0A2540] to-[#12365C] text-white shadow-xl ring-2 ring-[#D4AF37]/60 flex items-center justify-center hover:ring-[#D4AF37] transition-all"
         >
-          <Accessibility size={24} aria-hidden="true" />
+          <Accessibility className="w-5 h-5 sm:w-6 sm:h-6" aria-hidden="true" />
         </motion.button>
 
         <AccessibilityPanel open={open} onClose={() => setOpen(false)} launcherRef={launcherRef} />

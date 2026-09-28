@@ -75,4 +75,82 @@ readMinutes: 4,
     sources: "Nepal dairy cooperative structure (chilling centres, DDC/cooperative collection); goat market seasonality (Dashain peak); cooperative finance practice.",
     updated: "2026-09",
   },
+  {
+    id: "manure-compost-biogas",
+    categoryId: "farm-management",
+    title: {
+      en: "Manure, compost & biogas — turning the shed into an income",
+      np: "गोबर, कम्पोस्ट र बायोग्यास — गोठलाई आम्दानीमा बदल्ने",
+    },
+    summary: {
+      en: "Every buffalo walks around with a small fertiliser factory on board: about 15–20 kg of dung a day, worth real rupees as compost — and able to cook your meals if it passes through a biogas plant first.",
+      np: "हरेक भैंसीसँग सानो मल-कारखाना जोडिएर हिँड्छ: दिनको करिब १५–२० कि.ग्रा. गोबर, कम्पोस्टमा साँचो रुपैयाँ बराबर — र बायोग्यास भएर निस्कियो भने भात पकाउनसम्म पुग्छ।",
+    },
+    readMinutes: 6,
+    facts: [
+      { label: { en: "Cattle dung nutrients", np: "गाईको गोबरमा पोषक" }, value: { en: "3.4-1.9-0.6 kg/t", np: "३.४-१.९-०.६ कि.ग्रा./टन" }, note: { en: "N-P₂O₅-K₂O per tonne, fresh", np: "प्रति टन ताजा गोबरमा N-P₂O₅-K₂O" } },
+      { label: { en: "Buffalo dung", np: "भैंसीको गोबर" }, value: { en: "2.2-1.2-0.55 kg/t", np: "२.२-१.२-०.५५ कि.ग्रा./टन" }, note: { en: "poultry litter is ~5× richer in N", np: "कुखुराको थुकमा N ~५ गुणा बढी" } },
+      { label: { en: "Compost yield", np: "कम्पोस्ट निकास" }, value: { en: "~60% of input mass", np: "राखेको तौलको ~६०%" }, note: { en: "mass lost as water & CO₂", np: "पानी र CO₂ भएर घट्छ" } },
+      { label: { en: "Biogas from 1 kg dung", np: "१ कि.ग्रा. गोबरबाट ग्यास" }, value: { en: "≈ 0.036 m³", np: "≈ ०.०३६ घनमिटर" }, note: { en: "1 m³ gas ≈ 0.43 kg LPG", np: "१ घनमि. ग्यास ≈ ०.४३ कि.ग्रा. LPG" } },
+      { label: { en: "Firewood a plant saves", np: "ग्यासले बचाउने दाउरा" }, value: { en: "~2 tonnes/year", np: "वर्षको ~२ टन" }, note: { en: "≈450,000 plants installed in Nepal (2023)", np: "नेपालमा ~४.५ लाख बिरुवा बसेका (2023)" } },
+    ],
+    chart: {
+      title: { en: "Nitrogen per tonne of fresh manure", np: "प्रति टन ताजा गोबरमा नाइट्रोजन" },
+      unit: { en: "kg N per tonne", np: "प्रति टन कि.ग्रा. N" },
+      source: "FAO organic-manure nutrient tables; IUNG natural fertiliser guide (hen manure 1.6% N at 56% moisture); TNAU sheep/goat values.",
+      data: [
+        { label: { en: "Buffalo dung", np: "भैंसी गोबर" }, value: 2.2 },
+        { label: { en: "Cattle dung", np: "गाई गोबर" }, value: 3.4 },
+        { label: { en: "Goat manure", np: "बाख्रा गोबर" }, value: 6.5 },
+        { label: { en: "Hen manure", np: "कुखुरा थुक" }, value: 16 },
+      ],
+    },
+    sections: [
+      {
+        heading: { en: "The fertiliser factory in your shed", np: "गोठभित्रको मल-कारखाना" },
+        body: {
+          en: "A farm of five buffaloes puts out somewhere near 85 kg of dung every day — roughly 31 tonnes a year. Spread as raw dung that is worth around 69 kg of nitrogen, 38 kg of phosphate and 17 kg of potash: in bag terms, about 150 kg of urea plus 83 kg of DAP plus 28 kg of potash, before counting the organic matter that no bag sells you. Most farms in Nepal lose a large part of this value without noticing — dung dried in the open sun loses nitrogen to the air, dung washed by rain loses potash to the stream, and dung fed straight to the fire leaves nothing but ash. The first profit is not in making more manure; it is in keeping what the animals already make.",
+          np: "पाँच भैंसीको फार्मले दिनको करिब ८५ कि.ग्रा. गोबर निकाल्छ — वर्षको करिब ३१ टन। कच्चा गोबर नै फिँजाए पनि त्यसमा करिब ६९ कि.ग्रा. नाइट्रोजन, ३८ कि.ग्रा. फस्फेट र १७ कि.ग्रा. पोटास हुन्छ: बोराको भाषामा करिब १५० कि.ग्रा. युरिया + ८३ कि.ग्रा. DAP + २८ कि.ग्रा. पोटास — त्यसमाथि जुन जैविक पदार्थ कुनै बोराले बेच्दैन, त्यो छुट्टै। नेपालका धेरै फार्मले यो मूल्यको ठूलो भाग नजानिँदै गुमाउँछन् — घाममा सुकाइएको गोबरको नाइट्रोजन हावामा उड्छ, वर्षाले धुएको गोबरको पोटास खोलामा, र आँठामा जलाइएको गोबरले खरानीबाहेक केही दिँदैन। पहिलो नाफा थप गोबर बनाउनमा होइन; पशुले पहिले नै बनाइरहेको जोगाउनुमा हो।",
+        },
+      },
+      {
+        heading: { en: "Compost — the upgrade every dung pile can take", np: "कम्पोस्ट — हरेक गोबर थुप्रोले लिन सक्ने उन्नति" },
+        body: {
+          en: "Composting is controlled rotting, and it fixes three problems of raw dung at once: it stabilises the nitrogen so it releases slowly to crops instead of vaporising, it kills most weed seeds, fly larvae and disease germs with the pile's own heat, and it turns a sloppy mess into something you can carry in a doko. The recipe is forgiving — layer dung with dry crop residue or litter at roughly three parts dung to one part dry matter, keep it moist as a wrung-out sponge, and turn the pile after two or three weeks to feed the microbes air. Eight to twelve weeks later you have dark, crumbly, earthy-smelling compost weighing about sixty percent of what went in; the missing forty percent left as water and carbon dioxide, not as lost fertility.",
+          np: "कम्पोस्ट भनेको नियन्त्रित कुहिने प्रक्रिया हो, र यसले कच्चा गोबरका तीन समस्या एकैपटक सुधार्छ: नाइट्रोजन स्थिर हुन्छ र उड्नुको साटो बिस्तारै बालीलाई पुग्छ, थुप्रोको आफ्नै तापले झारको बीउ, झ्याइँको लार्भा र रोगका जीवाणुको ठूलो भाग मर्छन्, र लेदो डाँडो डोकोमा बोक्न मिल्ने कुरामा बदलिन्छ। विधि सरल छ — गोबर र सुक्खा बाली-अवशेष वा ओछ्यान करिब तीन भाग गोबर : एक भाग सुक्खाको दरमा तह थुप्रो बनाउनुहोस्, निचोरेको स्पञ्ज जत्रो चिसो राख्नुहोस्, र दुई-तीन हप्तापछि पल्टाएर हावा पसाउनुहोस्। आठ-बाह्र हप्तापछि कालो, खुस्रो, माटोजस्तो गन्धको कम्पोस्ट पाइन्छ — तौल राखिएको कुराको करिब साठी प्रतिशत; हरेको चालीस प्रतिशत पानी र कार्बन डाइअक्साइड भएर गएको हो, उर्वरता होइन।",
+        },
+      },
+      {
+        heading: { en: "Biogas — cook first, fertilise after", np: "बायोग्यास — पहिले पकाउनु, पछि मल बनाउनु" },
+        body: {
+          en: "A household biogas plant is a sealed underground stomach that feeds on dung and pays back gas: the standard fixed-dome designs that Nepal's Biogas Support Programme has installed over four hundred thousand times since the 1990s. The arithmetic is stable — one kilogram of fresh cattle or buffalo dung yields about 0.036 cubic metres of gas, so a family keeping dung-equivalent of about 50 kg a day runs a 6-cubic-metre plant that produces around 2 cubic metres of gas daily: enough for two cooked meals. Each working plant displaces roughly two tonnes of firewood a year, which is also about two tanker-loads of LPG-equivalent energy, and households report hours saved from wood gathering. The slurry that flows out the other end keeps nearly all the phosphorus and potash and about four-fifths of the nitrogen — as a fertiliser it beats raw dung.",
+          np: "घरायसी बायोग्यास प्लान्ट भनेको जमिनमुनिको बन्द पेट हो जसले गोबर खाएर ग्यास फर्काउँछ: नेपालको बायोग्यास सहायता कार्यक्रमले १९९० का दशकदेखि चार लाखभन्दा बढीपटक बसालेको सोही मानक फिक्स्ड-डोम डिजाइन। हिसाब स्थिर छ — एक कि.ग्रा. ताजा गाई/भैंसीको गोबरबाट करिब ०.०३६ घनमिटर ग्यास निस्किन्छ; त्यसैले दिनको करिब ५० कि.ग्रा. गोबर जुटाउने परिवारले ६ घनमिटरको प्लान्ट चलाउँछ जसले दिनको करिब २ घनमिटर ग्यास दिन्छ: दुई पटकको भात पकाउन पुग्ने। हरेक चलिरहेको प्लान्टले वर्षको करिब दुई टन दाउरा बचाउँछ — LPG-बराबर ऊर्जामा पनि त्यत्तिकै — र घरहरूले दाउरा जुटाउने घण्टामा पनि छुट पाउँछन्। अर्को ढोकाबाट बग्ने स्लरीमा फस्फोरस र पोटासको झन्डै सबै र नाइट्रोजनको करिब चार-पाँच भाग रहन्छ — मलका रूपमा कच्चा गोबरभन्दा राम्रो।",
+        },
+      },
+      {
+        heading: { en: "What your heap replaces in bags", np: "तपाईंको थुप्रोले बोरामा के ठास्छ" },
+        body: {
+          en: "Farmers price compost best by translating it into the fertiliser bags it replaces. A tonne of cattle dung carries about 3.4 kg of nitrogen — roughly what 7.4 kg of urea supply — alongside phosphate and potash equal to about 4 kg of DAP and 1 kg of potash. Not all of it reaches the first crop: organic nitrogen mineralises slowly, so figure about half the N and most of the P and K being plant-available in year one, with the balance feeding the soil in following seasons. Even at that discount, five buffaloes' yearly output replaces a real stack of bags — and unlike bags, the organic matter rebuilds the water-holding capacity that climate-stressed fields need most. The Manure & Compost tool on this site runs this arithmetic for your exact herd and current bag prices.",
+          np: "किसानले कम्पोस्टको भाउ त्यसले ठासिने मलका बोरामा अनुवाद गरेर राम्रोसँग थाहा पाउँछन्। एक टन गाईको गोबरमा करिब ३.४ कि.ग्रा. नाइट्रोजन हुन्छ — करिब ७.४ कि.ग्रा. युरियाले दिने भन्दा थोरै मात्रै कम — सँगै फस्फेट र पोटास पनि करिब ४ कि.ग्रा. DAP र १ कि.ग्रा. पोटासबराबर। सबै पहिलो बालीमा पुग्दैन: जैविक नाइट्रोजन बिस्तारै खुल्छ, त्यसैले पहिलो वर्ष N को करिब आधा र P, K को धेरैजसो बिरुवाले पाउँछ, बाँकी पछिल्ला मौसुममा माटोलाई पोषित गरिरहन्छ। त्यो छुट पाएर पनि पाँच भैंसीको वार्षिक उत्पादनले ठोक्कै बोरा बदल्छ — र बोराजस्तै होइन, जैविक पदार्थले जलवायु-दबाबमा परेका खेतलाई सबैभन्दा चाहिने पानी-समात्ने क्षमता पुनर्निर्माण गर्छ। यही साइटको Manure & Compost औजारले तपाईंकै बथान र आजका बोराभाउले यो हिसाब चलाइदिन्छ।",
+        },
+      },
+      {
+        heading: { en: "Handling, hygiene and hard rules", np: "चलाउने तरिका, सरसफाइ र कठोर नियम" },
+        body: {
+          en: "Fresh manure carries pathogens that composting heat defeats — which is exactly why raw dung should never touch vegetables eaten raw, and why home-made compost from a properly turned, properly hot pile is safer than anything scraped off the shed floor in March. Gloves and boots at the pile, hands washed after, slurry pits fenced so children and animals cannot fall in. For biogas, respect the gas itself: it burns clean but contains no warning smell before ignition, lines must be checked with soapy water never a flame, and nobody ever enters an empty digester for cleaning — the remaining gas displaces oxygen and kills silently. The animals' health loops back here too: dung from animals under treatment belongs on the compost heap with a longer wait, not on leafy beds that week.",
+          np: "ताजा गोबरमा रोगाणु हुन्छन्, जसलाई कम्पोस्टको तापले जित्छ — यही कारणले कच्चा गोबर पाकै खाइने तरकारीमा कहिल्यै नछुनुपर्‍यो, र राम्ररी पल्टिएर तातो भएको घरको कम्पोस्ट, चैतमा गोठको फर्सीबाट बोकेको कुराभन्दा सुरक्षित हुन्छ। थुप्रोमा पन्जा र जुत्ता, पछि हात धुने, र स्लरीको खाल्डो घेरेर बालबालिका र पशु नपसुन्। बायोग्यासमा ग्यासैलाई सम्मान गर्नुहोस्: सफा बले पनि बाल्नुअघि गन्ध गर्दैन, लाइन साबुनपानीले जाँच्नुपर्छ — सल्काँचुक्कै होइन, र खाली डाइजेस्टर सफा गर्न कोही पनि भित्र पस्दैन — बाँकी ग्यासले अक्सिजन धकेलेर बिना आवाज मार्छ। पशुको स्वास्थ्य पनि यहीँ फर्किन्छ: उपचारमा रहेका पशुको गोबर लामो प्रतीक्षासहित कम्पोस्ट थुप्रोमा जानुपर्छ, त्यो हप्ता पातेको डाँडामा होइन।",
+        },
+      },
+    ],
+    tip: {
+      en: "Roof your dung platform — a simple shed over the pile stops the monsoon from washing your potash downhill and the sun from baking your nitrogen into the air. It is the single cheapest fertility investment on a livestock farm.",
+      np: "गोबरको डाँडोमाथि छानो हाल्नुहोस् — सातो छानोले मनसुनले तपाईंको पोटास खोला बगाउने र घामले नाइट्रोजन हावामा सेक्ने रोक्छ। पशुपालन फार्ममा यो सबैभन्दा सस्तो उर्वरता-लगानी हो।",
+    },
+    caution: {
+      en: "Never enter an empty biogas digester — residual methane and hydrogen sulphide displace oxygen without any smell warning. Check gas lines with soapy water, never with a flame.",
+      np: "खाली बायोग्यास डाइजेस्टर भित्र कहिल्यै नपस्नुहोस् — बाँकी मिथेन र हाइड्रोजन सल्फाइडले कुनै गन्ध नदिई अक्सिजन धकेल्छ। ग्यास-लाइन साबुनपानीले जाँच्नुहोस्, सल्काँचुक्कै होइन।",
+    },
+    sources: "FAO 'Type of fertilizers' organic-manure nutrient table (cattle 3.41-1.91-0.56, buffalo 2.24-1.23-0.55 kg/t); IUNG natural fertiliser guide (hen manure N 1.6%, P₂O₅ 1.5%, K₂O 0.8%); Lohani et al. 2025 (~450,000 plants, Nepal); Ashden/BSP & Bajracharya 2018 (~2 t firewood saved/plant/yr); standard biogas yield 0.036 m³/kg fresh cattle dung; Gautam et al. 2022 (Nepal fertiliser prices).",
+    updated: "2026-09",
+  },
 ];

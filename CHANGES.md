@@ -31,6 +31,84 @@ Open **`src/app/config/site.ts`** — the single source of truth for all site se
 
 ---
 
+## Release 10 — Knowledge Base & AgroMap redesign, mobile accessibility fixes, PWA identity, 2 new tools (Sept 2026)
+
+*User requests: improve Knowledge Base and Maps UI/UX; fix the accessibility
+panel being overlapped by the nav bar on mobile; add more well-researched,
+data-backed features; smaller accessibility/emergency icons on mobile; and
+make the PWA icon the actual site logo, properly cropped.*
+
+### Mobile accessibility (the reported bugs)
+
+* **A11y panel vs nav bar — fixed at the root.** The panel was anchored
+  inside the dock's `z-40` stacking context, so the fixed nav (`z-50`) painted
+  over it whenever the panel grew tall (measured: 36px hidden at 390px). The
+  panel is now portaled to `<body>` with a root `z-[75]`: on phones it is a
+  fixed bottom sheet (measured top 218px vs nav bottom 80px — zero overlap),
+  on desktop an anchored popover computed from the launcher's live rect, with
+  a content-height cap so it never runs past the nav even on short windows.
+  Esc/click-outside/focus-trap behaviour preserved (click-outside now
+  includes the portaled panel); the cookie notice and update toast were
+  raised (`z-65/66`) and the SOS modal to `z-[90]` so every layer is ordered.
+* **Smaller floating buttons on phones.** Accessibility, SOS and WhatsApp
+  launchers drop from 56px to 48px below the `sm` breakpoint (icons 20px),
+  dock gap tightened; desktop sizes unchanged. Scroll-to-top was already 48px.
+
+### PWA identity from the site logo
+
+* New icon set generated with `sharp` from the actual nav/footer logo
+  (`avatar.webp`): circular gold-ringed medallion on deep navy — exactly how
+  the navbar presents it. `pwa-192.png`, `pwa-512.png` (purpose *any*),
+  `pwa-192/512-maskable.png` (medallion inside the 80% maskable safe zone)
+  and a new opaque 180px apple-touch-icon. Manifest rewritten; VLM-verified
+  (face centred, no cut-off, clean ring). Paw-mark favicon kept for tabs.
+
+### Knowledge Base — library & reader redesign
+
+* **Library:** 35 articles in 8 category sections (icon + blurb + count),
+  compact horizontal cards (thumb left, 2-line clamped text — ~3× denser on
+  mobile), sort control (Newest / A–Z / Shortest read), stats line, quick
+  topic chips in the empty state, live result count, per-card updated date
+  and factsheet badge.
+* **Reader:** gold reading-progress bar, "In this article" TOC chips (≥4
+  sections, anchor-scroll, reduce-motion aware), WhatsApp share + copy-link +
+  print, prev/next pair, related-articles strip (same category).
+
+### AgroMap — map-first layout
+
+* One consolidated **legend strip directly under the map** (province chips /
+  belt swatches / climate tags / spotlight note — no more duplicated or
+  detached legends), search + district-select merged into one compact row
+  **above** the map, taller mobile map allowance, tighter mobile card
+  padding, and quick-pick spotlight chips in the empty panel (top crops by
+  district count) so the map shows data on first visit.
+
+### Two new researched tools (17 total)
+
+* **Manure & Compost Value** (`/tools/manure`): herd roster → daily/annual
+  dung → compost yield (60%) → N-P₂O₅-K₂O (FAO per-tonne values, editable
+  rates) → urea/DAP/MOP bag equivalents valued at editable Nepal bag prices →
+  biogas potential (0.036 m³/kg, plant sizing with partial-cooking flag,
+  firewood/LPG savings).
+* **Estrus & Breeding Planner** (`/tools/estrus`): one observed heat →
+  optimal AI window (9–24h rule, AM/PM), next three expected heats with
+  ranges, non-return + pregnancy-check dates, expected delivery, rebreeding
+  window, and a real `.ics` reminder download.
+
+### Three new sourced articles (35 total)
+
+`deworming-parasites` (strategic calendar, drug rotation, fluke timing),
+`manure-compost-biogas` (nutrient values, composting, biogas economics) and
+`heat-detection-ai` (cycle physiology, buffalo night heat, AM/PM rule) — all
+bilingual with factsheets and citations.
+
+### Consistency sweep
+
+Sitemap (63 URLs), search palette entries, Home resources card, llms.txt and
+README counts all updated to 17 tools / 35 articles.
+
+---
+
 ## Release 9 — Tools hub redesign: searchable directory + focused tool pages (Sept 2026)
 
 *User feedback: "tools section is now too cluttered and has bad ui/ux."

@@ -85,6 +85,12 @@
     <priority>0.6</priority>
   </url>
   <url>
+    <loc>https://www.drmogalshah.com.np/knowledge/deworming-parasites</loc>
+    <lastmod>2026-09-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://www.drmogalshah.com.np/knowledge/dairy-buffalo-feeding</loc>
     <lastmod>2026-09-27</lastmod>
     <changefreq>monthly</changefreq>
@@ -98,6 +104,12 @@
   </url>
   <url>
     <loc>https://www.drmogalshah.com.np/knowledge/calf-care</loc>
+    <lastmod>2026-09-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.drmogalshah.com.np/knowledge/heat-detection-ai</loc>
     <lastmod>2026-09-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -182,6 +194,12 @@
   </url>
   <url>
     <loc>https://www.drmogalshah.com.np/knowledge/marketing-cooperatives</loc>
+    <lastmod>2026-09-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.drmogalshah.com.np/knowledge/manure-compost-biogas</loc>
     <lastmod>2026-09-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -301,6 +319,12 @@
     <priority>0.6</priority>
   </url>
   <url>
+    <loc>https://www.drmogalshah.com.np/tools/estrus</loc>
+    <lastmod>2026-09-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://www.drmogalshah.com.np/tools/dairy</loc>
     <lastmod>2026-09-27</lastmod>
     <changefreq>monthly</changefreq>
@@ -332,6 +356,12 @@
   </url>
   <url>
     <loc>https://www.drmogalshah.com.np/tools/herd</loc>
+    <lastmod>2026-09-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.drmogalshah.com.np/tools/manure</loc>
     <lastmod>2026-09-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>

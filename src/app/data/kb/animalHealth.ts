@@ -135,4 +135,77 @@ export const animalHealthArticles: KBArticle[] = [
     sources: "FAO biosecurity principles for smallholder systems; DLS outbreak guidance.",
     updated: "2026-09",
   },
+  {
+    id: "deworming-parasites",
+    categoryId: "animal-health",
+    title: {
+      en: "Deworming & parasite control — the hidden tax on your herd",
+      np: "कृमिनाशक तथा परजीवी नियन्त्रण — बथानमाथि लुकेको कर",
+    },
+    summary: {
+      en: "Worms rarely kill outright — they steal growth, milk and blood a little every day. A 3–4 month dosing calendar timed around the monsoon, correct doses by body weight, and yearly drug-family rotation keep them beatable.",
+      np: "कृमिले सिधै मार्दैनन् — दिनहरू दुध, बढ्ने गति र रगत अलिअलि चोर्छन्। मनसुनसँग मिलाइएको ३–४ महिनाको औषधि पात्रो, तौलअनुसारको सही खुराक र वर्षेनी औषधि-समूह फेरबदलले यिनलाई नियन्त्रणमा राख्छ।",
+    },
+    readMinutes: 5,
+    facts: [
+      { label: { en: "Roundworm dosing", np: "गोलकृमि औषधि" }, value: { en: "every 3–4 months", np: "हरेक ३–४ महिना" }, note: { en: "young stock suffer most", np: "बच्चा पशुलाई सबैभन्दा बढी असर" } },
+      { label: { en: "Liver fluke (wet areas)", np: "कलेजो फ्लुक (सिमसिमे ठाउँ)" }, value: { en: "2 doses a year", np: "वर्षको २ खुराक" }, note: { en: "~2 months after monsoon ends + spring", np: "मनसुन सकिएको ~२ महिनापछि + बसन्त" } },
+      { label: { en: "Critical timing", np: "महत्त्वपूर्ण समय" }, value: { en: "Jesth & Kartik", np: "जेठ र कार्तिक" }, note: { en: "before & after the wet season", np: "वर्षायाम अघि-पछि" } },
+      { label: { en: "New animal rule", np: "नयाँ पशु नियम" }, value: { en: "dose on arrival", np: "आउनासाथ खुराक" }, note: { en: "during the 21–30 day quarantine", np: "२१–३० दिने क्वारेन्टिनमै" } },
+    ],
+    sections: [
+      {
+        heading: { en: "Why deworming pays", np: "कृमिनाशकले किन फाइदा गर्छ" },
+        body: {
+          en: "Most worms in Nepal's sheds do their damage quietly: a heavy roundworm load in a calf can cut weight gain by a quarter and drag a milking cow's yield down around a tenth without a single obvious symptom — just a dull coat, a thin frame over the ribs, and an animal that eats but never quite fills. Young animals between weaning and a year old carry the heaviest burdens because they have no acquired immunity yet, and the wet warm months of monsoon let larvae survive on pasture for weeks. That is why the cheapest gains from deworming come from three places: calves and kids at weaning, milking animals before the flush, and every animal just before the stress season (monsoon or deep winter) hits.",
+          np: "नेपालका गोठमा पाइने धेरैजसो कृमिले चुपचाप क्षति गर्छन्: बच्चामा बाक्लो गोलकृमिको भारले तौल बढ्ने गति चौथाइ घटाउन सक्छ र दुध दिने गाईको उत्पादन दसौं भागजति तान्छ — कुनै ठोस लक्षण नै नदेखिई, बस फिक्का रौँ, खुट्टीमा तन्केको पातलो छाला, र खाए पनि नभरिने शरीर। अझै रोग-प्रतिरोधात्मक क्षमता नबनेको हुनाले च्याप्ने बेलादेखि एक वर्षसम्मका बच्चामा कृमिको बोझ सबैभन्दा बढी हुन्छ, र मनसुनका ओसिला-तातो महिनामा घाँसबारीमा लार्भा हप्तौं बाँच्छन्। त्यसैले कृमिनाशकको सबैभन्दा सस्तो फाइदा तीन ठाउँबाट आउँछ: च्याप्तिहरू, दुध चढाउनअघिका आमा पशु, र तनावको मौसम (मनसुन वा हाडको जाडो) सुरु हुनअघिका सबै पशु।",
+        },
+      },
+      {
+        heading: { en: "The parasites that matter here", np: "यहाँ महत्त्वका परजीवी" },
+        body: {
+          en: "Four groups cover almost everything a Nepali smallholder meets. Roundworms (strongyles) live in the gut of all ruminants, sucked-blood and nutrient-thieves, worst in calves, kids and lambs. The liver fluke (Fasciola gigantica) needs water and the snail that lives in seepage lines, terrace edges and marshy khet — so it flares in wet districts after the monsoon, causing bottle-jaw swelling under the jaw, wasting and sometimes death in buffalo. Tapeworm segments in dung point to young animals grazing on contaminated ground. Outside, lice, mange mites and ticks do their own quiet damage — rubbing, hair loss, anaemia in heavy tick loads, and ticks also carry the blood parasites that cause fever diseases.",
+          np: "नेपाली साना किसानले भेट्ने लगभग सबै परजीवी चार समूहमा पर्छन्। गोलकृमि (स्ट्रङ्गाइल) सबै रुमिनन्टको आँतमा बस्छन् — रगत र पोषक तत्त्व चोर्ने, गाईका बच्चा, खसी-बाख्रामा सबैभन्दा खतरनाक। कलेजो फ्लुक (फ्यासियोला गिगान्टिका) लाई पानी र सिमसिमे ठाउँ, गह्रा-किनार र दलदले खेतमा बस्ने गोलो चेपुवा चाहिन्छ — त्यसैले मनसुनपछि सिमसिमे जिल्लामा यो चर्किन्छ; बैंसीको तल बोतल-जस्तो सुन्निएको देखिने, शरीर सुक्दै जाने, कहिले मृत्युसम्म पुर्‍याउने। गोबरमा देखिने पाते-कृमिका टुक्राले सिमानित जमिनमा चरेका बच्चालाई संक्रमण देखाउँछ। बाहिरी पक्षमा उकुन, खुस्रो (मेल) र परेवा आफ्नै तरिकाले चुपचाप हानि गर्छन् — घस्ने, रौँ झर्ने, परेवा बाक्लो भएमा रगतको कमी, र परेवाले ज्वरो रोग गर्ने रक्त-परजीवी पनि बोक्छन्।",
+        },
+      },
+      {
+        heading: { en: "A calendar that follows the rain", np: "वर्षासँग हिँड्ने पात्रो" },
+        body: {
+          en: "Blanket monthly dosing is how farms burn money and breed resistance — the smarter pattern is strategic. Dose the whole herd around Jesth (pre-monsoon) so animals enter the wet season clean, and again around Kartik–Mangsir (post-monsoon) when pasture contamination peaks; between those, dose young stock every 3–4 months and any animal showing signs. For fluke, the killing dose matters most about two months after the monsoon ends, when ingested immature flukes settle in the bile ducts — a triclabendazole-type flukicide is the one that reaches immature stages. Every purchased animal gets one dose on arrival, inside its quarantine period, before it ever shares pasture with your herd.",
+          np: "महिनौं लगातार सबै पशुलाई औषधि दिँदा पैसा र औषधिको कार्यक्षमता दुवै जल्छ — बुद्धिमानी चाहिन्छ रणनीतिक ढङ्गले। सम्पूर्ण बथान जेठतिर (मनसुनअघि) खुराक दिनुहोस् ताकि वर्षायाम सफा शरीरले प्रवेश गरोस्, र कार्तिक–मंसिरतिर (मनसुनपछि) फेरि — घाँसबारीको सङ्क्रमण त्यतिखेर चुँडिन्छ। बीचबीचमा बच्चा पशुलाई ३–४ महिनामा र लक्षण देखिने पशुलाई खुराक दिनुहोस्। फ्लुकका लागि मनसुन सकिएको करिब दुई महिनापछिको खुराक सबैभन्दा असरदार हुन्छ — त्यतिखेर निलिएका कलिला फ्लुक पित्तनलीमा बस्छन्; ट्राइक्लाबेन्डाजोल-वर्गको फ्लुकसाइडले कलिला अवस्थासम्म पुग्छ। किनेर ल्याइएको हरेक पशुलाई क्वारेन्टिन अवधिभित्रै पहिलो खुराक दिनुहोस् — तपाईंको बथानसँग घाँस बाँड्नुअघि नै।",
+        },
+      },
+      {
+        heading: { en: "Dosing right — by weight, not by eye", np: "सही खुराक — आँखाले होइन, तौलले" },
+        body: {
+          en: "Under-dosing is the single fastest way to create a resistant worm population: you kill the weak worms and leave the strong ones to breed. Weigh the animal, or use a heart-girth tape (the Weight tool turns the same tape reading into a live-weight estimate), and pour the drench over the tongue rather than squirting it into the cheek where it gets spat out. Check your drench gun calibration by squeezing five doses into a measuring bottle once a season. If you keep several species, remember goats metabolise many wormers faster than sheep and cattle and commonly need the cattle dose — confirm the product label or your vet for goat-specific dosing.",
+          np: "कम खुराकले औषधि-प्रतिरोधी कृमिको जाति बनाउने सबैभन्दा छिटो बाटो हो: कम्जोर कृमि मर्छन्, बलियाहरू बाँचेर प्रजनन गर्छन्। पशुलाई तौल्नुहोस्, वा नापपट्टी प्रयोग गर्नुहोस् (Weight औजारले उही नापबाट जीवित तौल अनुमान निकाल्छ), र औषधि जिब्रोमाथि पस्केर दिनुहोस् — गालामा छर्किँदा थुतेर फालिन्छ। मौसममा एकपटक पिस्टनका पाँच खुराक नाप्ने बिनमा हालेर ड्रेन्च-गन सही छ कि छैन जाँच्नुहोस्। कयौं जात पालेको हो भने सम्झनुहोस्: बाख्राले धेरै कृमिनाशक भेडा-गाईभन्दा छिटो पचाउँछ, त्यसैले गाईकै खुराक चाहिने बेलो धेरै हुन्छ — उत्पादनको लेबल वा चिकित्सकसँग बाख्राका लागि खुराक पक्का गर्नुहोस्।",
+        },
+      },
+      {
+        heading: { en: "Rotation and the resistance trap", np: "फेरबदल र प्रतिरोधको जाल" },
+        body: {
+          en: "Wormers come in families — the white drenches (fenbendazole, albendazole), levamisole, and the clear ivermectin-type macrocyclic lactones — and each family kills by a different mechanism. Rotate the family once a year, not with every dose, so worms never face generations of pressure from one weapon. Never dose the entire herd on the same day unless there is an outbreak reason: leaving the cleanest 10–20 percent untreated keeps a population of unexposed worms ('refugia') diluting any resistant survivors. Watch for the warning sign of resistance — a dose that used to work now giving only temporary improvement — and ask your vet for a faecal egg count before and after dosing to check it is actually working.",
+          np: "कृमिनाशक समूहमा आउँछन् — सेतो ड्रेन्च (फेनबेन्डाजोल, अल्बेन्डाजोल), लेभामिसोल, र पारदर्शी इभरमेक्टिन-वर्गका म्याक्रोसाइक्लिक ल्याक्टोन — हरेक समूहले फरक संयन्त्रबाट मार्छ। समूह वर्षको एकपटक फेर्नुहोस्, हरेक खुराकमा होइन, ताकि कृमिले एउटै हतियारका पुस्तौं दबाब नभोगून्। प्रकोपको कारण नभएसम्म पूरै बथान एउटै दिन खुराक नदिनुहोस्: सबैभन्दा सफा १०–२० प्रतिशत उपचार नगरी छोड्दा कहिल्यै औषधि नभेटेका कृमिको जमात ('रिफ्युजिया') प्रतिरोधी बाँचेकाहरूलाई फिँजाइरहन्छ। प्रतिरोधको चेतावनी सङ्केत हेर्नुहोस् — पहिले असर गर्ने खुराकले अब छोटो समय मात्र सुधार गर्नु — र खुराकअघि-पछि मल-परीक्षण (फिकल इग काउन्ट) गराउन चिकित्सकलाई सोध्नुहोस्, औषधि साँच्चै लागिरहेको छ कि छैन थाहा पाउन।",
+        },
+      },
+      {
+        heading: { en: "Beyond the bottle", np: "औषधिबाहेकका बाटो" },
+        body: {
+          en: "No dewormer out-performs dirty management for long. Graze young animals on the driest paddocks you have — snail country and marshy terrace edges belong to the adults with stronger immunity. Don't overstock: larvae build where grass is grazed to the dirt. Composting manure properly (the pile's heat kills larvae and weed seeds) before it returns to fields breaks the cycle at home. Clean drinking water, not from the same pond the animals wade through, removes the biggest fluke gateway. And a simple door rule — quarantine and dose every arrival — stops you buying someone else's resistant worms along with the animal.",
+          np: "कुनै पनि कृमिनाशकले लामो समयसम्म फोहोर व्यवस्थापनलाई जित्दैन। बच्चा पशुलाई सबैभन्दा सुक्खा गह्रामा चराउनुहोस् — चेपुवा र सिमसिमे टारकिनार बलियो प्रतिरोधात्मक क्षमता भएका वयस्क पशुका लागि। घना नपाल्नुहोस्: घाँस जरै चरिएको ठाउँमा लार्भा थुप्रिन्छन्। गोबर राम्ररी कम्पोस्ट बनाएर (थुप्रोको तापले लार्भा र झारको बीउ मार्छ) खेतमा फर्काउँदा घरैभित्रै चक्र तोडिन्छ। सिँचो र चियाएको सफा पिउने पानी दिनुहोस् — त्यही पोखरीको पानी जहाँ पशु पसेर डुब्छन् त्यो फ्लुकको सबैभन्दा ठूलो ढोका हो। र सातोको ढोका-नियम — हरेक आउने पशु क्वारेन्टिन + खुराक — ले पशुसँगै अर्काका प्रतिरोधी कृमि किनेर ल्याउन रोक्छ।",
+        },
+      },
+    ],
+    tip: {
+      en: "Write every dose in the farm register — drug name, animal, weight, date. After a year you can see which months the herd actually needed treating and which product truly worked on your farm.",
+      np: "हरेक खुराक फार्म अभिलेखमा लेख्नुहोस् — औषधिको नाम, पशु, तौल, मिति। एक वर्षपछि कुन महिना बथानलाई साँच्चै उपचार चाहियो र कुन औषधि तपाईंको फार्ममा साँच्चै लाग्यो, देखिन्छ।",
+    },
+    caution: {
+      en: "Observe milk and meat withholding periods on the label — they differ by product (commonly two days or more for milk after typical wormers). Never exceed the labelled dose chasing 'a stronger effect'; toxicity and residues both rise together.",
+      np: "लेबलमा लेखिएको दुध र मासुको प्रतीक्षा अवधि पालना गर्नुहोस् — उत्पादनअनुसार फरक हुन्छ (सामान्य कृमिनाशकपछि दुधका लागि प्रायः दुई दिन वा बढी)। 'बलियो असर' खोजेर लेबलभन्दा बढी खुराक कहिल्यै नदिनुहोस्; विषाक्तता र औषधि-अवशेष दुवै सँगै बढ्छन्।",
+    },
+    sources: "Merck Veterinary Manual (anthelmintic classes, fasciolosis, parasite control programmes); DLS field deworming practice; South Asian extension schedules; Fasciola gigantica ecology in wet-season paddocks.",
+    updated: "2026-09",
+  },
 ];

@@ -1,17 +1,18 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router";
 import { motion, AnimatePresence } from "motion/react";
 import {
   BookOpen, Search, ChevronLeft, ChevronRight, Clock, Info,
   Stethoscope, Milk, Mountain, Bird, Wheat, Leaf, ThermometerSun, ClipboardList,
   Lightbulb, AlertTriangle, BookMarked, CalendarDays, BarChart3, Printer,
+  ListTree, Share2, Copy, Check, ArrowRight, MessageCircle,
 } from "lucide-react";
 import { useLanguage } from "../context/LanguageContext";
 import { SEO } from "../components/SEO";
 import { BreadcrumbSchema } from "../components/BreadcrumbSchema";
 import { ArticleSchema } from "../components/ArticleSchema";
 import { Input } from "../components/ui/input";
-import { kbArticles, kbCategories } from "../data/kb";
+import { kbArticles, kbCategories, kbArticleCount } from "../data/kb";
 import type { KBArticle } from "../data/kb/types";
 import { toNepaliDigits } from "../i18n/format";
 import { siteConfig } from "../config/site";
@@ -20,12 +21,16 @@ import { siteConfig } from "../config/site";
  * KNOWLEDGE BASE — a researched, bilingual agriculture & animal-husbandry
  * library for Nepali farmers, students and extension workers.
  *
- * UI/UX pattern:
+ * UI/UX pattern (r10 redesign):
  *   · Header band with live search (title + summary + section text, both langs)
- *   · Category rail (chips with icons) that filters instantly
- *   · Article cards with reading time + last-updated
- *   · In-place article reader (no route change): sections, bullets,
- *     field-tip / caution callouts, per-article source citations
+ *     and a stats line (articles · categories · sourced figures)
+ *   · Sort control — Newest updated / A–Z / Shortest read
+ *   · Unfiltered browse = category sections (icon + blurb + count), each
+ *     with its own compact card grid; filtered browse = one flat grid
+ *   · Compact horizontal cards (image thumb left, clamped text right) —
+ *     ~3× denser than the old tall cards, scannable on mobile
+ *   · In-place article reader (URL-driven, deep-linkable): section TOC,
+ *     reading-progress bar, share/copy/print, related articles + prev/next
  *
  * Content lives in src/app/data/kb/* — every schedule and statistic is
  * sourced (Merck Vet Manual, FAO, MoALD/DLS/NARC, peer-reviewed papers) and
@@ -42,6 +47,20 @@ const CATEGORY_ICONS: Record<string, typeof Stethoscope> = {
   climate: ThermometerSun,
   "farm-management": ClipboardList,
 };
+
+type SortId = "newest" | "az" | "short";
+
+const SORTS: { id: SortId; en: string; np: string }[] = [
+  { id: "newest", en: "Newest", np: "नयाँ" },
+  { id: "az", en: "A–Z", np: "अ–ज" },
+  { id: "short", en: "Shortest", np: "छोटो" },
+];
+
+const QUICK_TOPICS = [
+  { q: "vaccine", np: "खोप" }, { q: "silage", np: "सिलेज" },
+  { q: "goat", np: "बाख्रा" }, { q: "mastitis", np: "थन" },
+  { q: "compost", np: "कम्पोस्ट" }, { q: "heat", np: "यात्रा" },
+];
 
 const fmtN = (n: number, np: boolean) => (np ? toNepaliDigits(String(n)) : String(n));
 
@@ -101,6 +120,78 @@ function npDatestamp(s: string, np: boolean): string {
   return `${months[m] ?? m} ${toNepaliDigits(y)}`;
 }
 
+/** Compact horizontal article card — image thumb left, clamped text right. */
+function ArticleCard({
+  a, np, onOpen, index,
+}: { a: KBArticle; np: boolean; onOpen: (a: KBArticle) => void; index: number }) {
+  const Icon = CATEGORY_ICONS[a.categoryId] ?? BookOpen;
+  const cat = kbCategories.find((c) => c.id === a.categoryId);
+  return (
+    <motion.button
+      type="button"
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: Math.min(index * 0.03, 0.25), duration: 0.25 }}
+      onClick={() => onOpen(a)}
+      className="text-left bg-white rounded-2xl shadow-md hover:shadow-xl border-2 border-transparent hover:border-[#D4AF37]/40 transition-all overflow-hidden flex group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D4AF37] focus-visible:ring-offset-1"
+    >
+      {a.image ? (
+        <span className="relative w-24 h-24 sm:w-28 sm:h-28 flex-shrink-0 bg-gray-100 overflow-hidden" aria-hidden="true">
+          <img
+            src={a.image}
+            alt=""
+            loading="lazy"
+            width={1200}
+            height={500}
+            className="w-full h-full object-cover group-hover:scale-[1.05] transition-transform duration-300"
+          />
+          <span className="absolute inset-0 bg-gradient-to-t from-black/25 to-transparent" />
+          <span className="absolute bottom-1.5 left-1.5 w-6 h-6 rounded-lg bg-[#0A2540]/85 flex items-center justify-center">
+            <Icon size={12} className="text-[#D4AF37]" />
+          </span>
+        </span>
+      ) : (
+        <span className="w-24 h-24 sm:w-28 sm:h-28 flex-shrink-0 bg-[#0A2540] flex items-center justify-center" aria-hidden="true">
+          <Icon size={28} className="text-[#D4AF37]" />
+        </span>
+      )}
+      <span className="min-w-0 flex-1 p-4 flex flex-col">
+        <span className="flex items-center justify-between gap-2 mb-1">
+          <span className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#B8941F] truncate">
+            {np ? cat?.title.np : cat?.title.en}
+          </span>
+          <span className="inline-flex items-center gap-1 text-[10px] text-gray-400 flex-shrink-0">
+            <Clock size={10} />
+            {fmtN(a.readMinutes, np)}
+          </span>
+        </span>
+        <span className="font-display text-[15px] sm:text-base font-bold text-[#0A2540] leading-snug line-clamp-2 group-hover:text-[#B8941F] transition-colors">
+          {np ? a.title.np : a.title.en}
+        </span>
+        <span className="mt-1 text-xs sm:text-[13px] text-gray-600 leading-relaxed line-clamp-2">
+          {np ? a.summary.np : a.summary.en}
+        </span>
+        <span className="mt-auto pt-2 flex items-center justify-between gap-2">
+          <span className="inline-flex items-center gap-1 text-[10px] text-gray-400">
+            <CalendarDays size={10} />
+            {npDatestamp(a.updated, np)}
+            {a.facts && a.facts.length > 0 && (
+              <span className="ml-1.5 inline-flex items-center gap-0.5 text-[#B8941F] font-bold">
+                <ClipboardList size={10} />
+                {np ? "तथ्यपत्र" : "Factsheet"}
+              </span>
+            )}
+          </span>
+          <span className="inline-flex items-center gap-1 text-xs font-semibold text-[#0A2540] group-hover:gap-2 transition-all">
+            {np ? "पढ्नुहोस्" : "Read"}
+            <ChevronRight size={13} className="text-[#B8941F]" />
+          </span>
+        </span>
+      </span>
+    </motion.button>
+  );
+}
+
 export function Knowledge() {
   const { language } = useLanguage();
   const np = language === "np";
@@ -108,6 +199,10 @@ export function Knowledge() {
   const navigate = useNavigate();
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState<string>("all");
+  const [sort, setSort] = useState<SortId>("newest");
+  const [progress, setProgress] = useState(0);
+  const [copied, setCopied] = useState(false);
+  const articleRef = useRef<HTMLDivElement>(null);
 
   // Article selection lives in the URL (/knowledge/:slug) so every one of
   // the articles is deep-linkable, bookmarkable and individually indexed.
@@ -132,22 +227,102 @@ export function Knowledge() {
     });
   }, [query, category]);
 
+  const sorter = (arr: KBArticle[]): KBArticle[] => {
+    const c = [...arr];
+    if (sort === "newest") c.sort((a, b) => (a.updated < b.updated ? 1 : a.updated > b.updated ? -1 : a.id.localeCompare(b.id)));
+    else if (sort === "az") c.sort((a, b) => (np ? a.title.np.localeCompare(b.title.np) : a.title.en.localeCompare(b.title.en)));
+    else c.sort((a, b) => a.readMinutes - b.readMinutes);
+    return c;
+  };
+
   const counts = useMemo(() => {
     const m: Record<string, number> = { all: kbArticles.length };
     for (const a of kbArticles) m[a.categoryId] = (m[a.categoryId] ?? 0) + 1;
     return m;
   }, []);
 
-  const openArticle = (article: KBArticle) =>
+  /* Unfiltered & unsearched → grouped category sections (hub pattern). */
+  const grouped = !query.trim() && category === "all";
+  const flatList = useMemo(() => sorter(filtered), [filtered, sort, np]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const openArticle = (article: KBArticle) => {
+    setProgress(0);
     navigate(`/knowledge/${article.id}`);
-  const closeArticle = () => navigate("/knowledge");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+  const closeArticle = () => {
+    setProgress(0);
+    navigate("/knowledge");
+  };
+
+  /* Reading-progress bar — tracks the reader card through the viewport.
+     Respects the reduce-motion switch (no animated width). */
+  useEffect(() => {
+    if (!selected) return;
+    const smooth = !document.documentElement.classList.contains("a11y-reduce-motion");
+    const onScroll = () => {
+      const el = articleRef.current;
+      if (!el) return;
+      const r = el.getBoundingClientRect();
+      const total = r.height - window.innerHeight * 0.4;
+      const done = Math.min(Math.max(-r.top + window.innerHeight * 0.3, 0), Math.max(total, 1));
+      setProgress(Math.round((done / Math.max(total, 1)) * 100));
+    };
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+      void smooth;
+    };
+  }, [selected]);
+
+  /* Related articles — same category, excluding the open one. */
+  const related = useMemo(
+    () =>
+      selected
+        ? kbArticles.filter((a) => a.categoryId === selected.categoryId && a.id !== selected.id).slice(0, 3)
+        : [],
+    [selected]
+  );
+
+  const articleUrl = selected ? `${siteConfig.url}/knowledge/${selected.id}` : "";
+
+  const shareText = selected
+    ? `${np ? selected.title.np : selected.title.en} — ${articleUrl}`
+    : "";
+
+  const copyLink = async () => {
+    if (!articleUrl) return;
+    try {
+      await navigator.clipboard.writeText(articleUrl);
+    } catch {
+      const ta = document.createElement("textarea");
+      ta.value = articleUrl;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand("copy");
+      ta.remove();
+    }
+    setCopied(true);
+    setTimeout(() => setCopied(false), 1600);
+  };
+
+  const scrollToSection = (i: number) => {
+    const smooth = !document.documentElement.classList.contains("a11y-reduce-motion");
+    document.getElementById(`kb-sec-${i}`)?.scrollIntoView({
+      behavior: smooth ? "smooth" : "auto",
+      block: "start",
+    });
+  };
 
   return (
     <>
       <SEO
         title="Agriculture & Animal Husbandry Knowledge Base"
-        description="A researched, bilingual knowledge base for Nepali farmers and livestock keepers — vaccination schedules, dairy buffalo feeding, goat breeds of Nepal, Ranikhet control, paddy-maize-wheat crop seasons, fodder and silage making, climate change adaptation, and farm records. Every figure sourced from MoALD, DLS, NARC, FAO and the Merck Veterinary Manual."
-        keywords="Nepal agriculture knowledge base, livestock farming guide Nepal, vaccination schedule FMD HS PPR, dairy buffalo feeding, goat farming Nepal Khari Boer, Ranikhet Newcastle vaccine, paddy rice seasons Nepal, fodder trees silage hay, climate change agriculture Nepal, farm record keeping, कृषि ज्ञान भण्डार, पशुपालन जानकारी, बाख्रा पालन, धान मकै गहुँ, चारा सिलेज, जलवायु परिवर्तन कृषि"
+        description="A researched, bilingual knowledge base for Nepali farmers and livestock keepers — vaccination schedules, dairy buffalo feeding, goat breeds of Nepal, Ranikhet control, paddy-maize-wheat crop seasons, fodder and silage making, climate change adaptation, manure compost and biogas, heat detection and AI, and farm records. Every figure sourced from MoALD, DLS, NARC, FAO and the Merck Veterinary Manual."
+        keywords="Nepal agriculture knowledge base, livestock farming guide Nepal, vaccination schedule FMD HS PPR, dairy buffalo feeding, goat farming Nepal Khari Boer, Ranikhet Newcastle vaccine, paddy rice seasons Nepal, fodder trees silage hay, climate change agriculture Nepal, manure compost biogas Nepal, heat detection cattle buffalo AI, farm record keeping, कृषि ज्ञान भण्डार, पशुपालन जानकारी, बाख्रा पालन, धान मकै गहुँ, चारा सिलेज, गोबर कम्पोस्ट बायोग्यास, यात्रा मिलन, जलवायु परिवर्तन कृषि"
         path="/knowledge"
       />
       {/* Per-article SEO overrides the page-level tags above (helmet
@@ -180,6 +355,23 @@ export function Knowledge() {
         </>
       )}
 
+      {/* Reading progress — only while an article is open */}
+      {selected && (
+        <div
+          className="fixed top-0 left-0 right-0 z-[55] h-[3px] bg-transparent pointer-events-none"
+          role="progressbar"
+          aria-label={np ? "पढाइ प्रगति" : "Reading progress"}
+          aria-valuenow={progress}
+          aria-valuemin={0}
+          aria-valuemax={100}
+        >
+          <div
+            className="h-full bg-gradient-to-r from-[#D4AF37] to-[#B8941F] transition-[width] duration-150"
+            style={{ width: `${progress}%` }}
+          />
+        </div>
+      )}
+
       <div className="bg-gray-50 min-h-screen pb-20">
         {/* ── Header band ─────────────────────────────────────────────── */}
         <div className="bg-gradient-to-br from-[#0A2540] to-[#12365C] text-white pt-28 pb-12 px-4 sm:px-6">
@@ -203,12 +395,25 @@ export function Knowledge() {
                 : "A bilingual library built from verified sources — vaccination calendars, dairy feeding, goat and poultry systems, crop seasons by belt, fodder management, climate adaptation and farm records. Every figure is cited and dated."}
             </p>
 
+            <div className="mt-4 flex flex-wrap gap-x-5 gap-y-1.5 text-xs text-gray-300">
+              {[
+                np ? `${fmtN(kbArticleCount, np)} लेख` : `${kbArticleCount} articles`,
+                np ? `${fmtN(kbCategories.length, np)} वर्ग` : `${kbCategories.length} categories`,
+                np ? "हरेक तथ्याङ्क स्रोतसहित" : "every figure sourced",
+              ].map((s, i) => (
+                <span key={i} className="inline-flex items-center gap-1.5">
+                  <Check size={12} className="text-[#D4AF37]" aria-hidden="true" />
+                  {s}
+                </span>
+              ))}
+            </div>
+
             {/* Search */}
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
-              className="mt-7 max-w-xl relative"
+              className="mt-6 max-w-xl relative"
             >
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={17} />
               <Input
@@ -248,7 +453,8 @@ export function Knowledge() {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -12 }}
                 transition={{ duration: 0.25 }}
-                className="-mt-6 bg-white rounded-2xl shadow-xl border-0 overflow-hidden"
+                ref={articleRef}
+                className="-mt-6 bg-white rounded-2xl shadow-xl border-0 overflow-hidden scroll-mt-24"
               >
                 {/* Reader header */}
                 <div className="bg-gradient-to-br from-[#0A2540] to-[#12365C] text-white px-6 sm:px-10 py-8">
@@ -308,7 +514,26 @@ export function Knowledge() {
                   <p className="mt-3 text-gray-300 leading-relaxed max-w-3xl">
                     {np ? selected.summary.np : selected.summary.en}
                   </p>
+
+                  {/* Reader actions: share · copy · print */}
                   <div className="mt-4 flex flex-wrap gap-2">
+                    <a
+                      href={`https://wa.me/?text=${encodeURIComponent(shareText)}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1.5 text-xs font-semibold bg-[#25D366]/15 border border-[#25D366]/40 text-[#9BE3B0] rounded-full px-3 py-1.5 hover:bg-[#25D366]/25 transition-colors"
+                    >
+                      <MessageCircle size={12} />
+                      {np ? "व्हाट्सएपमा पठाउनुहोस्" : "Share on WhatsApp"}
+                    </a>
+                    <button
+                      type="button"
+                      onClick={copyLink}
+                      className="inline-flex items-center gap-1.5 text-xs font-semibold bg-white/10 border border-white/20 rounded-full px-3 py-1.5 text-gray-200 hover:text-white hover:border-[#D4AF37]/60 transition-colors"
+                    >
+                      {copied ? <Check size={12} className="text-[#D4AF37]" /> : <Copy size={12} />}
+                      {copied ? (np ? "लिङ्क कपी भयो" : "Link copied") : np ? "लिङ्क कपी" : "Copy link"}
+                    </button>
                     <button
                       type="button"
                       onClick={() => window.print()}
@@ -318,6 +543,29 @@ export function Knowledge() {
                       {np ? "प्रिन्ट गर्नुहोस्" : "Print article"}
                     </button>
                   </div>
+
+                  {/* Section TOC — long articles only (≥ 4 sections) */}
+                  {selected.sections.length >= 4 && (
+                    <div className="mt-5 pt-4 border-t border-white/15">
+                      <p className="flex items-center gap-1.5 text-[10px] uppercase tracking-[0.2em] font-bold text-[#D4AF37] mb-2">
+                        <ListTree size={12} />
+                        {np ? "यो लेखमा" : "In this article"}
+                      </p>
+                      <ol className="flex flex-wrap gap-1.5">
+                        {selected.sections.map((s, i) => (
+                          <li key={i}>
+                            <button
+                              type="button"
+                              onClick={() => scrollToSection(i)}
+                              className="text-[11px] sm:text-xs font-medium text-gray-200 bg-white/10 hover:bg-[#D4AF37]/20 hover:text-white border border-white/15 rounded-full px-2.5 py-1 transition-colors text-left"
+                            >
+                              {fmtN(i + 1, np)}. {np ? s.heading.np : s.heading.en}
+                            </button>
+                          </li>
+                        ))}
+                      </ol>
+                    </div>
+                  )}
                 </div>
 
                 {/* Hero image */}
@@ -381,7 +629,7 @@ export function Knowledge() {
                   )}
 
                   {selected.sections.map((s, i) => (
-                    <section key={i} className={i === 0 ? "" : "mt-8"}>
+                    <section key={i} id={`kb-sec-${i}`} className={i === 0 ? "scroll-mt-24" : "mt-8 scroll-mt-24"}>
                       <h3 className="font-display text-xl sm:text-2xl font-bold text-[#0A2540] mb-3">
                         {np ? s.heading.np : s.heading.en}
                       </h3>
@@ -438,31 +686,67 @@ export function Knowledge() {
                     </p>
                   </div>
 
-                  {/* Next article */}
+                  {/* Prev / next pair */}
                   {(() => {
                     const idx = kbArticles.findIndex((a) => a.id === selected.id);
-                    const next = kbArticles[(idx + 1) % kbArticles.length];
-                    return (
-                      <button
-                        type="button"
-                        onClick={() => {
-                          openArticle(next);
-                          window.scrollTo({ top: 0, behavior: "smooth" });
-                        }}
-                        className="mt-8 w-full text-left rounded-xl border-2 border-gray-100 hover:border-[#D4AF37]/50 bg-gray-50 hover:bg-[#D4AF37]/[0.05] px-5 py-4 transition-colors group"
-                      >
-                        <span className="text-[11px] uppercase tracking-[0.2em] text-gray-400 font-semibold">
-                          {np ? "अर्को लेख" : "Next article"}
-                        </span>
-                        <span className="flex items-center justify-between gap-3 mt-1">
-                          <span className="font-semibold text-[#0A2540] group-hover:text-[#B8941F] transition-colors">
-                            {np ? next.title.np : next.title.en}
+                    const prev = idx > 0 ? kbArticles[idx - 1] : null;
+                    const next = idx < kbArticles.length - 1 ? kbArticles[idx + 1] : null;
+                    const NavBtn = ({ a, isNext }: { a: KBArticle | null; isNext: boolean }) =>
+                      !a ? (
+                        <span className="flex-1" aria-hidden="true" />
+                      ) : (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            openArticle(a);
+                          }}
+                          className={`flex-1 min-w-0 rounded-xl border-2 border-gray-100 hover:border-[#D4AF37]/50 bg-gray-50 hover:bg-[#D4AF37]/[0.05] px-4 py-3.5 transition-colors group ${isNext ? "text-right" : "text-left"}`}
+                        >
+                          <span className={`text-[10px] uppercase tracking-[0.2em] text-gray-400 font-semibold flex items-center gap-1 ${isNext ? "justify-end" : ""}`}>
+                            {!isNext && <ChevronLeft size={11} />}
+                            {isNext ? (np ? "अर्को लेख" : "Next article") : np ? "अघिल्लो लेख" : "Previous article"}
+                            {isNext && <ChevronRight size={11} />}
                           </span>
-                          <ChevronRight size={18} className="text-[#B8941F] flex-shrink-0" />
-                        </span>
-                      </button>
+                          <span className="block mt-1 font-semibold text-sm text-[#0A2540] group-hover:text-[#B8941F] transition-colors line-clamp-1">
+                            {np ? a.title.np : a.title.en}
+                          </span>
+                        </button>
+                      );
+                    return (
+                      <div className="mt-8 flex flex-col sm:flex-row gap-3">
+                        <NavBtn a={prev} isNext={false} />
+                        <NavBtn a={next} isNext={true} />
+                      </div>
                     );
                   })()}
+
+                  {/* Related articles — same category */}
+                  {related.length > 0 && (
+                    <div className="mt-10">
+                      <p className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.18em] text-[#B8941F] mb-3">
+                        <Share2 size={13} />
+                        {np ? "यही वर्गका अरू लेख" : "More in this category"}
+                      </p>
+                      <div className="grid sm:grid-cols-3 gap-3">
+                        {related.map((a) => (
+                          <button
+                            key={a.id}
+                            type="button"
+                            onClick={() => openArticle(a)}
+                            className="text-left rounded-xl border-2 border-gray-100 hover:border-[#D4AF37]/50 bg-white px-4 py-3.5 transition-colors group"
+                          >
+                            <span className="block text-sm font-semibold text-[#0A2540] group-hover:text-[#B8941F] transition-colors line-clamp-2 leading-snug">
+                              {np ? a.title.np : a.title.en}
+                            </span>
+                            <span className="mt-2 inline-flex items-center gap-1 text-[11px] font-semibold text-[#B8941F]">
+                              {np ? "पढ्नुहोस्" : "Read"}
+                              <ArrowRight size={11} />
+                            </span>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
               </motion.article>
             ) : (
@@ -473,8 +757,8 @@ export function Knowledge() {
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.2 }}
               >
-                {/* ── Category rail ─────────────────────────────────── */}
-                <div className="-mt-6 bg-white rounded-2xl shadow-xl p-4 sm:p-5 mb-8">
+                {/* ── Category rail + sort ─────────────────────────── */}
+                <div className="-mt-6 bg-white rounded-2xl shadow-xl p-4 sm:p-5 mb-6 space-y-3.5">
                   <div className="flex flex-wrap gap-2">
                     <button
                       type="button"
@@ -513,104 +797,122 @@ export function Knowledge() {
                       );
                     })}
                   </div>
+
+                  {/* Sort */}
+                  <div className="flex items-center justify-between gap-3 flex-wrap">
+                    <div className="flex items-center gap-1.5" role="group" aria-label={np ? "क्रमबद्ध गर्नुहोस्" : "Sort articles"}>
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400 mr-1">
+                        {np ? "क्रम:" : "Sort:"}
+                      </span>
+                      {SORTS.map((s) => (
+                        <button
+                          key={s.id}
+                          type="button"
+                          aria-pressed={sort === s.id}
+                          onClick={() => setSort(s.id)}
+                          className={`px-2.5 py-1 rounded-lg text-xs font-semibold transition-colors ${
+                            sort === s.id
+                              ? "bg-[#D4AF37]/20 text-[#0A2540] border border-[#D4AF37]/50"
+                              : "text-gray-500 hover:text-[#0A2540] border border-transparent"
+                          }`}
+                        >
+                          {np ? s.np : s.en}
+                        </button>
+                      ))}
+                    </div>
+                    {(query || category !== "all") && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setQuery("");
+                          setCategory("all");
+                        }}
+                        className="text-xs font-semibold text-[#B8941F] hover:text-[#0A2540] transition-colors"
+                      >
+                        {np ? "फिल्टर हटाउनुहोस्" : "Clear filters"}
+                      </button>
+                    )}
+                  </div>
                 </div>
 
-                {/* ── Result count / empty state ────────────────────── */}
-                <div className="flex items-center justify-between mb-4 px-1">
-                  <p className="text-sm text-gray-500">
-                    {filtered.length === kbArticles.length
-                      ? np
-                        ? `${fmtN(filtered.length, np)} लेख — सबै वर्ग`
-                        : `${filtered.length} articles — all categories`
-                      : np
-                        ? `${fmtN(filtered.length, np)} लेख भेटियो`
-                        : `${filtered.length} ${filtered.length === 1 ? "article" : "articles"} found`}
-                  </p>
-                  {(query || category !== "all") && (
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setQuery("");
-                        setCategory("all");
-                      }}
-                      className="text-xs font-semibold text-[#B8941F] hover:text-[#0A2540] transition-colors"
-                    >
-                      {np ? "फिल्टर हटाउनुहोस्" : "Clear filters"}
-                    </button>
-                  )}
-                </div>
+                {/* ── Result count (live) ─────────────────────────── */}
+                <p className="mb-4 px-1 text-sm text-gray-500" aria-live="polite">
+                  {filtered.length === kbArticles.length
+                    ? np
+                      ? `${fmtN(filtered.length, np)} लेख — सबै वर्ग`
+                      : `${filtered.length} articles — all categories`
+                    : np
+                      ? `${fmtN(filtered.length, np)} लेख भेटियो`
+                      : `${filtered.length} ${filtered.length === 1 ? "article" : "articles"} found`}
+                </p>
 
                 {filtered.length === 0 ? (
                   <div className="bg-white rounded-2xl shadow-lg p-10 text-center">
                     <Search className="mx-auto text-gray-300 mb-3" size={32} />
-                    <p className="text-gray-600 font-medium">
+                    <p className="text-gray-600 font-medium mb-4">
                       {np ? "कुनै लेख भेटिएन — अर्को शब्दले प्रयास गर्नुहोस्।" : "No articles matched — try another word."}
                     </p>
-                  </div>
-                ) : (
-                  /* ── Article card grid ──────────────────────────────── */
-                  <div className="grid sm:grid-cols-2 gap-5">
-                    {filtered.map((a, i) => {
-                      const Icon = CATEGORY_ICONS[a.categoryId] ?? BookOpen;
-                      const cat = kbCategories.find((c) => c.id === a.categoryId);
-                      return (
-                        <motion.button
-                          key={a.id}
+                    <div className="flex flex-wrap justify-center gap-2">
+                      {QUICK_TOPICS.map((t) => (
+                        <button
+                          key={t.q}
                           type="button"
-                          initial={{ opacity: 0, y: 12 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ delay: Math.min(i * 0.04, 0.3), duration: 0.3 }}
-                          onClick={() => {
-                            openArticle(a);
-                            window.scrollTo({ top: 0, behavior: "smooth" });
-                          }}
-                          className="text-left bg-white rounded-2xl shadow-md hover:shadow-xl border border-transparent hover:border-[#D4AF37]/40 transition-all overflow-hidden flex flex-col group"
+                          onClick={() => setQuery(t.q)}
+                          className="px-3 py-1.5 rounded-full text-xs font-semibold border-2 border-gray-200 text-gray-600 hover:border-[#D4AF37]/60 hover:text-[#0A2540] transition-all"
                         >
-                          {a.image && (
-                            <div className="relative h-36 bg-gray-100 flex-shrink-0">
-                              <img
-                                src={a.image}
-                                alt=""
-                                aria-hidden="true"
-                                loading="lazy"
-                                width={1200}
-                                height={500}
-                                className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-300"
-                              />
-                              <span className="absolute inset-0 bg-gradient-to-t from-black/45 via-black/10 to-transparent" aria-hidden="true" />
-                              {a.facts && a.facts.length > 0 && (
-                                <span className="absolute bottom-2 left-3 inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-[0.12em] text-white drop-shadow bg-black/35 rounded-full px-2.5 py-1">
-                                  <ClipboardList size={11} className="text-[#D4AF37]" />
-                                  {np ? "तथ्यपत्र" : "Factsheet"}
+                          {np ? t.np : t.q}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                ) : grouped ? (
+                  /* ── Category sections (unfiltered browse) ─────── */
+                  <div className="space-y-9">
+                    {kbCategories.map((c) => {
+                      const items = sorter(kbArticles.filter((a) => a.categoryId === c.id));
+                      if (!items.length) return null;
+                      const Icon = CATEGORY_ICONS[c.id] ?? BookOpen;
+                      return (
+                        <section key={c.id} aria-labelledby={`kb-cat-${c.id}`}>
+                          <div className="flex items-start gap-3 mb-4">
+                            <span className="w-10 h-10 rounded-xl bg-[#0A2540] text-[#D4AF37] flex items-center justify-center flex-shrink-0">
+                              <Icon size={18} aria-hidden="true" />
+                            </span>
+                            <div className="min-w-0 flex-1">
+                              <h2 id={`kb-cat-${c.id}`} className="font-display text-lg sm:text-xl font-bold text-[#0A2540] leading-tight flex items-baseline gap-2 flex-wrap">
+                                {np ? c.title.np : c.title.en}
+                                <span className="text-xs font-semibold text-gray-400 font-sans">
+                                  {fmtN(items.length, np)}
                                 </span>
-                              )}
+                              </h2>
+                              <p className="text-xs text-gray-500 mt-0.5">
+                                {np ? c.blurb.np : c.blurb.en}
+                              </p>
                             </div>
-                          )}
-                          <div className="p-5 sm:p-6 flex flex-col flex-1">
-                          <div className="flex items-center justify-between gap-3 mb-3">
-                            <span className="inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-[0.12em] text-[#B8941F]">
-                              <Icon size={13} />
-                              {np ? cat?.title.np : cat?.title.en}
-                            </span>
-                            <span className="inline-flex items-center gap-1 text-[11px] text-gray-400">
-                              <Clock size={11} />
-                              {fmtN(a.readMinutes, np)} {np ? "मिनेट" : "min"}
-                            </span>
+                            <button
+                              type="button"
+                              onClick={() => setCategory(c.id)}
+                              className="hidden sm:inline-flex items-center gap-1 text-xs font-semibold text-[#B8941F] hover:text-[#0A2540] transition-colors flex-shrink-0 mt-1"
+                            >
+                              {np ? "यो वर्ग मात्र" : "Only this"}
+                              <ChevronRight size={12} />
+                            </button>
                           </div>
-                          <h3 className="font-display text-lg sm:text-xl font-bold text-[#0A2540] leading-snug group-hover:text-[#B8941F] transition-colors mb-2">
-                            {np ? a.title.np : a.title.en}
-                          </h3>
-                          <p className="text-sm text-gray-600 leading-relaxed flex-1">
-                            {np ? a.summary.np : a.summary.en}
-                          </p>
-                          <span className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-[#0A2540] group-hover:gap-2.5 transition-all">
-                            {np ? "पढ्नुहोस्" : "Read article"}
-                            <ChevronRight size={15} className="text-[#B8941F]" />
-                          </span>
+                          <div className="grid sm:grid-cols-2 gap-3.5">
+                            {items.map((a, i) => (
+                              <ArticleCard key={a.id} a={a} np={np} onOpen={openArticle} index={i} />
+                            ))}
                           </div>
-                        </motion.button>
+                        </section>
                       );
                     })}
+                  </div>
+                ) : (
+                  /* ── Flat filtered grid ─────────────────────────── */
+                  <div className="grid sm:grid-cols-2 gap-3.5">
+                    {flatList.map((a, i) => (
+                      <ArticleCard key={a.id} a={a} np={np} onOpen={openArticle} index={i} />
+                    ))}
                   </div>
                 )}
 

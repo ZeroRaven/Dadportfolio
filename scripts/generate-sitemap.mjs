@@ -27,8 +27,8 @@ const KB_FILES = [
 // Deep tool pages (hub-and-spoke Tools redesign) — must stay in sync with
 // the TOOL_GROUPS registry in src/app/pages/Tools.tsx; validated below.
 const TOOL_IDS = [
-  "weight", "gestation", "feed", "dosage", "water", "market", "bcs",
-  "dairy", "land", "poultry", "hatch", "vaccine", "herd", "weather", "health",
+  "weight", "gestation", "feed", "dosage", "water", "market", "bcs", "estrus",
+  "dairy", "land", "poultry", "hatch", "vaccine", "herd", "manure", "weather", "health",
 ];
 
 const staticRoutes = [

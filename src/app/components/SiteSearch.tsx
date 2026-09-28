@@ -236,11 +236,27 @@ const HAND_WRITTEN_INDEX: SearchItem[] = [
     keywords: "body condition score bcs cattle buffalo fat thin edmondson शरीर अवस्था अंक",
   },
   {
+    path: "/tools/manure",
+    icon: Wrench,
+    section: { en: "Tool", np: "औजार" },
+    title: { en: "Manure & Compost Value Calculator", np: "गोबर तथा कम्पोस्ट मूल्य क्यालकुलेटर" },
+    desc: { en: "Herd dung → compost, NPK nutrients, fertiliser-bag value in rupees, biogas potential.", np: "बथानको गोबर → कम्पोस्ट, NPK पोषक, बोरा-मल बराबर रुपैयाँ, बायोग्यास सम्भावना।" },
+    keywords: "manure dung compost npk fertiliser value biogas slurry urea dap गोबर कम्पोस्ट मल बायोग्यास",
+  },
+  {
+    path: "/tools/estrus",
+    icon: Wrench,
+    section: { en: "Tool", np: "औजार" },
+    title: { en: "Estrus & Breeding Planner (Heat / AI)", np: "यात्रा तथा मिलन योजना" },
+    desc: { en: "One observed heat → optimal AI window, next 3 heats, pregnancy-check dates, .ics reminders.", np: "एउटा यात्रा → मिलनको झ्याल, अर्का ३ यात्रा, गर्भ-जाँच मिति, .ics सम्झना।" },
+    keywords: "estrus heat detection artificial insemination breeding 21 day cycle am pm rule यात्रा मिलन कृत्रिम",
+  },
+  {
     path: "/knowledge",
     icon: BookOpen,
     section: { en: "Library", np: "पुस्तकालय" },
     title: { en: "Knowledge Base — Agriculture & Animal Husbandry", np: "ज्ञान भण्डार — कृषि तथा पशुपालन" },
-    desc: { en: "32 researched bilingual guides with factsheets & charts: vaccination, feeding, breeds, crops, climate.", np: "तथ्यपत्र र चित्रसहित ३२ अनुसन्धानमा आधारित द्विभाषी मार्गदर्शन: खोप, आहार, जात, बाली, जलवायु।" },
+    desc: { en: "35 researched bilingual guides with factsheets & charts: vaccination, feeding, breeds, crops, climate.", np: "तथ्यपत्र र चित्रसहित ३५ अनुसन्धानमा आधारित द्विभाषी मार्गदर्शन: खोप, आहार, जात, बाली, जलवायु।" },
     keywords: "knowledge base guides farming agriculture husbandry guides library ज्ञान भण्डार मार्गदर्शन कृषि पशुपालन",
   },
   {

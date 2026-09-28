@@ -6,13 +6,13 @@ import type { Province } from "nepal-district-map";
 import {
   Map as MapIcon, Info, Landmark, Users, Layers,
   Wheat, HeartPulse, CloudSun, Sparkles, ChevronRight, X, Leaf,
-  Building2, ListFilter, ArrowLeftRight, Table2, Columns3, MousePointerClick, Search,
+  Building2, ArrowLeftRight, Table2, Columns3, MousePointerClick, Search,
 } from "lucide-react";
 import { useLanguage } from "../context/LanguageContext";
 import { SEO } from "../components/SEO";
 import { PROVINCES, NATIONAL_STATS, provinceById } from "../data/nepalAgro";
 import {
-  DISTRICTS, PROVINCES_WITH_DISTRICTS, BELT_LEGEND, districtByName,
+  DISTRICTS, PROVINCES_WITH_DISTRICTS, districtByName,
   type DistrictProfile,
 } from "../data/nepalDistricts";
 import {
@@ -522,7 +522,7 @@ export function AgroMap() {
               <motion.div
                 initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="lg:col-span-3 bg-white rounded-2xl shadow-xl p-4 sm:p-6"
+                className="lg:col-span-3 bg-white rounded-2xl shadow-xl p-3 sm:p-6"
               >
                 {/* Thematic layer rail */}
                 <div className="flex flex-wrap items-center gap-1.5 mb-4">
@@ -592,24 +592,8 @@ export function AgroMap() {
                   </div>
                 )}
 
-                {/* Climate legend (climate layer) */}
-                {layer === "climate" && (
-                  <div className="mb-4 rounded-xl border border-gray-100 bg-gray-50/60 px-4 py-3">
-                    <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[#0A2540]/60 mb-2">
-                      {np ? "मुख्य जलवायु दबाब (रङ अनुसार)" : "Dominant climate pressure (by colour)"}
-                    </p>
-                    <NepalMapLegend
-                      mode="custom"
-                      direction="horizontal"
-                      fontSize={11}
-                      labelColor="#475569"
-                      items={CLIMATE_TAGS.map((t) => ({ color: CLIMATE_TAG_COLORS[t.id], label: np ? t.np : t.en }))}
-                    />
-                  </div>
-                )}
-
-                {/* Live district search — highlights matches on the map */}
-                <div className="mb-4">
+                {/* District search + quick-select — one compact row above the map */}
+                <div className="mb-4 grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                   <div className="relative">
                     <Search size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#B8941F]" aria-hidden="true" />
                     <input
@@ -621,38 +605,56 @@ export function AgroMap() {
                       className="w-full rounded-xl border-2 border-gray-200 bg-gray-50 pl-9 pr-4 py-2.5 text-sm font-medium text-[#0A2540] focus:border-[#D4AF37] outline-none transition-colors"
                     />
                   </div>
-                  {mapQuery.trim().length >= 2 && (
-                    <div className="mt-2 flex flex-wrap items-center gap-1.5">
-                      {searchMatches.length === 0 ? (
-                        <p className="text-xs text-gray-400">
-                          {np ? "कुनै जिल्ला मेल खाँदैन।" : "No district matches."}
-                        </p>
-                      ) : (
-                        <>
-                          <span className="text-[11px] font-bold uppercase tracking-wider text-gray-400">
-                            {fmtN(searchMatches.length)} {np ? "मेल" : "match"}:
-                          </span>
-                          {searchMatches.slice(0, 10).map((name) => {
-                            const d = districtByName(name)!;
-                            return (
-                              <button
-                                key={name}
-                                type="button"
-                                onClick={() => {
-                                  pickDistrict(name);
-                                  setMapQuery("");
-                                }}
-                                className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold border-2 border-emerald-200 bg-emerald-50 text-emerald-800 hover:border-emerald-400 transition-colors"
-                              >
-                                {np ? d.np : name}
-                              </button>
-                            );
-                          })}
-                        </>
-                      )}
-                    </div>
-                  )}
+                  <select
+                    value={districtActive ? district!.name : ""}
+                    onChange={(e) => e.target.value && pickDistrict(e.target.value)}
+                    aria-label={np ? "जिल्ला छान्नुहोस्" : "Select a district"}
+                    className="w-full rounded-xl border-2 border-gray-200 bg-gray-50 px-3.5 py-2.5 text-sm font-medium text-[#0A2540] focus:border-[#D4AF37] outline-none transition-colors"
+                  >
+                    <option value="">{np ? "— ७७ मध्ये कुनै जिल्ला —" : "— any of the 77 districts —"}</option>
+                    {PROVINCES_WITH_DISTRICTS.map((p) => (
+                      <optgroup key={p.id} label={`${p.id}${np ? ` · ${p.npName}` : ""}`}>
+                        {p.districts.map((d) => (
+                          <option key={d.name} value={d.name}>
+                            {d.name}
+                            {np ? ` · ${d.np}` : ""}
+                          </option>
+                        ))}
+                      </optgroup>
+                    ))}
+                  </select>
                 </div>
+                {mapQuery.trim().length >= 2 && (
+                  <div className="mb-4 -mt-1 flex flex-wrap items-center gap-1.5">
+                    {searchMatches.length === 0 ? (
+                      <p className="text-xs text-gray-400">
+                        {np ? "कुनै जिल्ला मेल खाँदैन।" : "No district matches."}
+                      </p>
+                    ) : (
+                      <>
+                        <span className="text-[11px] font-bold uppercase tracking-wider text-gray-400">
+                          {fmtN(searchMatches.length)} {np ? "मेल" : "match"}:
+                        </span>
+                        {searchMatches.slice(0, 10).map((name) => {
+                          const d = districtByName(name)!;
+                          return (
+                            <button
+                              key={name}
+                              type="button"
+                              onClick={() => {
+                                pickDistrict(name);
+                                setMapQuery("");
+                              }}
+                              className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold border-2 border-emerald-200 bg-emerald-50 text-emerald-800 hover:border-emerald-400 transition-colors"
+                            >
+                              {np ? d.np : name}
+                            </button>
+                          );
+                        })}
+                      </>
+                    )}
+                  </div>
+                )}
 
                 <NepalMap
                   data={layerData}
@@ -673,7 +675,7 @@ export function AgroMap() {
                   strokeColor="#FFFFFF"
                   strokeWidth={0.7}
                   backgroundColor="transparent"
-                  maxHeight="620px"
+                  maxHeight="min(72vh, 620px)"
                   ariaLabel={np ? "नेपालको अन्तरक्रियात्मक कृषि नक्सा" : "Interactive agriculture map of Nepal"}
                   renderTooltip={(name, data) => (
                     <div>
@@ -689,100 +691,88 @@ export function AgroMap() {
                   onDistrictClick={(name) => pickDistrict(name)}
                 />
 
-                {/* Layer-specific legend for zone view */}
-                {layer === "zone" && (
-                  <div className="mt-3">
-                    <NepalMapLegend
-                      mode="custom"
-                      direction="horizontal"
-                      fontSize={11}
-                      labelColor="#475569"
-                      items={(Object.keys(ZONE_LABELS) as (keyof typeof ZONE_LABELS)[]).map((z) => ({
-                        color: ZONE_LABELS[z].color,
-                        label: np ? ZONE_LABELS[z].np : ZONE_LABELS[z].en,
-                      }))}
-                    />
-                  </div>
-                )}
+                {/* ── Legend strip — always directly under the map, layer-aware ── */}
+                <div className="mt-3 pt-3 border-t border-gray-100 space-y-3">
+                  {/* Province layer: the interactive province chips below ARE the
+                      legend (each carries its province colour dot) — no second,
+                      redundant swatch row. */}
+                  {layer === "zone" && (
+                    <div>
+                      <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[#0A2540]/60 mb-2">
+                        {np ? "पारिस्थितिक भेग (रङ अनुसार)" : "Ecological belts (by colour)"}
+                      </p>
+                      <NepalMapLegend
+                        mode="custom"
+                        direction="horizontal"
+                        fontSize={11}
+                        labelColor="#475569"
+                        items={(Object.keys(ZONE_LABELS) as (keyof typeof ZONE_LABELS)[]).map((z) => ({
+                          color: ZONE_LABELS[z].color,
+                          label: np ? ZONE_LABELS[z].np : ZONE_LABELS[z].en,
+                        }))}
+                      />
+                    </div>
+                  )}
+                  {layer === "climate" && (
+                    <div>
+                      <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[#0A2540]/60 mb-2">
+                        {np ? "मुख्य जलवायु दबाब (रङ अनुसार)" : "Dominant climate pressure (by colour)"}
+                      </p>
+                      <NepalMapLegend
+                        mode="custom"
+                        direction="horizontal"
+                        fontSize={11}
+                        labelColor="#475569"
+                        items={CLIMATE_TAGS.map((t) => ({ color: CLIMATE_TAG_COLORS[t.id], label: np ? t.np : t.en }))}
+                      />
+                    </div>
+                  )}
+                  {(layer === "crops" || layer === "livestock") && (
+                    <p className="text-xs text-gray-500 flex items-center gap-1.5">
+                      <MousePointerClick size={13} className="text-[#B8941F]" aria-hidden="true" />
+                      {spotTag
+                        ? np
+                          ? `${spotTag} भएका ${fmtN(spotMatches?.length ?? 0)} जिल्ला सुनौलो रङमा चम्किएका छन् — बाँकी फिक्का।`
+                          : `${fmtN(spotMatches?.length ?? 0)} districts carry ${spotTag} — highlighted in gold; the rest are dimmed.`
+                        : np
+                          ? "माथिको कुनै बाली/पशु छान्नुहोस् — भएका जिल्ला सुनौलो भई बाँकी फिक्का हुन्छन्।"
+                          : "Pick a crop or livestock above — districts that carry it light up in gold; the rest dim."}
+                    </p>
+                  )}
 
-                {/* Spotlight result note */}
-                {spotMatches && (
-                  <p className="mt-3 text-xs text-gray-500 flex items-center gap-1.5">
-                    <MousePointerClick size={13} className="text-[#B8941F]" aria-hidden="true" />
-                    {np
-                      ? `${spotTag} भएका ${fmtN(spotMatches.length)} जिल्ला सुनौलो रङमा चम्किएका छन् — बाँकी फिक्का।`
-                      : `${fmtN(spotMatches.length)} districts carry ${spotTag} — highlighted in gold; the rest are dimmed.`}
-                  </p>
-                )}
-
-                {/* District quick-select — always available */}
-                <label className="block mt-4 mb-1 text-xs font-semibold text-[#0A2540]">
-                  <span className="inline-flex items-center gap-1.5">
-                    <ListFilter size={13} className="text-[#B8941F]" />
-                    {np ? "जिल्ला छान्नुहोस्" : "Pick a district"}
-                  </span>
-                </label>
-                <select
-                  value={districtActive ? district!.name : ""}
-                  onChange={(e) => e.target.value && pickDistrict(e.target.value)}
-                  aria-label={np ? "जिल्ला छान्नुहोस्" : "Select a district"}
-                  className="w-full rounded-xl border-2 border-gray-200 bg-gray-50 px-3.5 py-2.5 text-sm font-medium text-[#0A2540] focus:border-[#D4AF37] outline-none transition-colors"
-                >
-                  <option value="">{np ? "— ७७ मध्ये कुनै जिल्ला —" : "— any of the 77 districts —"}</option>
-                  {PROVINCES_WITH_DISTRICTS.map((p) => (
-                    <optgroup key={p.id} label={`${p.id}${np ? ` · ${p.npName}` : ""}`}>
-                      {p.districts.map((d) => (
-                        <option key={d.name} value={d.name}>
-                          {d.name}
-                          {np ? ` · ${d.np}` : ""}
-                        </option>
-                      ))}
-                    </optgroup>
-                  ))}
-                </select>
-
-                {/* Province chips — province layer only */}
-                {layer === "province" && (
-                  <div className="flex flex-wrap gap-2 mt-4 pt-4 border-t border-gray-100">
-                    {PROVINCES.map((p) => {
-                      const active = provinceActive && province === p.id;
-                      return (
-                        <button
-                          key={p.id}
-                          type="button"
-                          onClick={() => pickProvince(p.id)}
-                          aria-pressed={!!active}
-                          className={`inline-flex items-center gap-2 px-3.5 py-2 rounded-full text-sm font-semibold border-2 transition-all ${
-                            active
-                              ? "border-[#0A2540] bg-[#0A2540] text-white shadow-md"
-                              : "border-gray-200 bg-white text-gray-600 hover:border-[#D4AF37]/60 hover:text-[#0A2540]"
-                          }`}
-                        >
-                          <span
-                            aria-hidden="true"
-                            className="w-2.5 h-2.5 rounded-full flex-shrink-0"
-                            style={{ backgroundColor: PROVINCE_COLORS[p.id].fill }}
-                          />
-                          {np ? p.npName : p.id}
-                        </button>
-                      );
-                    })}
-                  </div>
-                )}
-
-                {/* Belt legend */}
-                <div className="mt-4 pt-4 border-t border-gray-100">
-                  <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[#0A2540]/60 mb-2">
-                    {np ? "पारिस्थितिक भेग" : "Ecological belts"}
-                  </p>
-                  <div className="flex flex-wrap gap-x-4 gap-y-1.5">
-                    {BELT_LEGEND.map((b) => (
-                      <span key={b.en} className="inline-flex items-center gap-1.5 text-xs text-gray-600">
-                        <span aria-hidden="true" className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: b.color }} />
-                        {np ? b.np : b.en}
-                      </span>
-                    ))}
-                  </div>
+                  {/* Province chips — province layer only (they double as the legend) */}
+                  {layer === "province" && (
+                    <div className="pt-1">
+                      <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[#0A2540]/60 mb-2">
+                        {np ? "प्रदेश (रङ अनुसार) — थिच्नुहोस्" : "Provinces (by colour) — tap to open"}
+                      </p>
+                      <div className="flex flex-wrap gap-2">
+                      {PROVINCES.map((p) => {
+                        const active = provinceActive && province === p.id;
+                        return (
+                          <button
+                            key={p.id}
+                            type="button"
+                            onClick={() => pickProvince(p.id)}
+                            aria-pressed={!!active}
+                            className={`inline-flex items-center gap-2 px-3.5 py-2 rounded-full text-sm font-semibold border-2 transition-all ${
+                              active
+                                ? "border-[#0A2540] bg-[#0A2540] text-white shadow-md"
+                                : "border-gray-200 bg-white text-gray-600 hover:border-[#D4AF37]/60 hover:text-[#0A2540]"
+                            }`}
+                          >
+                            <span
+                              aria-hidden="true"
+                              className="w-2.5 h-2.5 rounded-full flex-shrink-0"
+                              style={{ backgroundColor: PROVINCE_COLORS[p.id].fill }}
+                            />
+                            {np ? p.npName : p.id}
+                          </button>
+                        );
+                      })}
+                      </div>
+                    </div>
+                  )}
                 </div>
               </motion.div>
 
@@ -906,9 +896,29 @@ export function AgroMap() {
                           </h2>
                           <p className="text-sm text-gray-300 mt-2 leading-relaxed">
                             {np
-                              ? "माथिका थर (प्रदेश / भेग / बाली / पशुपालन / जलवायु) बदल्नुहोस् — नक्साको रङै बदलिन्छ; जिल्ला छुनुहोस्, तथ्यपत्र यहीँ खुल्छ।"
-                              : "Switch the layer above — the whole map recolours; touch any district for its full factsheet."}
+                              ? "माथिका थर (प्रदेश / भेग / बाली / पशुपालन / जलवायु) बदल्नुहोस् — नक्साको रङै बदलिन्छ; जिल्ला छुनुहोस्, तथ्यपत्र यहीँ खुल्छ। वा तलका छिटो-छनोटमा एउटा थिच्नुहोस्।"
+                              : "Switch the layer above — the whole map recolours; touch any district for its full factsheet. Or tap a quick-pick below for instant data."}
                           </p>
+                          {/* Quick-picks — top crop/livestock spotlights by district count */}
+                          <div className="mt-3.5 flex flex-wrap gap-1.5">
+                            {CROP_TAGS.slice()
+                              .sort((a, b) => districtsWithTag(b.id, "crops").length - districtsWithTag(a.id, "crops").length)
+                              .slice(0, 4)
+                              .map((t) => {
+                                const count = districtsWithTag(t.id, "crops").length;
+                                return (
+                                  <button
+                                    key={t.id}
+                                    type="button"
+                                    onClick={() => { setLayer("crops"); setSpotTag(t.id); }}
+                                    className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-[11px] font-semibold bg-white/10 border border-white/25 text-gray-100 hover:bg-[#D4AF37] hover:text-[#0A2540] hover:border-[#D4AF37] transition-all"
+                                  >
+                                    {np ? t.np : t.en}
+                                    <span className="text-[10px] opacity-70">{fmtN(count)}</span>
+                                  </button>
+                                );
+                              })}
+                          </div>
                         </div>
                         <div className="px-6 py-5 grid grid-cols-2 gap-4">
                           {NATIONAL_STATS.map((s, i) => (

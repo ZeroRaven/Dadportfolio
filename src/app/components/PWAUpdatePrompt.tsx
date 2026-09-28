@@ -33,7 +33,7 @@ export function PWAUpdatePrompt() {
 
   return (
     <div
-      className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 w-[calc(100vw-2rem)] sm:w-auto print:hidden"
+      className="fixed bottom-4 left-1/2 -translate-x-1/2 z-[66] w-[calc(100vw-2rem)] sm:w-auto print:hidden"
       role="alert"
       aria-live="polite"
     >

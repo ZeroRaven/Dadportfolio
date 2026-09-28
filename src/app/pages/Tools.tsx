@@ -26,6 +26,8 @@ import { MilkIncomeCalculator } from "../components/tools/MilkIncomeCalculator";
 import { WaterRequirementCalculator } from "../components/tools/WaterRequirementCalculator";
 import { IncubationCalculator } from "../components/tools/IncubationCalculator";
 import { MarketValueCalculator } from "../components/tools/MarketValueCalculator";
+import { ManureValueCalculator } from "../components/tools/ManureValueCalculator";
+import { EstrusPlanner } from "../components/tools/EstrusPlanner";
 import { ResultCardActions } from "../components/tools/ResultActions";
 import { toNepaliDigits } from "../i18n/format";
 
@@ -622,6 +624,10 @@ const TOOL_GROUPS: ToolGroup[] = [
         descEn: "Body condition 1–5 scored on a live cow diagram",
         descNp: "शरीर अवस्था अंक १–५, गाईको चित्रसहित",
         kw: "fat thin conditioning edmondson बोसो" },
+      { value: "estrus", icon: CalendarDays, en: "Heat & AI", np: "यात्रा-मिलन",
+        descEn: "Heat date → serve window, next heats, preg-check dates",
+        descNp: "यात्राको मितिबाट मिलन-झ्याल, अर्का यात्रा, गर्भ-जाँच",
+        kw: "estrus heat insemination breeding cycle 21 days ai यात्रा मिलन गर्भ" },
     ],
   },
   {
@@ -654,6 +660,10 @@ const TOOL_GROUPS: ToolGroup[] = [
         descEn: "Animals and daily milk records, charts, CSV export",
         descNp: "पशु र दैनिक दुध अभिलेख, चार्ट, CSV निर्यात",
         kw: "record keeping tracking livestock register अभिलेख" },
+      { value: "manure", icon: Wheat, en: "Manure value", np: "गोबर मूल्य",
+        descEn: "Dung → compost, NPK, fertiliser-bag value, biogas",
+        descNp: "गोबर → कम्पोस्ट, NPK, मल-बोरा मूल्य, बायोग्यास",
+        kw: "dung compost npk fertiliser biogas slurry organic गोबर कम्पोस्ट मल बायोग्यास" },
     ],
   },
   {
@@ -738,6 +748,8 @@ function renderTool(value: string, np: boolean) {
     case "herd": return <HerdTracker np={np} />;
     case "bcs": return <BCSGuide np={np} />;
     case "health": return <HealthGuide np={np} />;
+    case "manure": return <ManureValueCalculator np={np} />;
+    case "estrus": return <EstrusPlanner np={np} />;
     default: return null;
   }
 }
@@ -1108,7 +1120,7 @@ export function Tools() {
     <>
       <SEO
         title="Farm Tools & Calculators — 15 Free Tools for Nepali Farmers"
-        description="15 free farm tools and calculators for Nepali farmers and livestock keepers: tape-based weight estimation, gestation dates, feed rations, medicine dosage, water needs, market value, body condition score, dairy income, herd & milk ledger, Ropani-Bigha land units, poultry & hatchery planning, vaccination reminders, live weather with THI heat-stress alerts, and a symptom checker — bilingual, no sign-up."
+        description="17 free farm tools and calculators for Nepali farmers and livestock keepers: tape-based weight estimation, gestation dates, heat & AI breeding planner, feed rations, medicine dosage, water needs, market value, body condition score, dairy income, herd & milk ledger, Ropani-Bigha land units, poultry & hatchery planning, vaccination reminders, manure & compost value with biogas potential, live weather with THI heat-stress alerts, and a symptom checker — bilingual, no sign-up."
         keywords="farm calculator Nepal, livestock weight estimator, gestation calculator cattle buffalo goat, dairy income calculator Nepal, water requirement livestock, goat market price Nepal, live animal value estimator, incubation hatch calendar chicken duck quail, ropani aana converter, bigha kattha dhur conversion, dry matter intake calculator, feed requirement buffalo, veterinary dosage calculator mg kg, poultry feed FCR calculator, vaccination reminder FMD HS PPR, livestock symptom checker, body condition score cattle buffalo BCS, herd record keeping app, milk production tracker, Nepal weather livestock heat stress THI, किसान क्यालकुलेटर, दुग्ध आम्दानी गणना, पशु पानी आवश्यकता, खसी मूल्य, अन्डा कलाउने पात्रो, रोपनी रूपान्तरण, गर्भावधि हिसाब, चारा गणना, खुराक क्यालकुलेटर, शरीर अवस्था अंक, खोर अभिलेख, मौसम सहायक"
         path="/tools"
       />

@@ -78,7 +78,7 @@ export function EmergencySOS() {
         onClick={() => setOpen(true)}
         aria-label={np ? "आकस्मिक पशु सहयोग" : "Emergency animal help"}
         title={np ? "आकस्मिक पशु सहयोग" : "Emergency animal help"}
-        className="pointer-events-auto w-14 h-14 rounded-full bg-gradient-to-br from-[#C0392B] to-[#8B1E12] text-white shadow-xl ring-2 ring-white/70 flex items-center justify-center relative"
+        className="pointer-events-auto w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-gradient-to-br from-[#C0392B] to-[#8B1E12] text-white shadow-xl ring-2 ring-white/70 flex items-center justify-center relative"
       >
         {/* Attention pulse — disabled under the a11y reduce-motion switch */}
         {!document.documentElement.classList.contains("a11y-reduce-motion") && (
@@ -89,7 +89,7 @@ export function EmergencySOS() {
             transition={{ duration: 1.6, repeat: Infinity, ease: "easeOut" }}
           />
         )}
-        <Siren size={24} aria-hidden="true" />
+        <Siren className="w-5 h-5 sm:w-6 sm:h-6" aria-hidden="true" />
       </motion.button>
 
       {createPortal(
@@ -99,7 +99,7 @@ export function EmergencySOS() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="fixed inset-0 z-[70] flex items-end sm:items-center justify-center p-0 sm:p-6"
+              className="fixed inset-0 z-[90] flex items-end sm:items-center justify-center p-0 sm:p-6"
               style={{ backgroundColor: "rgba(10,20,35,0.62)", backdropFilter: "blur(4px)" }}
               onMouseDown={(e) => {
                 if (e.target === e.currentTarget) close();
